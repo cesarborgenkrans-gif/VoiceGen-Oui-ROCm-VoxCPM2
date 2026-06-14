@@ -125,7 +125,7 @@ If PyTorch loads a bundled HSA runtime instead of the system ROCm runtime, ROCm 
 
 ## 6. Model Files
 
-Download VoxCPM2 model files locally. The default app path is:
+Download VoxCPM2 model files locally. The default path is under the WaifuVoice lobby root:
 
 ```text
 models/VoxCPM2/
@@ -173,7 +173,8 @@ Optional launcher overrides:
 $env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
 $env:WAIFUVOICE_WSL_USER = "root"
 $env:WAIFUVOICE_WSL_VENV = "/home/you/waifuvoice-rocm72"
-$env:WAIFUVOICE_WSL_PROJECT = "/mnt/d/path/to/WaifuVoice"
+$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/WaifuVoice"
+$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/WaifuVoice/app"
 $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/models/VoxCPM2"
 ```
 
@@ -190,6 +191,7 @@ Use these gates before calling a setup working:
 ```bash
 rocminfo | grep -E "Name:|gfx"
 python3 -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0))"
+cd app
 python3 _backend/server.py
 ```
 

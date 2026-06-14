@@ -24,7 +24,8 @@ from gpu_runtime_control import cool_down_engine
 from vram_telemetry import get_vram_telemetry
 
 ROOT = Path(__file__).resolve().parent
-PROJECT_ROOT = ROOT.parent
+APP_ROOT = Path(os.environ.get("WAIFUVOICE_APP_ROOT", str(ROOT.parent))).expanduser().resolve()
+DATA_ROOT = Path(os.environ.get("WAIFUVOICE_DATA_ROOT", str(APP_ROOT.parent))).expanduser().resolve()
 PORT = int(os.environ.get("PORT", "3113"))
 HOST = os.environ.get("HOST", "127.0.0.1")
 MAX_JSON_BODY = int(os.environ.get("MAX_JSON_BODY", str(50 * 1024 * 1024)))
@@ -35,9 +36,12 @@ ALLOWED_ORIGINS = {
     f"http://[::1]:{PORT}",
 }
 
-MODEL_PATH = os.environ.get("VOXCPM_MODEL_PATH", os.path.join("models", "VoxCPM2"))
-OUTPUTS_DIR = PROJECT_ROOT / "_outputs_vox"
+MODEL_PATH = os.environ.get("VOXCPM_MODEL_PATH", str(DATA_ROOT / "models" / "VoxCPM2"))
+OUTPUTS_DIR = Path(os.environ.get("WAIFUVOICE_OUTPUTS_DIR", str(DATA_ROOT / "outputs"))).expanduser().resolve()
 METADATA_PATH = OUTPUTS_DIR / "metadata.json"
+CUSTOM_PERSONAS_PATH = Path(
+    os.environ.get("WAIFUVOICE_CUSTOM_PERSONAS_PATH", str(DATA_ROOT / "personas" / "presets_custom.json"))
+).expanduser().resolve()
 
 ENGINE_LOCK = threading.Lock()
 ENGINE = None
@@ -84,11 +88,46 @@ def load_metadata():
     return {}
 
 def save_metadata(metadata):
-    OUTPUTS_DIR.mkdir(exist_ok=True)
+    OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
     METADATA_PATH.write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True),
         encoding="utf-8",
     )
+
+def load_custom_personas():
+    if not CUSTOM_PERSONAS_PATH.exists():
+        return []
+    try:
+        data = json.loads(CUSTOM_PERSONAS_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    if isinstance(data, list):
+        return [item for item in data if isinstance(item, dict)]
+    if isinstance(data, dict) and isinstance(data.get("personas"), list):
+        return [item for item in data["personas"] if isinstance(item, dict)]
+    return []
+
+def save_custom_personas(personas):
+    CUSTOM_PERSONAS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = CUSTOM_PERSONAS_PATH.with_name(f"{CUSTOM_PERSONAS_PATH.name}.tmp")
+    tmp_path.write_text(
+        json.dumps(personas, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    tmp_path.replace(CUSTOM_PERSONAS_PATH)
+
+def upsert_custom_persona(persona):
+    if not isinstance(persona, dict):
+        raise ValueError("persona must be an object")
+    persona_id = str(persona.get("id") or "").strip()
+    if not persona_id:
+        raise ValueError("persona.id is required")
+    current = [item for item in load_custom_personas() if item.get("id") != persona_id]
+    saved = dict(persona)
+    saved["id"] = persona_id
+    current.append(saved)
+    save_custom_personas(current)
+    return saved, current
 
 def output_record_from_file(path, metadata):
     filename = path.name
@@ -305,9 +344,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def serve_file(self, rel_path):
         rel_path = rel_path.lstrip("/")
-        target = (PROJECT_ROOT / rel_path).resolve()
+        target = (APP_ROOT / rel_path).resolve()
         try:
-            target.relative_to(PROJECT_ROOT)
+            target.relative_to(APP_ROOT)
         except ValueError:
             self.send_error_json(403, "Forbidden")
             return
@@ -331,6 +370,10 @@ class Handler(BaseHTTPRequestHandler):
                 "loaded": loaded,
                 "model_source": "VoxCPM2",
                 "model_path": MODEL_PATH,
+                "app_root": str(APP_ROOT),
+                "data_root": str(DATA_ROOT),
+                "outputs_dir": str(OUTPUTS_DIR),
+                "custom_personas_path": str(CUSTOM_PERSONAS_PATH),
                 "voxcpm_import_ok": VoxCPMEngine is not None,
             }
             if loaded:
@@ -345,6 +388,13 @@ class Handler(BaseHTTPRequestHandler):
             
         if path == "/api/outputs":
             return self.send_json(list_output_records())
+
+        if path == "/api/personas/custom":
+            return self.send_json({
+                "status": "ok",
+                "path": str(CUSTOM_PERSONAS_PATH),
+                "personas": load_custom_personas(),
+            })
             
         if path.startswith("/outputs/"):
             filename = path[len("/outputs/"):]
@@ -407,6 +457,19 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_error_json(502, f"Local LLM connection failed: {exc.reason}")
                 except Exception as exc:
                     return self.send_error_json(500, f"{type(exc).__name__}: {exc}")
+            if path == "/api/personas/custom":
+                try:
+                    payload = read_body(self)
+                    persona = payload.get("persona") if isinstance(payload, dict) else None
+                    saved, personas = upsert_custom_persona(persona)
+                    return self.send_json({
+                        "status": "ok",
+                        "path": str(CUSTOM_PERSONAS_PATH),
+                        "persona": saved,
+                        "personas": personas,
+                    })
+                except Exception as exc:
+                    return self.send_error_json(400, f"{type(exc).__name__}: {exc}")
             return self.send_error_json(404, "Not found")
 
         temp_ref_path = None
@@ -506,7 +569,7 @@ class Handler(BaseHTTPRequestHandler):
                     
                 return
 
-            # Save permanently to _outputs_vox
+            # Save permanently to the lobby outputs folder.
             outputs_dir = str(OUTPUTS_DIR)
             os.makedirs(outputs_dir, exist_ok=True)
             filename = f"waifuvoice_voxcpm_{uuid.uuid4().hex[:8]}.wav"
@@ -538,7 +601,7 @@ class Handler(BaseHTTPRequestHandler):
             with open(out_path, "rb") as f:
                 wav_data = f.read()
                 
-            # Do NOT remove out_path, leave it permanently in _outputs_vox
+            # Do not remove out_path; leave it in the lobby outputs folder.
             self.send_payload(
                 200,
                 wav_data,

@@ -9,7 +9,8 @@ __pycache__/
 .mypy_cache/
 
 # Local model weights and Hugging Face caches
-models/
+models/*
+!models/README.md
 .cache/
 .huggingface/
 *.safetensors
@@ -18,7 +19,8 @@ models/
 
 # Generated audio and local test output
 _outputs_vox/
-outputs/
+outputs/*
+!outputs/README.md
 *.wav
 *.mp3
 *.flac
@@ -43,7 +45,11 @@ AGENTS.md
 FUTURE_EXPERIMENTS.md
 HANDOFF.md
 ROCm_librocdxg_dependency_check.md
-_frontend/data/presets_custom.json
+app/_frontend/data/presets_custom.json
+personas/*
+!personas/README.md
+!personas/presets_custom.example.json
+personas/presets_custom.json
 .env
 .env.*
 

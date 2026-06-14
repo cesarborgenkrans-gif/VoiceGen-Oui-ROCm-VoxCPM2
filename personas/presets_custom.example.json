@@ -1,0 +1,13 @@
+[
+  {
+    "id": "example-persona",
+    "label": "Example Persona",
+    "title": "Example Persona",
+    "voice_design": "Voice Attribute: A warm, clear speaker with natural pacing. Environment: A quiet studio. Detailed notes: Keep the delivery grounded and easy to reproduce.",
+    "background": "",
+    "personality": "",
+    "language": "English",
+    "sample": "Start with one clean sentence and keep the seed fixed.",
+    "tags": ["example"]
+  }
+]

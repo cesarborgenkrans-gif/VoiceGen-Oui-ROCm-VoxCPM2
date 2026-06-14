@@ -2,7 +2,17 @@
 
 Local-first VoxCPM voice synthesis UI for giving waifus, husbandos, mascots, and original personas a voice on your own machine.
 
-The app is built for a Windows + WSL2 + AMD ROCm workflow. The current verified development machine runs VoxCPM2 on an AMD Radeon RX 7900 XTX through Ubuntu 22.04, ROCm 7.2, ROCDXG, and PyTorch ROCm wheels. Your WSL username, project path, virtual environment path, and model path do not need to match the author's machine.
+The repository root is the **WaifuVoice lobby**: user-owned models, generated audio, and custom personas live beside the app code instead of inside it.
+
+```text
+WaifuVoice/
+  app/                  source code and UI
+  models/               local model snapshots, ignored by git
+  outputs/              generated audio, ignored by git
+  personas/             custom Persona Lab data, ignored by git except examples
+```
+
+The current verified development path runs VoxCPM2 on an AMD Radeon RX 7900 XTX through Windows + WSL2 + Ubuntu 22.04 + ROCm 7.2 + ROCDXG + PyTorch ROCm wheels. Your WSL username, project path, virtual environment path, and model path do not need to match the author's machine.
 
 ## Current Status
 
@@ -19,15 +29,13 @@ The app is built for a Windows + WSL2 + AMD ROCm workflow. The current verified 
 
 ## What Is Not Committed
 
-This repository ships source code and setup instructions only.
+This repository ships source code, setup instructions, and lightweight placeholder files only.
 
-- Model weights are not committed.
+- Model weights are not committed. Default location: `models/VoxCPM2/`.
 - Python virtual environments are not committed.
-- Generated WAV files are not committed.
+- Generated WAV files are not committed. Default location: `outputs/`.
+- Custom Persona Lab data is not committed. Default file: `personas/presets_custom.json`.
 - Local ROCm experiments, snapshots, installers, and machine-specific notes are not committed.
-- User-authored `presets_custom.json` data is treated as local runtime data.
-
-Download model files locally and place VoxCPM2 at `models/VoxCPM2/`, or set `VOXCPM_MODEL_PATH` to another local VoxCPM2 snapshot.
 
 ```text
  /\_/\
@@ -60,23 +68,33 @@ See [docs/ROCM_WSL_SETUP.md](docs/ROCM_WSL_SETUP.md) for the detailed process an
 
 ## Configure
 
-The launcher has defaults, but all important local paths are configurable.
+Download VoxCPM2 model files locally and place them under:
 
-PowerShell environment variables:
+```text
+models/VoxCPM2/
+```
+
+Or point the app at another model path:
+
+```powershell
+$env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/VoxCPM2"
+```
+
+The launcher has defaults, but all important local paths are configurable:
 
 ```powershell
 $env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
 $env:WAIFUVOICE_WSL_USER = "root"
 $env:WAIFUVOICE_WSL_VENV = "/home/you/waifuvoice-rocm72"
-$env:WAIFUVOICE_WSL_PROJECT = "/mnt/d/path/to/WaifuVoice"
-$env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/models/VoxCPM2"
+$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/WaifuVoice"
+$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/WaifuVoice/app"
 ```
 
-If `WAIFUVOICE_WSL_PROJECT` is not set, the launcher converts the current Windows project folder to a WSL path automatically.
+If `WAIFUVOICE_DATA_ROOT` and `WAIFUVOICE_APP_ROOT` are not set, the launcher converts the cloned Windows folder and its `app/` child to WSL paths automatically.
 
 ## Run
 
-From Windows PowerShell:
+From the repo root in Windows PowerShell:
 
 ```powershell
 .\start_waifuvoice_vox_wsl_rocm7.ps1
@@ -90,7 +108,7 @@ http://localhost:3113
 
 The launcher binds the server inside WSL with `HOST=0.0.0.0` so Windows can reach it through `localhost:3113`. The Python server defaults to `HOST=127.0.0.1` when run directly.
 
-Opening `index.html` directly with `file:///` can call the local backend at `http://localhost:3113`, but the HTTP route is the preferred path.
+Opening `app/index.html` directly with `file:///` can call the local backend at `http://localhost:3113`, but the HTTP route is the preferred path.
 
 ## License
 

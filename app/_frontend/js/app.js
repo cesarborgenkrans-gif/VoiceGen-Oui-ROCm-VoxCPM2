@@ -36,6 +36,7 @@ const state = {
   currentMode: 0,
   uploadToolsOpen: false,
   cloneToolsEnabled: readCloneToolsEnabled(),
+  customPersonaBackendAvailable: false,
   personaLab: null,
   presetLibrary: null,
   activePresetTab: 'personas',
@@ -388,7 +389,7 @@ function writeCustomPersonas(personas) {
   localStorage.setItem(CUSTOM_PERSONAS_KEY, JSON.stringify(personas, null, 2));
 }
 
-function upsertCustomPersona(persona) {
+function upsertLocalCustomPersona(persona) {
   const normalized = normalizePersona(persona);
   const personas = readCustomPersonas().filter((item) => item.id !== normalized.id);
   personas.push(normalized);
@@ -397,6 +398,43 @@ function upsertCustomPersona(persona) {
     state.presetLibrary.personas = mergePersonas(state.presetLibrary.personas || [], personas);
   }
   return normalized;
+}
+
+async function loadCustomPersonas() {
+  try {
+    const res = await fetch(apiPath('/api/personas/custom'), { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Custom personas HTTP ${res.status}`);
+    const data = await res.json();
+    const personas = Array.isArray(data) ? data : data.personas;
+    state.customPersonaBackendAvailable = true;
+    return Array.isArray(personas) ? personas.map(normalizePersona) : [];
+  } catch {
+    state.customPersonaBackendAvailable = false;
+    return readCustomPersonas();
+  }
+}
+
+async function upsertCustomPersona(persona) {
+  const normalized = normalizePersona(persona);
+  try {
+    const res = await fetch(apiPath('/api/personas/custom'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ persona: normalized })
+    });
+    if (!res.ok) throw new Error(`Custom persona save HTTP ${res.status}`);
+    const data = await res.json();
+    const saved = normalizePersona(data.persona || normalized);
+    const personas = Array.isArray(data.personas) ? data.personas.map(normalizePersona) : [saved];
+    state.customPersonaBackendAvailable = true;
+    if (state.presetLibrary) {
+      state.presetLibrary.personas = mergePersonas(state.presetLibrary.personas || [], personas);
+    }
+    return saved;
+  } catch {
+    state.customPersonaBackendAvailable = false;
+    return upsertLocalCustomPersona(normalized);
+  }
 }
 
 function mergePersonas(basePersonas, customPersonas) {
@@ -775,7 +813,7 @@ function duplicatePersonaLabDraft() {
   setHint('Persona Lab duplicated into a new draft.', 'ok');
 }
 
-function savePersonaLabDraft() {
+async function savePersonaLabDraft() {
   const persona = readPersonaLabForm();
   const sections = splitVoiceDesignSections(persona.voice_design);
   if (!sections.voice_attribute.trim()) {
@@ -786,11 +824,11 @@ function savePersonaLabDraft() {
     ...persona,
     id: state.personaLab?.baseId && state.personaLab.baseId !== 'new' ? state.personaLab.baseId : persona.id
   });
-  upsertCustomPersona(saved);
-  state.personaLab = { baseId: saved.id, persona: createPersonaLabTemplate(saved) };
+  const persisted = await upsertCustomPersona(saved);
+  state.personaLab = { baseId: persisted.id, persona: createPersonaLabTemplate(persisted) };
   writePersonaLabDraft(state.personaLab);
   state.activePresetTab = 'personas';
-  state.presetSelections.persona = saved.id;
+  state.presetSelections.persona = persisted.id;
   state.presetSelections.voice = null;
   state.presetSelections.mood = null;
   state.presetSelections.style = null;
@@ -799,10 +837,10 @@ function savePersonaLabDraft() {
   renderPresetGrid();
   renderPersonaLabPicker();
   updatePresetBlendLabel();
-  populatePersonaLabForm(saved);
-  updatePersonaLabPreview(saved);
-  setHint(`Saved persona ${saved.label}.`, 'ok');
-  return saved;
+  populatePersonaLabForm(persisted);
+  updatePersonaLabPreview(persisted);
+  setHint(`Saved persona ${persisted.label}.`, 'ok');
+  return persisted;
 }
 
 function applyPersonaLabToMainForm() {
@@ -1033,7 +1071,7 @@ async function loadPresetLibrary() {
     const res = await fetch(`${FRONTEND_BASE}data/presets.json`);
     if (!res.ok) throw new Error(`Preset library HTTP ${res.status}`);
     state.presetLibrary = await res.json();
-    state.presetLibrary.personas = mergePersonas(state.presetLibrary.personas || [], readCustomPersonas());
+    state.presetLibrary.personas = mergePersonas(state.presetLibrary.personas || [], await loadCustomPersonas());
     populateLanguageSelect();
     populatePersonaLabLanguageSelect(state.personaLab?.persona?.language || getLanguageValue());
     renderPresetTabs();
@@ -1560,7 +1598,10 @@ async function importPersonaFile(file) {
   const text = await file.text();
   const parsed = parsePersonaText(text, file.name);
   const personas = Array.isArray(parsed) ? parsed : [parsed];
-  const imported = personas.map(upsertCustomPersona);
+  const imported = [];
+  for (const persona of personas) {
+    imported.push(await upsertCustomPersona(persona));
+  }
   state.activePresetTab = 'personas';
   state.presetSelections.persona = imported[0]?.id || null;
   renderPresetTabs();
@@ -1615,7 +1656,9 @@ $('#btn-reset-blend')?.addEventListener('click', resetPresetBlend);
 $('#btn-persona-lab')?.addEventListener('click', () => openPersonaLab());
 $('#btn-persona-lab-new')?.addEventListener('click', newPersonaLabDraft);
 $('#btn-persona-lab-duplicate')?.addEventListener('click', duplicatePersonaLabDraft);
-$('#btn-persona-lab-save')?.addEventListener('click', savePersonaLabDraft);
+$('#btn-persona-lab-save')?.addEventListener('click', () => {
+  savePersonaLabDraft().catch((err) => setHint(`Persona save failed: ${err.message}`, 'error'));
+});
 $('#btn-persona-lab-apply')?.addEventListener('click', applyPersonaLabToMainForm);
 $('#btn-persona-lab-export-json')?.addEventListener('click', () => exportPersona('json'));
 $('#btn-persona-lab-export-md')?.addEventListener('click', () => exportPersona('md'));
