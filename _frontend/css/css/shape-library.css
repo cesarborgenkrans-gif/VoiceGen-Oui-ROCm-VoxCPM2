@@ -1,0 +1,152 @@
+/* 
+   ==========================================================================
+   🛡️ SHAPE LIBRARY: ARTISAN FRAMES, HIRAMEKI SHEEN & KASUMI CLOUDS
+   ==========================================================================
+*/
+
+/* 
+   --- [ARTISAN_FRAMES] --- 
+   Corner brackets that wrap panels. When selected/active, they glow.
+*/
+.artisan-frame {
+  position: relative;
+  border: 1px solid rgba(43, 92, 116, 0.1);
+  border-radius: var(--border-radius-card);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.artisan-frame::before,
+.artisan-frame::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  transition: border-color 0.3s ease, filter 0.3s ease;
+}
+
+/* Top-Left Bracket */
+.artisan-frame::before {
+  top: -2px;
+  left: -2px;
+  border-top: 3px solid var(--accent-pink);
+  border-left: 3px solid var(--accent-pink);
+  border-top-left-radius: 4px;
+}
+
+/* Bottom-Right Bracket */
+.artisan-frame::after {
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 3px solid var(--accent-pink);
+  border-right: 3px solid var(--accent-pink);
+  border-bottom-right-radius: 4px;
+}
+
+/* Active Artisan Frame State (Glow Effect) */
+.artisan-frame.active {
+  border-color: rgba(212, 97, 97, 0.3);
+  box-shadow: 0 0 15px rgba(212, 97, 97, 0.15);
+}
+
+.artisan-frame.active::before,
+.artisan-frame.active::after {
+  border-color: var(--accent-cyan);
+  filter: drop-shadow(0 0 5px var(--accent-cyan));
+}
+
+
+/* 
+   --- [HIRAMEKI_SHEEN] --- 
+   Hover sheen sweep across buttons.
+*/
+.hirameki-btn {
+  position: relative;
+  background: rgba(212, 97, 97, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-white);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(20, 44, 56, 0.04);
+}
+
+.hirameki-btn:hover {
+  background: rgba(212, 97, 97, 0.12);
+  border-color: var(--accent-pink);
+  box-shadow: var(--shadow-glow-pink);
+  transform: translateY(-2px);
+}
+
+.hirameki-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.45) 50%, 
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: none;
+}
+
+.hirameki-btn:hover::before {
+  animation: sheenSweep 0.75s ease-out forwards;
+}
+
+
+/* 
+   --- [KASUMI_CLUSTERS] --- 
+   Custom dot-and-bar button controls.
+*/
+.kasumi-cluster {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kasumi-cloud {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 20, 147, 0.05);
+  border: 1px dashed var(--accent-pink);
+  padding: 4px 10px;
+  border-radius: 20px;
+  animation: floatAnimation 5s ease-in-out infinite;
+}
+
+.kasumi-cloud .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-pink);
+  border-radius: 50%;
+  box-shadow: var(--shadow-glow-pink);
+}
+
+.kasumi-cloud .bar {
+  width: 15px;
+  height: 2px;
+  background: rgba(255, 20, 147, 0.4);
+  margin: 0 8px;
+}
+
+.kasumi-cloud span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-pink);
+  letter-spacing: 1px;
+}

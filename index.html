@@ -1,0 +1,1182 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaifuVoice Forge</title>
+  <meta name="description" content="A local-first voice forge UI tuned for VoxCPM2 voice synthesis." />
+  <link rel="stylesheet" href="_frontend/css/css/design-system.css" />
+  <link rel="stylesheet" href="_frontend/css/css/shape-library.css" />
+  <link rel="stylesheet" href="_frontend/css/css/cockpit.css" />
+  <style>
+    /* Specific tweaks for Voice Forge layout inside Cockpit */
+    .chat-feed { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; flex: 1; }
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-group label { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
+    @keyframes rgbSparkle {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .input-group textarea, .input-group input[type="text"], input[type="file"], .top-select {
+      background: linear-gradient(124deg, rgba(0,255,255,0.14), rgba(81,121,255,0.14), rgba(178,95,255,0.14), rgba(0,210,170,0.12));
+      background-size: 400% 400%;
+      animation: rgbSparkle 20s ease infinite;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-white);
+      padding: 12px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      border-radius: 6px;
+      outline: none;
+      resize: vertical;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+    .input-group textarea:focus, .input-group input[type="text"]:focus, input[type="file"]:focus, .top-select:focus {
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 15px rgba(178, 95, 255, 0.34), inset 0 0 10px rgba(0, 255, 255, 0.2);
+      background: linear-gradient(124deg, rgba(0,255,255,0.22), rgba(81,121,255,0.22), rgba(178,95,255,0.22), rgba(0,210,170,0.2));
+      background-size: 400% 400%;
+    }
+    .voice-design-label { color: #ff69b4 !important; text-shadow: 0 0 8px rgba(255,105,180,0.4); }
+    .voice-design-input:focus { border-color: #ff69b4 !important; box-shadow: 0 0 20px rgba(255, 105, 180, 0.5) !important; }
+    
+    .action-row { display: flex; gap: 12px; margin-top: 10px; align-items: center; }
+    .action-row button {
+      padding: 10px 24px; font-family: var(--font-mono); font-weight: bold; font-size: 12px;
+      border-radius: 4px; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+    }
+    html, body {
+      scrollbar-color: rgba(49, 199, 218, 0.85) rgba(255, 255, 255, 0.45);
+      scrollbar-width: thin;
+    }
+    body::-webkit-scrollbar { width: 12px; }
+    body::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.45);
+      border-radius: 999px;
+    }
+    body::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #b8f7ff, #31c7da);
+      border-radius: 999px;
+      border: 0;
+      box-shadow: none;
+    }
+    .cockpit-sidebar {
+      scrollbar-color: rgba(49, 199, 218, 0.85) rgba(211, 245, 250, 0.24);
+      scrollbar-width: thin;
+    }
+    .cockpit-sidebar::-webkit-scrollbar { width: 12px; }
+    .cockpit-sidebar::-webkit-scrollbar-track {
+      background: linear-gradient(180deg, rgba(211,245,250,0.3), rgba(129,236,236,0.08));
+      border-left: 1px solid rgba(129,236,236,0.18);
+      border-radius: 999px;
+    }
+    .cockpit-sidebar::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #b8f7ff, #31c7da 45%, #147790);
+      border: 2px solid rgba(245,253,255,0.86);
+      border-radius: 999px;
+      box-shadow: inset 0 0 0 1px rgba(20,119,144,0.18), 0 0 10px rgba(49,199,218,0.26);
+    }
+    .cockpit-sidebar::-webkit-scrollbar-button:single-button {
+      display: block;
+      height: 13px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(184,247,255,0.95), rgba(49,199,218,0.86));
+      border: 1px solid rgba(20,119,144,0.24);
+    }
+    .cockpit-sidebar::-webkit-scrollbar-button:single-button:vertical:decrement {
+      background:
+        linear-gradient(45deg, transparent 0 40%, #147790 40% 60%, transparent 60%),
+        linear-gradient(180deg, rgba(184,247,255,0.95), rgba(49,199,218,0.86));
+    }
+    .cockpit-sidebar::-webkit-scrollbar-button:single-button:vertical:increment {
+      background:
+        linear-gradient(135deg, transparent 0 40%, #147790 40% 60%, transparent 60%),
+        linear-gradient(180deg, rgba(184,247,255,0.95), rgba(49,199,218,0.86));
+    }
+    #generate-btn { background: var(--accent-cyan); color: var(--bg-darker); border: none; }
+    #generate-btn:hover { background: var(--text-white); box-shadow: 0 0 10px var(--accent-cyan); }
+    #generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .clone-action {
+      border-color: rgba(216, 105, 161, 0.9) !important;
+      color: #be5b5b !important;
+      background: #ffd8ea !important;
+      opacity: 0.95;
+      box-shadow: 0 0 12px rgba(240,154,199,0.1);
+    }
+    .clone-action:hover,
+    .clone-action:focus-visible,
+    .clone-action.active {
+      border-color: rgba(216, 105, 161, 0.9) !important;
+      color: #be5b5b !important;
+      background: #ffd8ea !important;
+      opacity: 0.95;
+      box-shadow: 0 0 12px rgba(240,154,199,0.1);
+    }
+    .clone-action.active,
+    .clone-action.active:hover,
+    .clone-action.active:focus-visible {
+      border-color: rgba(204, 88, 146, 0.95) !important;
+      color: #aa4f77 !important;
+      background: #f0a4cb !important;
+      opacity: 1;
+      box-shadow: 0 0 16px rgba(240,154,199,0.18);
+    }
+
+    .output-box {
+      margin-top: auto;
+      border: 0;
+      border-radius: 8px;
+      padding: 16px;
+      background:
+        linear-gradient(135deg, rgba(232,248,250,0.9), rgba(196,235,241,0.72)),
+        linear-gradient(90deg, rgba(20,119,144,0.08), rgba(0,210,170,0.07));
+      box-shadow: 0 10px 24px rgba(20,44,56,0.08);
+    }
+    .output-box h3 { color: #153e47; font-family: var(--font-mono); font-size: 11px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;}
+    audio {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 36px;
+      outline: none;
+      border-radius: 6px;
+      background: transparent;
+      display: block;
+      margin-bottom: 12px;
+      border: 0;
+      box-shadow: none;
+    }
+    audio::-webkit-media-controls-panel {
+      background:
+        linear-gradient(90deg, rgba(232,248,250,0.96), rgba(184,247,255,0.86) 50%, rgba(229,216,255,0.82) 100%),
+        linear-gradient(135deg, rgba(49,199,218,0.1), rgba(178,95,255,0.08));
+      border-radius: 6px;
+    }
+    audio::-webkit-media-controls-play-button,
+    audio::-webkit-media-controls-mute-button {
+      filter: hue-rotate(135deg) saturate(1.25);
+    }
+    audio::-webkit-media-controls-current-time-display,
+    audio::-webkit-media-controls-time-remaining-display {
+      color: #18333a;
+      text-shadow: none;
+      font-family: var(--font-mono);
+    }
+
+    .top-controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .top-control { display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); border-radius:4px; padding:5px 8px; }
+    .top-control label { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+    .top-select { min-width:118px; max-width:160px; padding:6px 8px; font-size:11px; border-radius:4px; animation:none; background:rgba(0,0,0,0.26); cursor:pointer; }
+    .voice-language-control { background:rgba(255,255,255,0.08); }
+    .voice-language-button { display:grid; gap:1px; min-width:172px; border:1px solid rgba(129,236,236,0.3); background:rgba(0,255,255,0.08); color:#18333a; border-radius:999px; padding:6px 11px; cursor:pointer; text-align:left; }
+    .voice-language-button span { font-family:var(--font-mono); font-size:9px; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:1px; }
+    .voice-language-button strong { font-size:12px; letter-spacing:0; }
+    .top-action { border:1px solid var(--accent-cyan); background:rgba(0,255,255,0.1); color:var(--accent-cyan); border-radius:4px; padding:8px 10px; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; cursor:pointer; font-weight:bold; }
+    .top-action.active { border-color:var(--accent-pink); color:var(--accent-pink); background:rgba(255,0,128,0.12); }
+
+    /* Segmented Toggle Styles */
+    .mode-toggle { display: flex; background: rgba(0,0,0,0.3); border-radius: 20px; padding: 4px; margin-bottom: 12px; border: 1px solid rgba(0,255,255,0.1); position: relative; }
+    .mode-btn { flex: 1; text-align: center; padding: 8px 0; cursor: pointer; color: var(--text-muted); font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; z-index: 2; border: none; background: transparent; }
+    .mode-btn.active { color: var(--bg-darker); font-weight: bold; }
+    .toggle-pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 6px); background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink)); border-radius: 16px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; box-shadow: 0 0 10px rgba(0,255,255,0.4); }
+
+    .upload-tools-panel {
+      display:none;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(0,0,0,0.18);
+      border-radius:6px;
+      padding:12px;
+      gap:10px;
+    }
+    .upload-tools-panel.active { display:grid; }
+    .upload-tools-note { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); line-height:1.4; }
+
+    /* Sliding Viewport Styles */
+    .slider-viewport { overflow: hidden; position: relative; width: 100%; border-radius: 6px; padding: 4px 0; }
+    .slider-track { display: flex; width: 200%; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+    .slider-pane { width: 50%; padding: 0 4px; flex-shrink: 0; opacity: 0; transition: opacity 0.4s; }
+    .slider-pane.active-pane { opacity: 1; pointer-events: auto; }
+    .slider-pane:not(.active-pane) { pointer-events: none; }
+
+    .preset-library {
+      border: 1px solid rgba(0,255,255,0.18);
+      background: rgba(0,0,0,0.18);
+      border-radius: 6px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .preset-library-head { display:flex; align-items:center; gap:10px; justify-content:space-between; }
+    .preset-library-title { font-family:var(--font-mono); font-size:11px; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:1px; font-weight:bold; }
+    .preset-active-blend { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .persona-lab-launch {
+      border: 1px solid rgba(255,0,128,0.32);
+      background: rgba(255,0,128,0.1);
+      color: var(--accent-pink);
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+    }
+    .persona-lab-launch:hover,
+    .persona-lab-launch:focus-visible {
+      background: rgba(255,0,128,0.16);
+      box-shadow: 0 0 0 2px rgba(255,0,128,0.08);
+    }
+    .preset-tabs { display:flex; flex-wrap:wrap; gap:6px; }
+    .preset-tab, .preset-card, .history-action {
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(255,255,255,0.07);
+      color:var(--text-white);
+      border-radius:4px;
+      cursor:pointer;
+      font-family:var(--font-mono);
+      transition:all 0.18s ease;
+    }
+    .preset-tab { padding:6px 10px; font-size:10px; text-transform:uppercase; }
+    .preset-tab.active, .preset-card.active { border-color:var(--accent-cyan); background:rgba(0,255,255,0.16); color:var(--accent-cyan); }
+    .preset-tab[data-tab="personas"] {
+      background: linear-gradient(90deg, rgba(78,88,96,0.96), rgba(131,140,147,0.9));
+      color: #eef8ff;
+      border-color: rgba(129,236,236,0.18);
+    }
+    .preset-tab[data-tab="personas"]:hover,
+    .preset-tab[data-tab="personas"]:focus-visible {
+      border-color: rgba(129,236,236,0.34);
+      background: linear-gradient(90deg, rgba(90,102,111,0.98), rgba(154,163,170,0.94));
+    }
+    .preset-tab[data-tab="personas"].active {
+      background: linear-gradient(90deg, rgba(21,78,126,0.98), rgba(123,220,242,0.22));
+      color: #effcff;
+      border-color: rgba(129,236,236,0.52);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+    }
+    .preset-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
+    .preset-card { padding:9px; text-align:left; min-height:70px; }
+    .preset-card strong { display:block; font-size:12px; margin-bottom:5px; color:var(--text-white); }
+    .preset-card span { display:block; font-size:10px; line-height:1.35; color:var(--text-muted); }
+    .preset-grid.persona-compact { grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); }
+    .preset-grid.persona-compact .preset-card { min-height:44px; padding:8px 10px; }
+    .preset-grid.persona-compact .preset-card span { display:none; }
+    .preset-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .preset-actions button { padding:7px 12px; border-radius:4px; border:1px solid var(--accent-cyan); background:rgba(0,255,255,0.12); color:var(--accent-cyan); font-family:var(--font-mono); font-size:10px; cursor:pointer; text-transform:uppercase; }
+    .preset-actions button.persona-action { border-color:var(--accent-pink); background:rgba(255,0,128,0.1); color:var(--accent-pink); }
+    .consent-panel {
+      display:none;
+      border:1px solid rgba(255,0,128,0.32);
+      background:rgba(255,0,128,0.08);
+      border-radius:6px;
+      padding:10px 12px;
+      color:var(--text-white);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .consent-panel.active { display:block; }
+    .consent-panel label { display:flex; gap:8px; align-items:flex-start; font-family:var(--font-mono); font-size:11px; color:var(--text-white); }
+    .history-panel {
+      margin-top:15px;
+      border-top:1px solid rgba(20,119,144,0.18);
+      padding-top:15px;
+      display:grid;
+      gap:9px;
+      background: transparent;
+    }
+    .history-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .history-title { font-family:var(--font-mono); font-size:10px; color:#23616b; text-transform:uppercase; letter-spacing:1px; }
+    .history-list { display:grid; gap:8px; max-height:260px; overflow:auto; padding-right:4px; }
+    .history-list {
+      scrollbar-color: auto;
+      scrollbar-width: auto;
+    }
+    .history-list::-webkit-scrollbar { width:10px; }
+    .history-list::-webkit-scrollbar-track {
+      background:linear-gradient(180deg, rgba(207,247,250,0.78), rgba(197,244,249,0.38));
+      border-radius:999px;
+      box-shadow:inset 0 0 0 1px rgba(129,236,236,0.16);
+    }
+    .history-list::-webkit-scrollbar-thumb {
+      background:
+        linear-gradient(180deg, #dfffff 0%, #7eefff 17%, #72d9ff 35%, #b7aaff 54%, #74dff0 74%, #1599ac 100%);
+      border:1px solid rgba(246,253,255,0.96);
+      border-radius:999px;
+      box-shadow:
+        inset 0 0 0 1px rgba(20,119,144,0.14),
+        inset -1px 0 2px rgba(20,119,144,0.18),
+        0 1px 4px rgba(20,119,144,0.26);
+    }
+    .history-item {
+      border:1px solid rgba(20,119,144,0.18);
+      background:rgba(248,253,255,0.7);
+      border-radius:6px;
+      padding:8px;
+      display:grid;
+      gap:6px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.36);
+    }
+    .history-top { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:start; }
+    .history-name { font-family:var(--font-mono); font-size:11px; color:#18333a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .history-meta { font-family:var(--font-mono); font-size:10px; color:#456b72; }
+    .history-actions { display:flex; gap:6px; flex-wrap:wrap; }
+    .history-action { padding:5px 8px; font-size:10px; color:#147790; border-color:rgba(20,119,144,0.24); background:rgba(255,255,255,0.58); }
+    .waveform { width:100%; height:30px; background:rgba(20,119,144,0.08); border-radius:4px; display:block; }
+    .empty-history { font-family:var(--font-mono); font-size:11px; color:#456b72; padding:8px; border:1px dashed rgba(20,119,144,0.2); border-radius:4px; background:rgba(255,255,255,0.48); }
+    .tsuki-dialogue-panel {
+      margin: 8px 22px 12px;
+      border: 1px solid rgba(129,236,236,0.24);
+      background: rgba(0, 31, 38, 0.46);
+      border-radius: 6px;
+      padding: 9px;
+      display: grid;
+      gap: 7px;
+    }
+    .tsuki-dialogue-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .tsuki-dialogue-title { font-family:var(--font-mono); font-size:10px; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:1px; }
+    .tsuki-dialogue-actions { display:flex; gap:6px; }
+    .tsuki-dialogue-btn { border:1px solid rgba(129,236,236,0.25); background:rgba(129,236,236,0.08); color:var(--accent-cyan); border-radius:4px; padding:4px 6px; font-family:var(--font-mono); font-size:9px; cursor:pointer; text-transform:uppercase; }
+    .tsuki-dialogue-text {
+      min-height: 42px;
+      max-height: 58px;
+      overflow: hidden;
+      color: var(--text-white);
+      font-size: 11px;
+      line-height: 1.35;
+      cursor: pointer;
+      position: relative;
+    }
+    .tsuki-dialogue-text::after {
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height:18px;
+      background:linear-gradient(transparent, rgba(0,31,38,0.96));
+      pointer-events:none;
+    }
+    .tsuki-dialogue-empty { color:var(--text-muted); font-family:var(--font-mono); }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 34, 38, 0.36);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+    .modal-overlay.active { display:flex; }
+    .modal-card {
+      width: min(680px, 94vw);
+      max-height: 82vh;
+      overflow: auto;
+      border: 1px solid rgba(129,236,236,0.32);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(238,250,255,0.94), rgba(213,243,246,0.92)),
+        repeating-linear-gradient(135deg, rgba(20,119,144,0.08) 0 2px, transparent 2px 18px);
+      color: #16383f;
+      box-shadow: 0 22px 70px rgba(3,25,29,0.28);
+      padding: 18px;
+      display:grid;
+      gap:12px;
+    }
+    .modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .modal-head h2 { margin:0; font-family:var(--font-mono); color:var(--accent-cyan); font-size:14px; text-transform:uppercase; }
+    .modal-close { border:1px solid rgba(20,119,144,0.24); background:rgba(255,255,255,0.64); color:#147790; border-radius:4px; cursor:pointer; padding:5px 8px; }
+    .options-grid { display:grid; gap:10px; }
+    .options-grid label { display:grid; gap:5px; font-family:var(--font-mono); color:#2b5b65; font-size:10px; text-transform:uppercase; }
+    .options-grid input, .options-grid select {
+      border: 1px solid rgba(129,236,236,0.24);
+      background: rgba(255,255,255,0.78);
+      color: #18333a;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 12px;
+    }
+    .options-help { color:#335e66; font-size:12px; line-height:1.45; }
+    .dialogue-history-list { display:grid; gap:8px; }
+    .dialogue-history-item { border:1px solid rgba(20,119,144,0.18); background:rgba(255,255,255,0.62); color:#18333a; border-radius:4px; padding:8px; text-align:left; cursor:pointer; }
+    .dialogue-history-item strong { display:block; font-family:var(--font-mono); font-size:10px; color:var(--accent-cyan); margin-bottom:4px; }
+    .language-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px; }
+    .language-option { border:1px solid rgba(20,119,144,0.18); background:rgba(255,255,255,0.62); color:#18333a; border-radius:5px; padding:8px; text-align:left; cursor:pointer; font-family:var(--font-mono); font-size:11px; transition:all 0.16s ease; }
+    .language-option:hover, .language-option.active { border-color:#147790; color:#147790; background:rgba(255,255,255,0.9); box-shadow:0 0 0 2px rgba(129,236,236,0.18); }
+    .language-option small { display:block; margin-top:3px; color:#5b767c; font-size:9px; }
+    .persona-lab-modal .modal-card {
+      width: min(1160px, 96vw);
+      max-height: 88vh;
+    }
+    .persona-lab-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .persona-lab-column {
+      border: 1px solid rgba(129,236,236,0.22);
+      border-radius: 6px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.82), rgba(232,248,250,0.74)),
+        linear-gradient(90deg, rgba(20,119,144,0.05), rgba(255,0,128,0.04));
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+    }
+    .persona-lab-section {
+      display:grid;
+      gap:8px;
+      padding:10px;
+      border:1px solid rgba(129,236,236,0.14);
+      background: rgba(255,255,255,0.52);
+      border-radius: 6px;
+    }
+    .persona-lab-section-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      font-family:var(--font-mono);
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:#2b5b65;
+    }
+    .persona-lab-section-meta { color:#53747b; font-size:9px; letter-spacing:0; text-transform:none; }
+    .persona-lab-picker {
+      display:grid;
+      gap:6px;
+      max-height:160px;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .persona-lab-picker::-webkit-scrollbar { width:8px; }
+    .persona-lab-picker::-webkit-scrollbar-track { background:rgba(255,255,255,0.54); border-radius:999px; }
+    .persona-lab-picker::-webkit-scrollbar-thumb { background:linear-gradient(180deg, #b8f7ff, #31c7da); border-radius:999px; }
+    .persona-lab-persona {
+      border:1px solid rgba(20,119,144,0.16);
+      background:rgba(255,255,255,0.62);
+      color:#18333a;
+      border-radius:4px;
+      padding:7px 9px;
+      text-align:left;
+      cursor:pointer;
+      font-family:var(--font-mono);
+      transition:all 0.16s ease;
+    }
+    .persona-lab-persona:hover,
+    .persona-lab-persona:focus-visible {
+      border-color:#147790;
+      background:rgba(255,255,255,0.9);
+      box-shadow:0 0 0 2px rgba(129,236,236,0.14);
+    }
+    .persona-lab-persona.active {
+      border-color: var(--accent-cyan);
+      background: linear-gradient(90deg, rgba(0,160,188,0.16), rgba(129,236,236,0.16));
+      color:#11606d;
+    }
+    .persona-lab-persona strong {
+      display:block;
+      font-size:11px;
+      line-height:1.2;
+      color:inherit;
+    }
+    .persona-lab-fields { display:grid; gap:10px; }
+    .persona-lab-split { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+    .persona-lab-field {
+      display:grid;
+      gap:5px;
+      font-family:var(--font-mono);
+      color:#2b5b65;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+    .persona-lab-field input,
+    .persona-lab-field textarea,
+    .persona-lab-field select {
+      border: 1px solid rgba(129,236,236,0.24);
+      background: rgba(255,255,255,0.82);
+      color: #18333a;
+      border-radius: 4px;
+      padding: 8px 9px;
+      font-size: 12px;
+      font-family: var(--font-body);
+      min-width: 0;
+    }
+    .persona-lab-field textarea {
+      resize: vertical;
+      min-height: 72px;
+      line-height: 1.45;
+    }
+    .persona-lab-field small {
+      font-size: 9px;
+      text-transform: none;
+      letter-spacing: 0;
+      color: #53747b;
+      line-height: 1.35;
+    }
+    .persona-lab-footer { display:flex; flex-wrap:wrap; gap:8px; }
+    .persona-lab-footer button { padding:7px 12px; border-radius:4px; border:1px solid var(--accent-cyan); background:rgba(0,255,255,0.12); color:var(--accent-cyan); font-family:var(--font-mono); font-size:10px; cursor:pointer; text-transform:uppercase; }
+    .persona-lab-footer button.persona-action { border-color:var(--accent-pink); background:rgba(255,0,128,0.1); color:var(--accent-pink); }
+    .persona-lab-help { color:#335e66; font-size:12px; line-height:1.45; }
+    .persona-lab-status { font-family:var(--font-mono); font-size:10px; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:1px; }
+    .persona-lab-preview { display:grid; gap:12px; min-width:0; }
+    .persona-lab-preview-card {
+      border: 1px solid rgba(129,236,236,0.22);
+      border-radius: 6px;
+      background:
+        linear-gradient(135deg, rgba(238,250,255,0.94), rgba(213,243,246,0.92)),
+        repeating-linear-gradient(135deg, rgba(20,119,144,0.06) 0 2px, transparent 2px 18px);
+      color: #16383f;
+      padding: 12px;
+      display:grid;
+      gap:10px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.34);
+    }
+    .persona-lab-preview-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .persona-lab-preview-title { font-family:var(--font-mono); font-size:14px; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:1px; font-weight:bold; }
+    .persona-lab-preview-label { font-family:var(--font-mono); font-size:10px; color:#4d7178; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+    .persona-lab-chip-row { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
+    .persona-lab-chip {
+      border:1px solid rgba(20,119,144,0.18);
+      background:rgba(255,255,255,0.62);
+      color:#18333a;
+      border-radius:999px;
+      padding:4px 8px;
+      font-family:var(--font-mono);
+      font-size:9px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+    .persona-lab-preview-section {
+      display:grid;
+      gap:4px;
+      padding-top:8px;
+      border-top: 1px solid rgba(20,119,144,0.12);
+    }
+    .persona-lab-preview-section strong {
+      font-family:var(--font-mono);
+      font-size:10px;
+      color:#23616b;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+    .persona-lab-preview-section div {
+      font-size:12px;
+      line-height:1.45;
+      color:#18333a;
+      white-space:pre-wrap;
+    }
+    .persona-lab-markdown {
+      margin:0;
+      border:1px solid rgba(20,119,144,0.18);
+      background:rgba(255,255,255,0.64);
+      border-radius:6px;
+      padding:10px;
+      font-size:11px;
+      line-height:1.5;
+      color:#18333a;
+      white-space:pre-wrap;
+      max-height: 290px;
+      overflow:auto;
+    }
+    @media (max-width: 980px) {
+      .persona-lab-layout { grid-template-columns: 1fr; }
+      .persona-lab-split { grid-template-columns: 1fr; }
+      .persona-lab-preview-head { flex-direction:column; }
+      .persona-lab-chip-row { justify-content:flex-start; }
+    }
+    .proc-log {
+      margin-top:0;
+      min-height:82px;
+      max-height:126px;
+      background:rgba(248,253,255,0.62);
+      flex: 0 0 auto;
+    }
+    .runtime-panel {
+      border: 1px solid rgba(129,236,236,0.2);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.68), rgba(211,245,250,0.42)),
+        rgba(20,119,144,0.04);
+      padding: 10px;
+      display: grid;
+      gap: 9px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
+    }
+    .runtime-title {
+      font-family:var(--font-mono);
+      font-size:10px;
+      color:#147790;
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+      font-weight:bold;
+    }
+    .proc-status-grid { display:grid; gap:6px; margin-top:0; }
+    .proc-status-card { display:grid; gap:3px; border-top:1px solid rgba(20,119,144,0.16); padding-top:7px; }
+    .proc-status-card:first-child { border-top:0; padding-top:0; }
+    .proc-status-label { font-family:var(--font-mono); font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+    .vram-panel {
+      display:grid;
+      gap:7px;
+      border-top:1px solid rgba(20,119,144,0.16);
+      padding-top:9px;
+    }
+    .vram-panel.is-hidden { display:none; }
+    .vram-row { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+    .vram-label { font-family:var(--font-mono); font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+    .vram-summary { font-family:var(--font-mono); font-size:10px; color:#18333a; text-align:right; }
+    .vram-meter { height:8px; border-radius:999px; background:rgba(20,119,144,0.11); overflow:hidden; border:1px solid rgba(20,119,144,0.12); }
+    .vram-meter span { display:block; height:100%; width:0%; background:linear-gradient(90deg, #31c7da, #b25fff); transition:width .25s ease; }
+    .vram-details, .vram-cooldown-status { color:#456b72; font-family:var(--font-mono); font-size:9px; line-height:1.35; }
+    .vram-action {
+      border:1px solid rgba(20,119,144,0.32);
+      background:rgba(129,236,236,0.16);
+      color:#147790;
+      border-radius:5px;
+      padding:7px 9px;
+      font-family:var(--font-mono);
+      font-size:10px;
+      text-transform:uppercase;
+      cursor:pointer;
+      font-weight:bold;
+    }
+    .vram-action:hover { background:rgba(129,236,236,0.28); box-shadow:0 0 12px rgba(49,199,218,0.18); }
+    .vram-action:disabled { opacity:.55; cursor:not-allowed; }
+    #seed-input {
+      font-size: 12px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+    .inference-panel.is-collapsed .inference-extra { display:none; }
+    .inference-panel.is-collapsed .inference-scroll { max-height: none; overflow: visible; }
+    .inference-extra { display:grid; gap:10px; }
+    .inference-panel-head { margin-top:0; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .inference-toggle {
+      width:24px;
+      height:24px;
+      border:1px solid rgba(20,119,144,0.24);
+      background:rgba(129,236,236,0.12);
+      color:#147790;
+      border-radius:5px;
+      cursor:pointer;
+      font-family:var(--font-mono);
+      font-size:13px;
+      line-height:1;
+      display:grid;
+      place-items:center;
+    }
+    .inference-panel.is-collapsed .inference-toggle { transform: rotate(180deg); }
+    .app-trademark {
+      font-family:var(--font-mono);
+      font-size:10px;
+      color:#456b72;
+      text-align:right;
+      padding:2px 2px 0;
+      letter-spacing:.3px;
+    }
+
+    /* Terminology Guide Overlay */
+    .term-guide-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 126, 170, 0.09) 0 1px, transparent 1px 48px),
+                  linear-gradient(45deg, rgba(255, 214, 102, 0.11) 0 1px, transparent 1px 56px),
+                  linear-gradient(rgba(20, 119, 144, 0.08) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(20, 119, 144, 0.08) 1px, transparent 1px),
+                  linear-gradient(180deg, rgba(238, 250, 255, 0.86), rgba(214, 241, 248, 0.72) 58%, rgba(255, 246, 232, 0.7));
+      background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px, 100% 100%;
+      z-index: 100;
+      display: flex;
+      flex-direction: row;
+      border-radius: 6px;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+      padding: 20px;
+      gap: 20px;
+    }
+    .term-guide-overlay.active { opacity: 1; pointer-events: auto; }
+    .term-list { flex: 1; min-width: 200px; max-width: 250px; background: rgba(255,255,255,0.4); border-radius: 6px; padding: 10px; overflow-y: auto; border: 1px solid rgba(20, 119, 144, 0.2); }
+    .term-item { padding: 10px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; border-radius: 4px; transition: background 0.2s, color 0.2s; color: #147790; font-weight: bold; border: 1px solid transparent; }
+    .term-item:hover, .term-item.active { background: var(--accent-cyan); color: #fff; border-color: rgba(255,255,255,0.5); }
+    .term-content { flex: 3; background: rgba(255,255,255,0.7); border-radius: 6px; padding: 20px; border: 1px solid rgba(20, 119, 144, 0.2); overflow-y: auto; color: #333; font-family: sans-serif; font-size: 14px; line-height: 1.6; position: relative;}
+    .term-content h2 { color: var(--accent-pink); font-family: var(--font-mono); font-size: 18px; margin-top: 0; text-transform: uppercase; border-bottom: 1px dashed rgba(255,0,128,0.2); padding-bottom: 10px; }
+    .overlay-close { position: absolute; top: 10px; right: 10px; background: var(--accent-pink); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 10; font-size: 16px; transition: transform 0.2s; box-shadow: 0 0 10px rgba(255,0,128,0.4); }
+    .overlay-close:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute; pointer-events: none;">
+    <defs>
+      <g id="art-cloud">
+        <g class="anim-cloud">
+          <rect x="35" y="15" width="30" height="30" fill="#ffffff" opacity="0.95"/>
+          <rect x="20" y="30" width="60" height="30" fill="#ffffff" opacity="0.95"/>
+          <rect x="5" y="45" width="90" height="30" fill="#ffffff" opacity="0.95"/>
+          <rect x="15" y="15" width="6" height="6" fill="#81ecec" class="anim-twinkle"/>
+          <rect x="85" y="20" width="6" height="6" fill="#81ecec" class="anim-twinkle" style="animation-delay: 1.5s;"/>
+          <rect x="65" y="5" width="6" height="6" fill="#81ecec" class="anim-twinkle" style="animation-delay: 0.7s;"/>
+        </g>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="cockpit">
+    <!-- ===== Sidebar ===== -->
+    <aside class="cockpit-sidebar">
+      <div class="cockpit-brand">WAIFU <span>VOICE</span><span class="sub">VoxCPM edition</span></div>
+
+      <!-- Angel frame: Tsuki Hoshi's resting spot in the sidebar -->
+      <div class="angel-frame theme-cloud" id="angel-frame">
+          <svg class="vine top-left" viewBox="0 0 100 100"><use class="theme-use" href="#art-cloud"/></svg>
+          <svg class="vine top-right" viewBox="0 0 100 100"><use class="theme-use" href="#art-cloud"/></svg>
+          <svg class="vine bottom-left" viewBox="0 0 100 100"><use class="theme-use" href="#art-cloud"/></svg>
+          <svg class="vine bottom-right" viewBox="0 0 100 100"><use class="theme-use" href="#art-cloud"/></svg>
+  
+          <div class="angel-stage" id="angel-stage">
+            <div class="mascot-sprite-large" id="mascot-chibi-sidebar"></div>
+          </div>
+          <div class="angel-frame-bg-label">✦ TSUKI HOSHI ✦</div>
+          </div>
+
+      <section class="tsuki-dialogue-panel" aria-label="Tsuki Hoshi Feedback">
+        <div class="tsuki-dialogue-head">
+          <div class="tsuki-dialogue-title">Tsuki Hoshi</div>
+          <div class="tsuki-dialogue-actions">
+            <button class="tsuki-dialogue-btn" id="btn-dialogue-history" type="button">History</button>
+          </div>
+        </div>
+        <div class="tsuki-dialogue-text tsuki-dialogue-empty" id="tsuki-dialogue-text" role="button" tabindex="0">Enable a local LLM in Options, then ask for feedback on a generated voice.</div>
+      </section>
+
+      <!-- Inference Parameters (Sampling) -->
+      <div class="inference-panel is-collapsed" id="inference-panel">
+        <div class="side-section-title inference-panel-head">
+          <span>Synthesis Params</span>
+          <button class="inference-toggle" id="btn-toggle-params" type="button" aria-label="Toggle synthesis parameters" aria-expanded="false">⌃</button>
+        </div>
+        <div class="inference-scroll">
+          <label for="seed-input" title="Set to -1 for random voice generation. Lock in a positive number to reproduce the exact same voice inflection.">Vocal Seed</label>
+          <input type="number" id="seed-input" class="param-number" value="-1">
+
+          <div class="inference-extra">
+          <label>CFG Scale <span id="val-cfg">2.0</span></label>
+          <input type="range" id="cfg-input" min="0.1" max="10.0" step="0.1" value="2.0">
+          
+          <label>Timesteps <span id="val-steps">10</span></label>
+          <input type="range" id="steps-input" min="1" max="50" step="1" value="10">
+          
+          <label title="Higher values use more VRAM (up to 24GB+ for 8192)">Max Length <span id="val-maxlen">4096</span></label>
+          <input type="range" id="maxlen-input" min="1024" max="8192" step="512" value="4096">
+
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
+            <label class="checkbox" style="color:var(--text-white); font-family:var(--font-mono); font-size:11px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+              <input type="checkbox" id="denoise-input"> DENOISE AUDIO
+            </label>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc-log">
+        <div class="proc-log-head">PROCESS LOG</div>
+        <div class="proc-log-feed"><span class="ln-dim" id="raw-status">System idle. Ready to synthesize.</span></div>
+      </div>
+
+      <section class="runtime-panel" aria-label="VoxCPM Backend Status">
+        <div class="runtime-title">VoxCPM Backend</div>
+        <div class="proc-status-grid">
+          <div class="proc-status-card">
+            <span class="proc-status-label">VoxCPM backend</span>
+            <span id="status-pill" class="badge cyan" title="VoxCPM backend status">CHECKING...</span>
+          </div>
+          <div class="proc-status-card">
+            <span class="proc-status-label">VoxCPM2 model</span>
+            <span id="model-pill" class="badge pink" title="VoxCPM2 model state">MODEL: UNKNOWN</span>
+          </div>
+        </div>
+        <div class="vram-panel" id="vram-panel">
+          <div class="vram-row">
+            <span class="vram-label">VRAM telemetry</span>
+            <strong class="vram-summary" id="vram-summary">Checking...</strong>
+          </div>
+          <div class="vram-meter" aria-hidden="true"><span id="vram-meter-fill"></span></div>
+          <div class="vram-details" id="vram-details">Waiting for backend telemetry.</div>
+          <button class="vram-action" id="btn-cooldown-gpu" type="button">Cool Down GPU</button>
+          <div class="vram-cooldown-status" id="vram-cooldown-status">One-shot model unload. Next synthesis reloads VoxCPM.</div>
+        </div>
+      </section>
+    </aside>
+
+      <!-- ===== Main ===== -->
+    <main class="cockpit-main">
+      <!-- Function rail -->
+      <div class="control-rail" id="control-rail">
+        <div style="flex:1;"></div>
+        <div class="top-control voice-language-control">
+          <button id="voice-language-button" class="voice-language-button" type="button" aria-haspopup="dialog" aria-expanded="false">
+            <span>VoxCPM2 Voice Language</span>
+            <strong id="voice-language-current">English</strong>
+          </button>
+          <select id="language-select" class="top-select" aria-label="VoxCPM2 generation language" hidden>
+            <option value="English">English</option>
+          </select>
+        </div>
+        <button class="rail-toggle" id="btn-options" style="background: rgba(0,255,255,0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight:bold;">Options</button>
+        <button class="rail-toggle" id="btn-user-guide" style="background: rgba(0,255,255,0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight:bold;">User Guide</button>
+      </div>
+
+      <div class="kumiko-header-divider" id="kumiko-header-divider"></div>
+
+      <!-- Core Synthesis Form -->
+      <div class="chat-feed" id="chat-feed">
+
+        <section class="preset-library" aria-label="Preset Library">
+      <div class="preset-library-head">
+        <div class="preset-library-title">Preset Library</div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="persona-lab-launch" id="btn-persona-lab" type="button">Persona Lab</button>
+          <div class="preset-active-blend" id="preset-active-blend">No blend selected</div>
+        </div>
+      </div>
+          <div class="preset-tabs" id="preset-tabs"></div>
+          <div class="preset-grid" id="preset-grid"></div>
+          <div class="preset-actions">
+            <button id="btn-apply-blend" type="button">Apply Blend</button>
+            <button id="btn-sample-line" type="button">Use Sample Line</button>
+            <button id="btn-reset-blend" type="button">Reset Blend</button>
+            <button id="btn-import-persona" class="persona-action" type="button">Import Persona</button>
+            <button id="btn-export-persona-json" class="persona-action" type="button">Export JSON</button>
+            <button id="btn-export-persona-md" class="persona-action" type="button">Export MD</button>
+            <input id="persona-import-input" type="file" accept=".json,.md,application/json,text/markdown,text/plain" hidden>
+          </div>
+        </section>
+
+        <div class="input-group">
+          <label for="text-input">Spoken Script</label>
+          <textarea id="text-input" rows="6" placeholder="Enter the dialogue here...">Start with one clean sentence, keep the seed fixed, and compare each take before changing the voice design.</textarea>
+        </div>
+
+        <section class="script-sample-ticker" id="script-sample-ticker" aria-label="Spoken script samples">
+          <div class="script-sample-head">Spoken Script Samples</div>
+          <div class="script-sample-viewport" id="script-sample-viewport">
+            <div class="script-sample-track" id="script-sample-track"></div>
+          </div>
+        </section>
+
+        <div class="input-group">
+          <label for="voice-input" class="voice-design-label">Voice Design Instruction</label>
+          <textarea id="voice-input" class="voice-design-input" rows="6" placeholder="Describe the voice (e.g., A warm, articulate voice...)">Voice Attribute: A warm, articulate narrator with rounded vowels, relaxed pacing, and intimate clarity. Environment: A small local studio where each line is tested carefully. Detailed notes: Keep the delivery natural, grounded, and easy to compare between takes.</textarea>
+        </div>
+
+        <section class="upload-tools-panel" id="upload-tools-panel" aria-label="Uploaded voice tools" hidden>
+          <div class="upload-tools-note">Uploaded voice modes are tucked away until needed. Use them only with approved audio.</div>
+          <div class="mode-toggle">
+            <div class="toggle-pill" id="toggle-pill"></div>
+            <button class="mode-btn active" id="btn-mode-1" type="button">Zero-Shot Clone</button>
+            <button class="mode-btn" id="btn-mode-2" type="button">Continuation</button>
+          </div>
+          <div class="slider-viewport">
+            <div class="slider-track" id="slider-track">
+
+            <!-- Pane 1: Zero-Shot Clone -->
+            <div class="slider-pane active-pane" id="pane-1">
+              <div class="input-group">
+                <label for="ref-audio-input" style="color: var(--accent-pink);">Reference Audio</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <input type="file" id="ref-audio-input" accept="audio/*" style="padding: 8px; flex: 1;">
+                  <button onclick="document.getElementById('ref-audio-input').value=''" style="background: linear-gradient(124deg, rgba(255,0,128,0.2), rgba(0,255,255,0.2)); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; cursor: pointer; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; text-shadow: 0 0 4px rgba(255,255,255,0.5); transition: all 0.3s;">CLEAR</button>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:8px; font-family:var(--font-mono);">Upload an audio clip to clone the voice's acoustic signature.</div>
+              </div>
+            </div>
+
+            <!-- Pane 2: Continuation -->
+            <div class="slider-pane" id="pane-2">
+              <div class="input-group">
+                <label for="prompt-audio-input" style="color: var(--accent-cyan);">Prompt Audio</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <input type="file" id="prompt-audio-input" accept="audio/*" style="padding: 8px; flex: 1;">
+                  <button onclick="document.getElementById('prompt-audio-input').value=''" style="background: linear-gradient(124deg, rgba(0,255,255,0.2), rgba(255,0,128,0.2)); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; cursor: pointer; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; text-shadow: 0 0 4px rgba(255,255,255,0.5); transition: all 0.3s;">CLEAR</button>
+                </div>
+              </div>
+              <div class="input-group" style="margin-top: 12px;">
+                <label for="prompt-text-input">Prompt Transcription</label>
+                <textarea id="prompt-text-input" rows="2" placeholder="Exact transcription of the uploaded prompt audio..."></textarea>
+              </div>
+            </div>
+
+            </div>
+          </div>
+        </section>
+
+        <div class="consent-panel" id="consent-panel" hidden>
+          <label>
+            <input type="checkbox" id="consent-input">
+            <span>I have permission to use the uploaded voice material and understand this generation may imitate the supplied speaker or performance.</span>
+          </label>
+        </div>
+
+        <div class="action-row">
+          <button id="generate-btn">Synthesize Audio</button>
+          <button class="top-action clone-action" id="btn-upload-tools" type="button" aria-expanded="false" hidden>Clone / Continue</button>
+          <label class="checkbox" style="color:var(--accent-cyan); font-family:var(--font-mono); font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:bold; background:rgba(0,255,255,0.1); padding:8px 12px; border-radius:4px; border:1px solid var(--accent-cyan);">
+            <input type="checkbox" id="autoplay-input" checked> AUTO PLAY
+          </label>
+          <span id="hint" style="font-family:var(--font-mono); font-size:11px; color:var(--accent-cyan);">Ready. Awaiting commands.</span>
+        </div>
+
+        <div class="output-box">
+          <h3>Generated Output</h3>
+          <audio id="audio-player" controls></audio>
+          <a id="download-link" href="#" class="disabled" style="color:var(--accent-pink); font-family:var(--font-mono); font-size:11px; text-decoration:none; text-transform:uppercase; font-weight:bold; letter-spacing:1px; display:inline-block; margin-top:4px;">[ Download WAV ]</a>
+          
+          <div class="history-panel">
+            <div class="history-head">
+              <div class="history-title">Queue / History</div>
+              <button class="history-action" id="btn-refresh-history" type="button">Refresh</button>
+            </div>
+            <div class="history-list" id="history-list">
+              <div class="empty-history">No generated clips yet.</div>
+            </div>
+          </div>
+        </div>
+        <div class="app-trademark">Angel Forge [local:3113]</div>
+      </div> <!-- End chat-feed -->
+      
+      <!-- Terminology Guide Overlay -->
+      <div class="term-guide-overlay" id="term-guide-overlay">
+        <button class="overlay-close" id="btn-close-guide" title="Close Guide">&times;</button>
+        <div class="term-list" id="term-list">
+          <div class="term-item active" data-term="cfg">CFG Scale</div>
+          <div class="term-item" data-term="timesteps">Timesteps</div>
+          <div class="term-item" data-term="maxlen">Max Length</div>
+          <div class="term-item" data-term="denoise">Denoise Audio</div>
+          <div class="term-item" data-term="voicedesign">Voice Design</div>
+          <div class="term-item" data-term="voicelanguage">VoxCPM2 Language</div>
+          <div class="term-item" data-term="personas">Personas</div>
+          <div class="term-item" data-term="llmfeedback">LLM Feedback</div>
+          <div class="term-item" data-term="zeroshot">Zero-Shot Clone</div>
+          <div class="term-item" data-term="continuation">Continuation</div>
+          <div style="flex: 1;"></div>
+          <div class="term-item" data-term="credits" style="color: rgba(255,255,255,0.3); font-size: 10px; border-left: 2px solid transparent; text-align: left; padding: 10px 15px; cursor: pointer;">System Credits</div>
+        </div>
+        <div class="term-content">
+          <h2 id="term-title">Terminology Guide</h2>
+          <div id="term-desc">Select a term from the left menu to read its explanation.</div>
+        </div>
+      </div>
+      
+      <div class="modal-overlay" id="dialogue-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2>Tsuki Hoshi Dialogue</h2>
+            <button class="modal-close" type="button" data-close-modal="dialogue-modal">Close</button>
+          </div>
+          <div id="dialogue-modal-body"></div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="dialogue-history-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2>Dialogue History</h2>
+            <button class="modal-close" type="button" data-close-modal="dialogue-history-modal">Close</button>
+          </div>
+          <div class="dialogue-history-list" id="dialogue-history-list"></div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="language-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2>VoxCPM2 Voice Language</h2>
+            <button class="modal-close" type="button" data-close-modal="language-modal">Close</button>
+          </div>
+          <div class="options-help">This sets the target voice generation language sent with the VoxCPM2 request. It does not change the app menu language.</div>
+          <div class="language-grid" id="language-grid"></div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="vram-warning-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2>VRAM Warning</h2>
+            <button class="modal-close" id="btn-vram-warning-cancel" type="button">Cancel</button>
+          </div>
+          <div class="options-help" id="vram-warning-body">VRAM telemetry indicates the next model load may be tight.</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="top-action" id="btn-vram-warning-generate" type="button">Generate Anyway</button>
+            <button class="modal-close" type="button" data-close-modal="vram-warning-modal">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="options-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2>Options</h2>
+            <button class="modal-close" type="button" data-close-modal="options-modal">Close</button>
+          </div>
+          <div class="options-grid">
+            <label><span><input type="checkbox" id="llm-enabled-input"> Enable Local LLM Feedback</span></label>
+            <label><span><input type="checkbox" id="clone-tools-enabled-input"> Enable Clone / Continue</span></label>
+            <label>Provider
+              <select id="llm-provider-input">
+                <option value="lmstudio">LM Studio OpenAI-compatible</option>
+                <option value="ollama">Ollama Chat API</option>
+                <option value="openai-compatible">Other OpenAI-compatible Local Server</option>
+              </select>
+            </label>
+            <label>Endpoint
+              <input id="llm-endpoint-input" type="text" value="http://127.0.0.1:1234">
+            </label>
+            <label>Model
+              <input id="llm-model-input" type="text" placeholder="e.g. qwen2.5:3b-instruct-q4, llama-3.2-3b-instruct">
+            </label>
+            <label>Recommended Context Tokens
+              <select id="llm-context-input">
+                <option value="4096">4096</option>
+                <option value="8192">8192</option>
+              </select>
+            </label>
+            <label><span><input type="checkbox" id="vram-warning-enabled-input" checked> VRAM overload warnings</span></label>
+            <label><span><input type="checkbox" id="vram-telemetry-visible-input" checked> Show VRAM telemetry</span></label>
+            <button class="top-action" id="btn-save-options" type="button">Save Options</button>
+          </div>
+          <div class="options-help">
+            Recommended: LM Studio or Ollama with a small instruct model and either 4096 or 8192 context tokens. This feature only needs a small window; use modern edge models around 1B-4B parameters or small quantizations that fit within about 4GB VRAM/RAM, such as Qwen, Gemma, Llama, Phi, or other efficient local assistant models.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay persona-lab-modal" id="persona-lab-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <div>
+              <h2>Persona Lab</h2>
+              <div class="persona-lab-status" id="persona-lab-status">Create or refine a custom voice design.</div>
+            </div>
+            <button class="modal-close" type="button" data-close-modal="persona-lab-modal">Close</button>
+          </div>
+
+          <div class="persona-lab-layout">
+            <div class="persona-lab-column">
+              <div class="persona-lab-section">
+                <div class="persona-lab-section-head">
+                  <span>Persona Library</span>
+                  <span class="persona-lab-section-meta" id="persona-lab-library-count">0 personas</span>
+                </div>
+                <div class="persona-lab-picker" id="persona-lab-picker"></div>
+              </div>
+              <form class="persona-lab-fields" id="persona-lab-form">
+                <div class="persona-lab-split">
+                  <label class="persona-lab-field">Title
+                    <input id="persona-lab-title" data-lab-field="title" type="text" placeholder="Persona title">
+                  </label>
+                  <label class="persona-lab-field">Label
+                    <input id="persona-lab-label" data-lab-field="label" type="text" placeholder="Short library label">
+                  </label>
+                </div>
+                <div class="persona-lab-split">
+                  <label class="persona-lab-field">Target Language
+                    <select id="persona-lab-language" data-lab-field="language"></select>
+                  </label>
+                  <label class="persona-lab-field">Tags
+                    <input id="persona-lab-tags" data-lab-field="tags" type="text" placeholder="e.g. elegant, low, cozy">
+                  </label>
+                </div>
+                <label class="persona-lab-field">Voice Attribute
+                  <textarea id="persona-lab-voice-attribute" data-lab-field="voice_attribute" rows="4" placeholder="Describe the voice, tone, and texture."></textarea>
+                  <small>This is the voice core that becomes the main prompt body.</small>
+                </label>
+                <label class="persona-lab-field">Environment
+                  <textarea id="persona-lab-environment" data-lab-field="environment" rows="3" placeholder="Where the voice lives or speaks."></textarea>
+                </label>
+                <label class="persona-lab-field">Detailed Notes
+                  <textarea id="persona-lab-detailed-notes" data-lab-field="detailed_notes" rows="4" placeholder="Pacing, delivery, mood, and guardrails."></textarea>
+                </label>
+                <label class="persona-lab-field">Background
+                  <textarea id="persona-lab-background" data-lab-field="background" rows="2" placeholder="Optional character background."></textarea>
+                </label>
+                <label class="persona-lab-field">Personality
+                  <textarea id="persona-lab-personality" data-lab-field="personality" rows="2" placeholder="Optional personality summary."></textarea>
+                </label>
+                <label class="persona-lab-field">Sample Line
+                  <textarea id="persona-lab-sample" data-lab-field="sample" rows="3" placeholder="One line that demonstrates the voice."></textarea>
+                </label>
+              </form>
+
+              <div class="persona-lab-footer">
+                <button class="top-action" id="btn-persona-lab-new" type="button">New</button>
+                <button class="top-action" id="btn-persona-lab-duplicate" type="button">Duplicate</button>
+                <button class="top-action" id="btn-persona-lab-save" type="button">Save</button>
+                <button class="top-action" id="btn-persona-lab-apply" type="button">Apply to Main Form</button>
+                <button class="persona-action" id="btn-persona-lab-export-json" type="button">Export JSON</button>
+                <button class="persona-action" id="btn-persona-lab-export-md" type="button">Export MD</button>
+              </div>
+
+              <div class="persona-lab-help">
+                The lab edits the same persona object the preset library already uses. Saving updates your local custom personas; applying copies the voice design into the main synthesis form.
+              </div>
+            </div>
+
+            <div class="persona-lab-column persona-lab-preview">
+              <div class="persona-lab-preview-card">
+                <div class="persona-lab-preview-head">
+                  <div>
+                    <div class="persona-lab-preview-title" id="persona-lab-preview-title">New Persona</div>
+                    <div class="persona-lab-preview-label" id="persona-lab-preview-label">Label preview</div>
+                  </div>
+                  <div class="persona-lab-chip-row" id="persona-lab-preview-tags"></div>
+                </div>
+
+                <div class="persona-lab-preview-section">
+                  <strong>Voice Design</strong>
+                  <div id="persona-lab-preview-voice"></div>
+                </div>
+                <div class="persona-lab-preview-section">
+                  <strong>Background</strong>
+                  <div id="persona-lab-preview-background"></div>
+                </div>
+                <div class="persona-lab-preview-section">
+                  <strong>Personality</strong>
+                  <div id="persona-lab-preview-personality"></div>
+                </div>
+                <div class="persona-lab-preview-section">
+                  <strong>Sample Line</strong>
+                  <div id="persona-lab-preview-sample"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="persona-lab-status">Export Preview</div>
+                <pre class="persona-lab-markdown" id="persona-lab-preview-markdown"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </main>
+  </div>
+
+  <script src="_frontend/js/app.js" type="module"></script>
+  <script src="_frontend/js/vram-telemetry.js" type="module"></script>
+  <script src="_frontend/js/vram-controls.js" type="module"></script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,54 @@
+# Python/runtime artifacts
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Local model weights and Hugging Face caches
+models/
+.cache/
+.huggingface/
+*.safetensors
+*.bin
+*.pth
+
+# Generated audio and local test output
+_outputs_vox/
+outputs/
+*.wav
+*.mp3
+*.flac
+*.ogg
+mid-test/*.wav
+mid-test/*.log
+
+# ROCm bring-up snapshots and local installers
+mid-test/
+mid-test/snapshots/
+mid-test/*.deb
+mid-test/test_*.py
+mid-test/_gpu_synth_*.py
+mid-test/start_waifuvoice_vox*.ps1
+
+# Recycled design experiments and machine-local shortcuts
+_app_recycle/
+*.lnk
+
+# Local-only docs and user-authored runtime data
+AGENTS.md
+FUTURE_EXPERIMENTS.md
+HANDOFF.md
+ROCm_librocdxg_dependency_check.md
+_frontend/data/presets_custom.json
+.env
+.env.*
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

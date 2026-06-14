@@ -1,0 +1,105 @@
+/* 
+   ==========================================================================
+   💎 AI HARNESS DESIGN SYSTEM: VARIABLES, KEYFRAMES & TYPOGRAPHY
+   ==========================================================================
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+:root {
+  /* Colors - Beige White Ocean Chill palette */
+  --bg-cream: #f5f2e9;                  /* Soft Warm Beige */
+  --panel-bg: rgba(252, 251, 250, 0.72); /* Frosted Cream/White */
+  --text-white: #142c38;                /* Deep Ocean Navy */
+  --text-muted: #3d5e6e;                /* Ocean Grey-Teal */
+  --text-dim: #6b8f9e;                  /* Muted Teal-Grey */
+  
+  --accent-pink: #d46161;                /* Soft Shell/Coral Pink */
+  --accent-cyan: #1d787a;                /* Deep Seafoam Teal */
+  --accent-gold: #a88132;                /* Warm Sand Gold */
+  
+  --border-color: rgba(43, 92, 116, 0.15); /* Soft Ocean Teal Border */
+  --border-hover: rgba(100, 168, 168, 0.4);
+  
+  --shadow-glow-cyan: 0 0 15px rgba(29, 120, 122, 0.22);
+  --shadow-glow-pink: 0 0 15px rgba(212, 97, 97, 0.22);
+  --shadow-glow-gold: 0 0 15px rgba(168, 129, 50, 0.22);
+
+  /* Fonts */
+  --font-main: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Layout Knobs */
+  --spine-width: 20px;
+  --border-radius-main: 16px;
+  --border-radius-card: 12px;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-cream);
+  background-image: 
+    linear-gradient(rgba(29, 120, 122, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 120, 122, 0.03) 1px, transparent 1px);
+  background-position: center;
+  background-size: 60px 60px;
+  font-family: var(--font-main);
+  color: var(--text-white);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.65) 20%, var(--bg-cream) 95%);
+}
+
+/* Keyframe Animations */
+@keyframes floatAnimation {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes scanlineMove {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes pulseGlowCyan {
+  0% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(0, 229, 255, 0.6); }
+  100% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+}
+
+@keyframes pulseGlowPink {
+  0% { box-shadow: 0 0 10px rgba(255, 20, 147, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(255, 20, 147, 0.6); }
+  100% { box-shadow: 0 0 10px rgba(255, 20, 147, 0.2); }
+}
+
+@keyframes heartFloatUp {
+  0% { transform: translateY(0) scale(0) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.9; }
+  85% { opacity: 0.9; }
+  100% { transform: translateY(-120px) scale(1.4) rotate(15deg); opacity: 0; }
+}
+
+@keyframes sheenSweep {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}

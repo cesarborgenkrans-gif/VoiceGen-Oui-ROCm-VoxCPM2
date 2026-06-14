@@ -1,0 +1,126 @@
+import os
+import torch
+# MIOpen (ROCm's cuDNN) works on gfx1100 as of ROCm 6.2.4. Earlier code disabled
+# cudnn to dodge the ROCm 6.1.3 MIOpen conv crash, but that rerouted convolutions
+# to a fallback path that deadlocked instead. Keep MIOpen enabled for the fast path.
+torch.backends.cudnn.enabled = True
+
+# Force the math SDPA backend on ROCm/gfx1100. The Flash / mem-efficient attention
+# kernels deadlock on the single-token KV-cache decode step (q_len=1 + boolean mask)
+# under WSL2; the math backend is plain matmul+softmax, which is reliable here.
+try:
+    torch.backends.cuda.enable_flash_sdp(False)
+    torch.backends.cuda.enable_mem_efficient_sdp(False)
+    torch.backends.cuda.enable_math_sdp(True)
+except Exception:
+    pass
+
+# Explicitly handle AMD on Windows via DirectML if available, 
+# otherwise let VoxCPM handle cuda/cpu fallback
+def get_best_device():
+    try:
+        import torch_directml
+        if torch_directml.is_available():
+            print("[VoxCPMEngine] DirectML detected. Using AMD GPU.")
+            return torch_directml.device()
+    except ImportError:
+        pass
+        
+    if torch.cuda.is_available():
+        print("[VoxCPMEngine] CUDA detected. Using NVIDIA/ROCm GPU.")
+        return "cuda"
+    
+    print("[VoxCPMEngine] No GPU backend found. Falling back to CPU.")
+    return "cpu"
+
+from voxcpm.core import VoxCPM
+
+class VoxCPMEngine:
+    def __init__(self, model_dir):
+        print("=========================================")
+        print("Initializing VoxCPM Engine...")
+        self.device = get_best_device()
+        print(f"Device targeted: {self.device}")
+        
+        # We disable optimize because torch.compile often fails on Windows/DirectML
+        self.model = VoxCPM(
+            voxcpm_model_path=model_dir,
+            enable_denoiser=False, # Disable denoiser for faster init
+            optimize=False,        # torch.compile might crash on AMD Windows
+            device=self.device
+        )
+        print("VoxCPM Engine Initialized Successfully!")
+        print("=========================================")
+        
+    def _build_final_text(self, text, language=None, instruct=None):
+        instructions = []
+        if language and str(language).strip():
+            instructions.append(f"Target voice language: {str(language).strip()}.")
+        if instruct and instruct.strip():
+            instructions.append(instruct.strip())
+        if instructions:
+            return f"({' '.join(instructions)}){text}"
+        return text
+
+    def generate_design(self, text, language, instruct, reference_wav_path=None, output_path="output.wav", cfg_value=2.0, inference_timesteps=10, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
+        import torch
+        import numpy as np
+        if seed is not None and seed >= 0:
+            torch.manual_seed(seed)
+            np.random.seed(seed)
+            
+        final_text = self._build_final_text(text, language, instruct)
+            
+        print(f"[VoxCPMEngine] Synthesizing audio...")
+        print(f"   Text: {final_text}")
+        print(f"   Max Len: {max_len}")
+        
+        audio_array = self.model.generate(
+            text=final_text,
+            reference_wav_path=reference_wav_path,
+            prompt_wav_path=prompt_wav_path,
+            prompt_text=prompt_text,
+            cfg_value=cfg_value,
+            inference_timesteps=inference_timesteps,
+            max_len=max_len,
+            denoise=denoise and (reference_wav_path is not None or prompt_wav_path is not None)
+        )
+        
+        import soundfile as sf
+        import numpy as np
+        
+        sample_rate = self.model.tts_model.sample_rate
+        
+        # Ensure array is float32
+        if audio_array.dtype != np.float32 and audio_array.dtype != np.float64:
+            audio_array = audio_array.astype(np.float32)
+            
+        sf.write(str(output_path), audio_array, sample_rate)
+        
+        return output_path, sample_rate
+
+    def generate_design_stream(self, text, language, instruct, reference_wav_path=None, cfg_value=2.0, inference_timesteps=10, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
+        import torch
+        import numpy as np
+        if seed is not None and seed >= 0:
+            torch.manual_seed(seed)
+            np.random.seed(seed)
+            
+        final_text = self._build_final_text(text, language, instruct)
+            
+        print(f"[VoxCPMEngine] Streaming audio...")
+        print(f"   Text: {final_text}")
+        
+        sample_rate = self.model.tts_model.sample_rate
+        
+        for chunk in self.model.generate_streaming(
+            text=final_text,
+            reference_wav_path=reference_wav_path,
+            prompt_wav_path=prompt_wav_path,
+            prompt_text=prompt_text,
+            cfg_value=cfg_value,
+            inference_timesteps=inference_timesteps,
+            max_len=max_len,
+            denoise=denoise and (reference_wav_path is not None or prompt_wav_path is not None)
+        ):
+            yield chunk, sample_rate

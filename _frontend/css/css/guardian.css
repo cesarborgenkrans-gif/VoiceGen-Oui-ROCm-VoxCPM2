@@ -1,0 +1,582 @@
+/*
+  ==========================================================================
+  🛡️ FILE GUARDIAN — CHANGE FEED & HISTORY PANEL
+  ==========================================================================
+  Integrates with the WaifuCode design system tokens.
+  No new fonts or color overrides — inherits from design-system.css.
+*/
+
+/* ── Sidebar Guardian Section ─────────────────────────────────────────── */
+
+.guardian-sidebar-section {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.guardian-sidebar-section .nav-section-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.guardian-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.guardian-status-dot.active {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(29, 120, 122, 0.6);
+  animation: guardianPulse 2s ease-in-out infinite;
+}
+
+@keyframes guardianPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(29, 120, 122, 0.4); }
+  50%       { box-shadow: 0 0 14px rgba(29, 120, 122, 0.9); }
+}
+
+.guardian-path-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.guardian-path-input {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 8px;
+  background: rgba(43, 92, 116, 0.06);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-white);
+  outline: none;
+  transition: border-color 0.2s ease;
+  min-width: 0;
+}
+
+.guardian-path-input:focus {
+  border-color: var(--accent-cyan);
+}
+
+.guardian-path-input::placeholder {
+  color: var(--text-dim);
+}
+
+.guardian-control-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.guardian-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 5px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.guardian-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: rgba(29, 120, 122, 0.07);
+}
+
+.guardian-btn.start {
+  border-color: rgba(29, 120, 122, 0.4);
+  color: var(--accent-cyan);
+}
+
+.guardian-btn.start:hover {
+  background: rgba(29, 120, 122, 0.15);
+}
+
+.guardian-btn.stop {
+  border-color: rgba(212, 97, 97, 0.4);
+  color: var(--accent-pink);
+}
+
+.guardian-btn.stop:hover {
+  background: rgba(212, 97, 97, 0.12);
+}
+
+.guardian-btn.history-toggle {
+  margin-left: auto;
+  font-size: 9px;
+}
+
+.guardian-change-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-left: 2px;
+  transition: color 0.2s ease;
+}
+
+.guardian-change-count.has-changes {
+  color: var(--accent-gold);
+}
+
+/* ── Change Feed (Floating Cards — Bottom Right) ───────────────────────── */
+
+#guardian-feed {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 380px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* ── Individual Change Card ────────────────────────────────────────────── */
+
+.guardian-card {
+  pointer-events: all;
+  background: rgba(252, 251, 250, 0.97);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(20, 44, 56, 0.12), 0 2px 6px rgba(20, 44, 56, 0.06);
+  overflow: hidden;
+  transform: translateX(420px);
+  opacity: 0;
+  animation: cardSlideIn 0.32s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.guardian-card.dismissing {
+  animation: cardSlideOut 0.22s ease forwards;
+}
+
+.guardian-card.reverted {
+  border-left-color: var(--accent-cyan);
+  animation: cardRevertFlash 0.5s ease forwards;
+}
+
+@keyframes cardSlideIn {
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes cardSlideOut {
+  to { transform: translateX(420px); opacity: 0; }
+}
+
+@keyframes cardRevertFlash {
+  0%   { border-left-color: var(--accent-gold); background: rgba(252, 251, 250, 0.97); }
+  40%  { border-left-color: var(--accent-cyan);  background: rgba(29, 120, 122, 0.08); }
+  100% { border-left-color: var(--accent-cyan);  background: rgba(252, 251, 250, 0.97); transform: translateX(420px); opacity: 0; }
+}
+
+/* Card Header */
+.guardian-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.guardian-card-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.guardian-card-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.guardian-card-filename {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guardian-card-time {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.guardian-card-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  background: rgba(168, 129, 50, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* Diff Block */
+.guardian-diff {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.55;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 6px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.guardian-diff::-webkit-scrollbar { width: 4px; }
+.guardian-diff::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+.diff-line {
+  display: flex;
+  gap: 0;
+  padding: 1px 12px;
+  white-space: pre;
+}
+
+.diff-line-gutter {
+  width: 16px;
+  flex-shrink: 0;
+  color: var(--text-dim);
+  user-select: none;
+  font-size: 10px;
+}
+
+.diff-line-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diff-line.added {
+  background: rgba(29, 120, 122, 0.08);
+  color: #1a6e5e;
+}
+
+.diff-line.added .diff-line-gutter { color: var(--accent-cyan); }
+
+.diff-line.removed {
+  background: rgba(212, 97, 97, 0.08);
+  color: #a04040;
+}
+
+.diff-line.removed .diff-line-gutter { color: var(--accent-pink); }
+
+.diff-line.context {
+  color: var(--text-dim);
+  opacity: 0.75;
+}
+
+.diff-truncation-hint {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 4px 12px;
+  border-top: 1px dashed var(--border-color);
+}
+
+/* Card Actions */
+.guardian-card-actions {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-color);
+  background: rgba(240, 238, 232, 0.5);
+}
+
+.guardian-action-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.16s ease;
+  background: transparent;
+}
+
+.guardian-action-btn.dismiss {
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+.guardian-action-btn.dismiss:hover {
+  color: var(--text-muted);
+  border-color: var(--text-dim);
+  background: rgba(43, 92, 116, 0.05);
+}
+
+.guardian-action-btn.reject {
+  color: var(--accent-pink);
+  border-color: rgba(212, 97, 97, 0.35);
+}
+
+.guardian-action-btn.reject:hover {
+  background: rgba(212, 97, 97, 0.12);
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 8px rgba(212, 97, 97, 0.2);
+}
+
+.guardian-action-btn.reject:active {
+  transform: scale(0.97);
+}
+
+/* ── History Drawer ────────────────────────────────────────────────────── */
+
+#guardian-history-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: rgba(252, 251, 250, 0.98);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -8px 0 32px rgba(20, 44, 56, 0.1);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#guardian-history-drawer.open {
+  transform: translateX(0);
+}
+
+.history-drawer-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.history-drawer-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-white);
+  flex: 1;
+}
+
+.history-drawer-close {
+  font-size: 16px;
+  line-height: 1;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+
+.history-drawer-close:hover {
+  color: var(--text-white);
+}
+
+.history-drawer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.history-filter-input {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 8px;
+  background: rgba(43, 92, 116, 0.06);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-white);
+  outline: none;
+}
+
+.history-filter-input:focus {
+  border-color: var(--accent-cyan);
+}
+
+.history-clear-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 5px 9px;
+  border: 1px solid rgba(212, 97, 97, 0.35);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent-pink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.history-clear-btn:hover {
+  background: rgba(212, 97, 97, 0.1);
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.history-list::-webkit-scrollbar { width: 4px; }
+.history-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+.history-empty {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* History list item */
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(43, 92, 116, 0.07);
+  cursor: default;
+  transition: background 0.14s ease;
+}
+
+.history-item:hover {
+  background: rgba(29, 120, 122, 0.04);
+}
+
+.history-item.reverted {
+  opacity: 0.5;
+}
+
+.history-item-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.history-item.reverted .history-item-dot {
+  background: var(--accent-cyan);
+}
+
+.history-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-item-file {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-stats {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.history-item-stats .added-count { color: var(--accent-cyan); }
+.history-item-stats .removed-count { color: var(--accent-pink); }
+
+.history-revert-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border: 1px solid rgba(212, 97, 97, 0.35);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--accent-pink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.history-revert-btn:hover {
+  background: rgba(212, 97, 97, 0.1);
+}
+
+.history-revert-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Toast Notification ────────────────────────────────────────────────── */
+
+#guardian-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 8px;
+  background: var(--accent-cyan);
+  color: #fff;
+  z-index: 1100;
+  opacity: 0;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#guardian-toast.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+#guardian-toast.error {
+  background: var(--accent-pink);
+}

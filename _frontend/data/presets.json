@@ -1,0 +1,235 @@
+{
+  "version": 3,
+  "script_samples": [
+    {
+      "id": "bangkok-market-invite",
+      "label": "Bangkok Market Invite",
+      "sample_context": "Inviting a friend to visit a busy market cafe before the evening crowd arrives.",
+      "text": "Come early na, before the market gets too loud. The iced coffee there is strong, sweet, and honestly worth the walk."
+    },
+    {
+      "id": "moonlit-secret",
+      "label": "Moonlit Secret",
+      "sample_context": "A refined character quietly turning a political secret into leverage.",
+      "text": "Secrets do not demand silence. They merely ask for a wiser tongue, and tonight, I intend to speak carefully."
+    },
+    {
+      "id": "nordic-weather-report",
+      "label": "Nordic Weather Report",
+      "sample_context": "Warm public-radio style narration with clear, realistic pacing.",
+      "text": "God morgon. Regnet drar in over kusten vid lunchtid, men fram emot kvallen klarnar himlen upp igen."
+    },
+    {
+      "id": "studio-product-demo",
+      "label": "Studio Product Demo",
+      "sample_context": "A calm product walkthrough with practical confidence.",
+      "text": "Start with one clean sentence, keep the seed fixed, and compare each take before changing the voice design."
+    },
+    {
+      "id": "urgent-spaceport",
+      "label": "Urgent Spaceport",
+      "sample_context": "A fast announcement that still needs intelligible consonants.",
+      "text": "Gate seven is closing in two minutes. Passengers for orbital shuttle Aster, proceed to boarding now."
+    },
+    {
+      "id": "quiet-audiobook",
+      "label": "Quiet Audiobook",
+      "sample_context": "A soft narrative line with room for breath and atmosphere.",
+      "text": "The forest held its breath as the lantern dimmed, and every branch seemed to remember an older story."
+    }
+  ],
+  "voices": [
+    {
+      "id": "suave-signal",
+      "label": "Suave Signal",
+      "prompt": "A smooth, slightly deep female voice with a precise, professional tone and a subtle, high-fidelity shimmer.",
+      "tags": ["female", "clean", "confident"]
+    },
+    {
+      "id": "bright-guide",
+      "label": "Bright Guide",
+      "prompt": "A youthful, light and airy female voice with a gentle, professional tone. Clear, bright, and melodious.",
+      "tags": ["female", "bright", "friendly"]
+    },
+    {
+      "id": "warm-narrator",
+      "label": "Warm Narrator",
+      "prompt": "A warm, articulate narrator voice with rounded vowels, relaxed pacing, and intimate clarity.",
+      "tags": ["neutral", "warm", "narration"]
+    },
+    {
+      "id": "calm-operator",
+      "label": "Calm Operator",
+      "prompt": "A calm, low-pressure operator voice with steady timing, soft consonants, and measured delivery.",
+      "tags": ["calm", "support", "steady"]
+    },
+    {
+      "id": "idol-spark",
+      "label": "Idol Spark",
+      "prompt": "A playful idol-style voice with a lively smile, crisp pronunciation, and sparkling stage energy.",
+      "tags": ["playful", "cute", "energetic"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "dark-priestess",
+      "label": "Dark Priestess",
+      "title": "Dark Priestess",
+      "voice_design": "Voice Attribute: A velvety, mature feminine mezzo-soprano with calm pitch control and a whisper-close delivery. The texture is smooth, shadowed, and deliberate, like silk moving over polished obsidian.\n\nEnvironment: A candlelit lunar court after midnight, where private counsel is given behind velvet screens and every pause carries political weight.\n\nDetailed notes: Keep consonants softened and transitions fluid. Speak slowly, with controlled danger and elegant restraint. Avoid theatrical shouting; the power comes from intimacy, precision, and what is left unsaid.",
+      "background": "The Grand Shadow-Steward of the Lunar Court. She manages the kingdom's secrets and weaves the political webs that keep the monarchy from collapsing.",
+      "personality": "Calculating, refined, and enigmatic. She finds beauty in the shadows and strength in the things left unsaid.",
+      "language": "English",
+      "sample": "Secrets do not demand silence. They merely ask for a wiser tongue.",
+      "tags": ["dark", "elegant", "dangerous", "feminine", "mezzo-soprano"]
+    },
+    {
+      "id": "tsuki-hoshi-guide",
+      "label": "Tsuki Hoshi",
+      "title": "Tsuki Hoshi, the Local Star Guide",
+      "voice_design": "Voice Attribute: A bright, friendly feminine voice with crisp articulation, soft enthusiasm, and a clean studio tone.\n\nEnvironment: A small local voice forge where the assistant is helping the user compare takes without rushing.\n\nDetailed notes: Keep the delivery encouraging and practical. Use small playful lifts at the end of helpful lines, but preserve clarity and steady pacing.",
+      "background": "A local-first voice forge companion who keeps the synthesis workflow organized and gentle.",
+      "personality": "Cheerful, practical, and attentive. She explains things clearly and keeps the user moving without pressure.",
+      "language": "English",
+      "sample": "The forge is ready. Choose your feeling, keep your seed, and let the next take sparkle.",
+      "tags": ["friendly", "guide", "clear", "bright"]
+    },
+    {
+      "id": "bangkok-bright",
+      "label": "Bangkok Bright",
+      "title": "Bangkok Bright",
+      "voice_design": "Voice Attribute: A lively young Thai woman with bright expressive timing, a warm conversational smile, and a quick but graceful rhythm. Her English has a gentle Thai melodic contour, with light upward inflections and soft, rounded consonants.\n\nEnvironment: A shaded cafe beside a busy Bangkok market in late afternoon, with scooters passing, fruit vendors calling, and iced drinks clinking on metal tables.\n\nDetailed notes: Keep the delivery energetic, friendly, and natural. Use occasional Thai conversational particles such as na or ka only when the script includes them. Let the tone feel welcoming and street-smart, not like a polished announcer or a caricature.",
+      "background": "A Bangkok neighborhood guide who knows quiet shortcuts, good coffee stalls, and when the market becomes too crowded.",
+      "personality": "Warm, playful, observant, and persuasive. She makes practical local advice feel bright and personal.",
+      "language": "English",
+      "sample": "Come early na, before the market gets too loud. The iced coffee there is strong, sweet, and honestly worth the walk.",
+      "tags": ["thai", "energetic", "informal", "female", "accented"]
+    },
+    {
+      "id": "nordic-hearthkeeper",
+      "label": "Nordic Hearthkeeper",
+      "title": "Nordic Hearthkeeper",
+      "voice_design": "Voice Attribute: A warm Scandinavian feminine alto with grounded resonance, clean vowels, and a composed public-radio calm.\n\nEnvironment: A timber cabin near a cold shoreline, where morning weather, folk memory, and practical advice are shared over a quiet broadcast.\n\nDetailed notes: Keep the pace measured and intimate. Use gentle emphasis, clear vowel shapes, and soft endings. The voice should feel trustworthy, wintry, and close without becoming sleepy.",
+      "background": "A coastal storyteller and practical guide who turns weather, history, and daily tasks into calm narration.",
+      "personality": "Patient, steady, observant, and quietly affectionate toward small details.",
+      "language": "Swedish",
+      "sample": "God morgon. Regnet drar in over kusten vid lunchtid, men fram emot kvallen klarnar himlen upp igen.",
+      "tags": ["swedish", "nordic", "warm", "narrator", "female"]
+    }
+  ],
+  "moods": [
+    {
+      "id": "focused",
+      "label": "Focused",
+      "prompt": "Keep the performance focused, composed, and useful.",
+      "tags": ["work", "clear"]
+    },
+    {
+      "id": "gentle",
+      "label": "Gentle",
+      "prompt": "Use a gentle emotional color with soft emphasis and no sharp edges.",
+      "tags": ["soft", "kind"]
+    },
+    {
+      "id": "excited",
+      "label": "Excited",
+      "prompt": "Add upbeat momentum and friendly excitement while keeping words intelligible.",
+      "tags": ["energy", "bright"]
+    },
+    {
+      "id": "mysterious",
+      "label": "Mysterious",
+      "prompt": "Use a slightly mysterious tone with restrained drama and careful pauses.",
+      "tags": ["dramatic", "controlled"]
+    },
+    {
+      "id": "reassuring",
+      "label": "Reassuring",
+      "prompt": "Sound reassuring, patient, and steady, as if guiding someone through a delicate setup.",
+      "tags": ["support", "patient"]
+    }
+  ],
+  "styles": [
+    {
+      "id": "product-read",
+      "label": "Product Read",
+      "prompt": "Shape it like a polished product demo voiceover.",
+      "params": { "cfg_value": 2.0, "inference_timesteps": 10, "max_len": 4096 }
+    },
+    {
+      "id": "character-line",
+      "label": "Character Line",
+      "prompt": "Deliver it like an expressive character line with a little personality.",
+      "params": { "cfg_value": 2.4, "inference_timesteps": 12, "max_len": 4096 }
+    },
+    {
+      "id": "short-alert",
+      "label": "Short Alert",
+      "prompt": "Keep the line compact, clear, and notification-like.",
+      "params": { "cfg_value": 1.8, "inference_timesteps": 8, "max_len": 2048 }
+    },
+    {
+      "id": "sleepy-close",
+      "label": "Sleepy Close",
+      "prompt": "Use a close, intimate delivery with a relaxed ending.",
+      "params": { "cfg_value": 2.1, "inference_timesteps": 12, "max_len": 3072 }
+    }
+  ],
+  "languages": [
+    { "id": "arabic", "label": "Arabic", "value": "Arabic", "family": "Official VoxCPM2 language" },
+    { "id": "burmese", "label": "Burmese", "value": "Burmese", "family": "Official VoxCPM2 language" },
+    { "id": "chinese", "label": "Chinese", "value": "Chinese", "family": "Official VoxCPM2 language" },
+    { "id": "danish", "label": "Danish", "value": "Danish", "family": "Official VoxCPM2 language" },
+    { "id": "dutch", "label": "Dutch", "value": "Dutch", "family": "Official VoxCPM2 language" },
+    { "id": "english", "label": "English", "value": "English", "family": "Official VoxCPM2 language" },
+    { "id": "finnish", "label": "Finnish", "value": "Finnish", "family": "Official VoxCPM2 language" },
+    { "id": "french", "label": "French", "value": "French", "family": "Official VoxCPM2 language" },
+    { "id": "german", "label": "German", "value": "German", "family": "Official VoxCPM2 language" },
+    { "id": "greek", "label": "Greek", "value": "Greek", "family": "Official VoxCPM2 language" },
+    { "id": "hebrew", "label": "Hebrew", "value": "Hebrew", "family": "Official VoxCPM2 language" },
+    { "id": "hindi", "label": "Hindi", "value": "Hindi", "family": "Official VoxCPM2 language" },
+    { "id": "indonesian", "label": "Indonesian", "value": "Indonesian", "family": "Official VoxCPM2 language" },
+    { "id": "italian", "label": "Italian", "value": "Italian", "family": "Official VoxCPM2 language" },
+    { "id": "japanese", "label": "Japanese", "value": "Japanese", "family": "Official VoxCPM2 language" },
+    { "id": "khmer", "label": "Khmer", "value": "Khmer", "family": "Official VoxCPM2 language" },
+    { "id": "korean", "label": "Korean", "value": "Korean", "family": "Official VoxCPM2 language" },
+    { "id": "lao", "label": "Lao", "value": "Lao", "family": "Official VoxCPM2 language" },
+    { "id": "malay", "label": "Malay", "value": "Malay", "family": "Official VoxCPM2 language" },
+    { "id": "norwegian", "label": "Norwegian", "value": "Norwegian", "family": "Official VoxCPM2 language" },
+    { "id": "polish", "label": "Polish", "value": "Polish", "family": "Official VoxCPM2 language" },
+    { "id": "portuguese", "label": "Portuguese", "value": "Portuguese", "family": "Official VoxCPM2 language" },
+    { "id": "russian", "label": "Russian", "value": "Russian", "family": "Official VoxCPM2 language" },
+    { "id": "spanish", "label": "Spanish", "value": "Spanish", "family": "Official VoxCPM2 language" },
+    { "id": "swahili", "label": "Swahili", "value": "Swahili", "family": "Official VoxCPM2 language" },
+    { "id": "swedish", "label": "Swedish", "value": "Swedish", "family": "Official VoxCPM2 language" },
+    { "id": "tagalog", "label": "Tagalog", "value": "Tagalog", "family": "Official VoxCPM2 language" },
+    { "id": "thai", "label": "Thai", "value": "Thai", "family": "Official VoxCPM2 language" },
+    { "id": "turkish", "label": "Turkish", "value": "Turkish", "family": "Official VoxCPM2 language" },
+    { "id": "vietnamese", "label": "Vietnamese", "value": "Vietnamese", "family": "Official VoxCPM2 language" },
+    { "id": "sichuanese", "label": "Sichuanese Chinese", "value": "Sichuanese Chinese", "family": "Chinese dialect" },
+    { "id": "cantonese", "label": "Cantonese", "value": "Cantonese", "family": "Chinese dialect" },
+    { "id": "wu-chinese", "label": "Wu Chinese", "value": "Wu Chinese", "family": "Chinese dialect" },
+    { "id": "northeastern-mandarin", "label": "Northeastern Mandarin", "value": "Northeastern Mandarin", "family": "Chinese dialect" },
+    { "id": "henan-dialect", "label": "Henan Dialect", "value": "Henan Dialect", "family": "Chinese dialect" },
+    { "id": "shaanxi-dialect", "label": "Shaanxi Dialect", "value": "Shaanxi Dialect", "family": "Chinese dialect" },
+    { "id": "shandong-dialect", "label": "Shandong Dialect", "value": "Shandong Dialect", "family": "Chinese dialect" },
+    { "id": "tianjin-dialect", "label": "Tianjin Dialect", "value": "Tianjin Dialect", "family": "Chinese dialect" },
+    { "id": "minnan", "label": "Minnan", "value": "Minnan", "family": "Chinese dialect" }
+  ],
+  "scenes": [
+    {
+      "id": "forge-ready",
+      "label": "Forge Ready",
+      "text": "The voice forge is online. Local rendering is steady, and the next line is ready for synthesis."
+    },
+    {
+      "id": "safety-hello",
+      "label": "Consent Hello",
+      "text": "This voice test uses only approved material, clear intent, and a local workflow."
+    },
+    {
+      "id": "soft-signoff",
+      "label": "Soft Signoff",
+      "text": "That take is complete. Save the seed, compare the metadata, and rest the voice for a moment."
+    }
+  ]
+}
