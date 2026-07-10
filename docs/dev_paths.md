@@ -17,6 +17,8 @@ VoiceGen-Oui-ROCm-VoxCPM2/                 source checkout
 
 The launcher creates the runtime folders automatically and passes the Windows path to WSL. Existing source-checkout models remain a fallback so a migration does not break a working installation.
 
+Double-click `open_voicegen_oui_data_folder.cmd` from the repository root to open this folder in Explorer. It resolves `%LOCALAPPDATA%` for the Windows account that runs it, so the same tracked shortcut works on another computer.
+
 ## Overrides
 
 ```text

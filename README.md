@@ -34,6 +34,8 @@ From the repository root in Windows PowerShell:
 
 The launcher waits for VoiceGen Oui! to become healthy, then opens the app in your default browser. Use `-NoBrowser` when you only want to start the backend.
 
+To open your local outputs, personas, logs, and optional user-managed models, double-click `open_voicegen_oui_data_folder.cmd` in the repository root.
+
 ## Try It, Test It, Improve It
 
 If you use Windows with an AMD GPU and want to help make VoxCPM2 more usable through ROCm and WSL2, this repo is for you.
