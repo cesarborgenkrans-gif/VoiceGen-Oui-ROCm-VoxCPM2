@@ -138,7 +138,7 @@ It downloads the upstream `openbmb/VoxCPM2` snapshot into the default user-data 
 %LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2\
 ```
 
-The script asks the user to review the upstream model card and license before downloading, verifies `config.json`, `model.safetensors`, and `audiovae.pth`, and does not commit model files to git. You can keep the model anywhere and point the app at it:
+The script asks the user to review the upstream model card and license before downloading, shows the Hugging Face file-download progress in the terminal, verifies `config.json`, `model.safetensors`, and `audiovae.pth`, and does not commit model files to git. When launched by double-click, it waits for Enter after success or failure so its output remains visible. You can keep the model anywhere and point the app at it:
 
 ```bash
 export VOXCPM_MODEL_PATH=/path/to/VoxCPM2

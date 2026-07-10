@@ -16,7 +16,15 @@ function Convert-ToWslPath([string]$Value) {
     if ($Value.StartsWith("/")) {
         return $Value
     }
-    return (& wsl -d $WslDistro -u $WslUser -e wslpath -a $Value).Trim()
+
+    $fullPath = [System.IO.Path]::GetFullPath($Value)
+    if ($fullPath -notmatch "^(?<drive>[A-Za-z]):\\(?<rest>.*)$") {
+        throw "VoiceGen Oui! requires a local Windows drive path, not: $Value"
+    }
+
+    $drive = $Matches.drive.ToLowerInvariant()
+    $rest = $Matches.rest -replace "\\", "/"
+    return "/mnt/$drive/$rest"
 }
 
 function Get-WslVenv {

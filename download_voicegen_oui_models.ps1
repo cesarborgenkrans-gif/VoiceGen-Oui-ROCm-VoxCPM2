@@ -3,17 +3,25 @@ param(
     [string]$Destination,
     [string]$ModelId = "openbmb/VoxCPM2",
     [switch]$AcceptUpstreamLicense,
-    [switch]$Force
+    [switch]$Force,
+    [switch]$NoPause
 )
 
 $ErrorActionPreference = "Stop"
 
 function Convert-ToWslPath([string]$Value) {
-    $converted = & wsl.exe wslpath -a $Value
-    if ($LASTEXITCODE -ne 0 -or -not $converted) {
-        throw "Could not convert Windows path to a WSL path: $Value"
+    if ($Value.StartsWith("/")) {
+        return $Value
     }
-    return $converted.Trim()
+
+    $fullPath = [System.IO.Path]::GetFullPath($Value)
+    if ($fullPath -notmatch "^(?<drive>[A-Za-z]):\\(?<rest>.*)$") {
+        throw "VoiceGen Oui! requires a local Windows drive path, not: $Value"
+    }
+
+    $drive = $Matches.drive.ToLowerInvariant()
+    $rest = $Matches.rest -replace "\\", "/"
+    return "/mnt/$drive/$rest"
 }
 
 function Quote-Bash([string]$Value) {
@@ -27,8 +35,8 @@ function Get-WslVenv([string]$Distro, [string]$User) {
         return $env:VOICEGEN_OUI_WSL_VENV
     }
 
-    $home = if ($User -eq "root") { "/root" } else { "/home/$User" }
-    foreach ($candidate in @("$home/voicegen-oui-rocm72", "$home/voxcpm-wsl-rocm72", "$home/voxcpm-wsl-rocm")) {
+    $WslHome = if ($User -eq "root") { "/root" } else { "/home/$User" }
+    foreach ($candidate in @("$WslHome/voicegen-oui-rocm72", "$WslHome/voxcpm-wsl-rocm72", "$WslHome/voxcpm-wsl-rocm")) {
         & wsl.exe -d $Distro -u $User -- test -f "$candidate/bin/activate"
         if ($LASTEXITCODE -eq 0) {
             return $candidate
@@ -38,6 +46,19 @@ function Get-WslVenv([string]$Distro, [string]$User) {
     throw "No compatible WSL Python venv found. Set VOICEGEN_OUI_WSL_VENV to the venv containing VoxCPM."
 }
 
+function Show-KawaiiSpinner([string]$Message) {
+    $frames = @([char]0x280B, [char]0x2819, [char]0x2839, [char]0x2838, [char]0x283C, [char]0x2834, [char]0x2826, [char]0x2827, [char]0x2807, [char]0x280F)
+    foreach ($frame in $frames) {
+        Write-Host -NoNewline "`r[$frame] $Message"
+        Start-Sleep -Milliseconds 70
+    }
+    Write-Host "`r[ok] $Message"
+}
+
+$PauseAtEnd = -not $NoPause -and -not $WhatIfPreference
+$exitCode = 0
+
+try {
 $DataRoot = if ($env:VOICEGEN_OUI_DATA_ROOT) {
     $env:VOICEGEN_OUI_DATA_ROOT
 } else {
@@ -78,6 +99,7 @@ if ($missingBefore.Count -eq 0 -and -not $Force) {
 }
 
 New-Item -ItemType Directory -Force -Path $ModelDestination | Out-Null
+Show-KawaiiSpinner "Preparing the WSL download bridge..."
 $WslDestination = Convert-ToWslPath $ModelDestination
 $WslVenv = Get-WslVenv $WslDistro $WslUser
 $QuotedDestination = Quote-Bash $WslDestination
@@ -88,6 +110,8 @@ $ForceDownload = if ($Force) { "True" } else { "False" }
 $BashCommand = @"
 set -e
 source $QuotedVenv/bin/activate
+export PYTHONUNBUFFERED=1
+export HF_HUB_DISABLE_PROGRESS_BARS=0
 python3 -c 'import huggingface_hub' || python3 -m pip install huggingface-hub
 export VOICEGEN_OUI_MODEL_DEST=$QuotedDestination
 export VOICEGEN_OUI_MODEL_ID=$QuotedModelId
@@ -115,6 +139,7 @@ PY
 
 Write-Host "Using WSL distro: $WslDistro" -ForegroundColor DarkCyan
 Write-Host "Using WSL venv:   $WslVenv" -ForegroundColor DarkCyan
+Write-Host "Downloading model files now. Hugging Face progress bars and file output will appear below." -ForegroundColor Cyan
 & wsl.exe -d $WslDistro -u $WslUser -- bash -lc $BashCommand
 if ($LASTEXITCODE -ne 0) {
     throw "Model download failed. Read the WSL output above for the upstream download error."
@@ -129,4 +154,17 @@ $sizeGiB = [math]::Round(((Get-ChildItem -LiteralPath $ModelDestination -Recurse
 Write-Host "VoxCPM2 is ready at $ModelDestination ($sizeGiB GiB)." -ForegroundColor Green
 if ($Destination) {
     Write-Host "Set VOXCPM_MODEL_PATH to this folder before launching VoiceGen Oui!." -ForegroundColor Yellow
+}
+} catch {
+    $exitCode = 1
+    Write-Host "Model install failed: $($_.Exception.Message)" -ForegroundColor Red
+} finally {
+    if ($PauseAtEnd) {
+        Write-Host ""
+        Read-Host "Press Enter to close this installer" | Out-Null
+    }
+}
+
+if ($exitCode -ne 0) {
+    exit $exitCode
 }
