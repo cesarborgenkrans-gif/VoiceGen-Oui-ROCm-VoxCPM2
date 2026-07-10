@@ -2,131 +2,55 @@
 
 **ROCm-powered VoxCPM2 voice generation for AMD GPU users.**
 
-VoiceGen is a utility repo: a local app, launcher, and setup path that puts VoxCPM2 into practice on AMD GPUs through ROCm. It is not the upstream VoxCPM2 baseline, model, or training project. It is the practical layer around that code path so more AMD GPU users can actually try the feature, test hardware, and contribute fixes.
+![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
+
+VoiceGen is the practical ROCm layer around VoxCPM2: a local GUI, Windows-to-WSL launcher, and reproducible setup path for AMD GPU users who want to generate voices without falling back to CPU.
 
 **Reference hardware:** AMD Radeon RX 7900 XTX / `gfx1100`
 
-**Observed performance:** up to approximately **8 it/s** in the reference VoxCPM2 voice-generation setup.
+**Quality / speed setting:** `8` timesteps is the project setting for the fastest generation that still meets VoiceGen's target quality. Recorded RX 7900 XTX reference sessions have reached **8.24-8.64 it/s** with this setting.
 
-Actual performance depends on voice-generation settings, text length, ROCm and PyTorch versions, WSL configuration, and GPU.
+Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/).
+
+## Listen
+
+- [Voice sample 01 (WAV)](docs/assets/voicegen-sample-01.wav)
+- [Voice sample 02 (WAV)](docs/assets/voicegen-sample-02.wav)
+
+These two curated samples are intentional public demo media. Ordinary generated audio remains local and gitignored.
+
+## What It Unlocks
+
+This is not the upstream VoxCPM2 model or training project. It is the utility layer that makes the ROCm path practical: write a voice design, generate locally, compare results, and help improve AMD GPU compatibility for the next person.
+
+Need the environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md). Model weights are installed locally under `models/VoxCPM2/` or pointed to with `VOXCPM_MODEL_PATH`; they are never committed here.
 
 ## Run
 
-From the repo root in Windows PowerShell:
+From the repository root in Windows PowerShell:
 
 ```powershell
 .\start_voicegen_voxcpm_wsl_rocm7.ps1
 ```
 
-The launcher waits for the backend health check, then opens VoiceGen in your default browser. To start without opening a browser:
-
-```powershell
-.\start_voicegen_voxcpm_wsl_rocm7.ps1 -NoBrowser
-```
-
-Manual browser address:
-
-```text
-http://localhost:3113
-```
-
-![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
-
-Hear a short sample generated through the same VoiceGen / VoxCPM2 path:
-
-<audio controls preload="metadata" src="docs/assets/voicegen-reference-rx7900xtx.wav">
-  Your browser does not support the audio player. [Download the WAV sample](docs/assets/voicegen-reference-rx7900xtx.wav).
-</audio>
-
-[Download the reference WAV sample](docs/assets/voicegen-reference-rx7900xtx.wav)
+The launcher waits for VoiceGen to become healthy, then opens the app in your default browser. Use `-NoBrowser` when you only want to start the backend.
 
 ## Try It, Test It, Improve It
 
-If you have an AMD GPU and want VoxCPM2 off the CPU path, this repo is for you.
+If you have an AMD GPU and want to help make VoxCPM2 more usable through ROCm, this repo is for you.
 
-- **Try it** if you run Windows + WSL2 and want a ROCm route for VoxCPM2.
-- **Test another AMD card** if you have something besides an RX 7900 XTX.
-- **Open a report** if setup works, partly works, or fails in a useful way.
-- **Send fixes** for ROCm setup notes, launcher portability, docs, or runtime behavior.
+- Test your AMD card and share what happened.
+- Send launcher, setup, or documentation fixes.
+- Report successful runs, partial runs, and useful failures.
 
-The most helpful contribution right now is a hardware test report: GPU model, ROCm version, PyTorch ROCm result, generation result, and measured speed. Use [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md), then [open a hardware report on GitHub](https://github.com/cesarborgenkrans-gif/VoiceGen-ROCm-VoxCPM2/issues/new?template=hardware-test.yml).
+The most useful contribution is a hardware test report with your GPU, ROCm version, PyTorch ROCm result, VoxCPM2 result, and observed speed. Start with [CONTRIBUTING.md](CONTRIBUTING.md) or [open a hardware report](https://github.com/cesarborgenkrans-gif/VoiceGen-ROCm-VoxCPM2/issues/new?template=hardware-test.yml).
 
-## What This Is
+## Local-Only Files
 
-VoiceGen gives you:
+The repository contains source code, docs, lightweight placeholders, and the curated README demo media above. It intentionally ignores model weights, Python environments, generated outputs, custom local personas, logs, and `.env` files. See [.gitignore](.gitignore) for the exact rules.
 
-- A utility layer around VoxCPM2: GUI, launcher, and ROCm/WSL notes.
-- A browser GUI for writing a spoken script and voice design.
-- A Windows PowerShell launcher for the WSL2 + ROCm + VoxCPM2 path.
-- Local output/history folders for generated audio.
-- Setup notes for ROCm, ROCDXG, and PyTorch ROCm wheels.
-- A contribution path for AMD GPU compatibility results.
+## License And Notices
 
-This is not a polished commercial product, and it is not a replacement for upstream VoxCPM2. It is an open utility project for ROCm users who want to get VoxCPM2 voice generation running locally and make the path easier for the next person.
+The utility code and documentation are [Apache-2.0](LICENSE). Mascots, logos, SparkleSnap marks, screenshots, and README/demo media are separate reserved assets under [docs/ASSET_LICENSE.md](docs/ASSET_LICENSE.md).
 
-## Reference Setup
-
-The reference result above was produced on the RX 7900 XTX / `gfx1100` path. Other AMD GPUs are welcome to test, but their results are not represented by this reference benchmark until someone reports them. Share successful runs, partial results, and useful failures through the [hardware report workflow](https://github.com/cesarborgenkrans-gif/VoiceGen-ROCm-VoxCPM2/issues/new?template=hardware-test.yml).
-
-This is not the upstream VoxCPM2 baseline model or training code, a redistribution point for model weights or ROCm packages, or an AMD/OpenBMB project.
-
-## Quick Start
-
-Clone the repo, then create a Python environment inside WSL. This path is only an example:
-
-```bash
-python3 -m venv ~/waifuvoice-rocm72
-source ~/waifuvoice-rocm72/bin/activate
-pip install -r requirements.txt
-pip check
-```
-
-Install the ROCm/WSL pieces described in the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) before running the app. That guide contains the version-specific commands and validation gates, so the README can remain focused on the stable project path.
-
-## Model Files
-
-Download VoxCPM2 model files locally and place them under:
-
-```text
-models/VoxCPM2/
-```
-
-Model weights are not committed to this repo. You can also keep the model elsewhere:
-
-```powershell
-$env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/VoxCPM2"
-```
-
-## What Is Not Committed
-
-This repository ships source code, setup instructions, and lightweight placeholder files only.
-
-- Model weights.
-- Python virtual environments.
-- Generated WAV files.
-- Custom Persona Lab data.
-- Local ROCm experiments, installers, logs, and machine-specific notes.
-
-## Contributing
-
-Contributions are welcome when they make AMD GPU voice generation easier to reproduce.
-
-Good first contributions:
-
-- A test report for another AMD GPU.
-- A clearer ROCm/WSL validation step.
-- A launcher fix for a different local path or WSL user.
-- A PyTorch ROCm compatibility note.
-- A docs correction that saves someone else an hour.
-
-Start with [CONTRIBUTING.md](CONTRIBUTING.md), or open a report using [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md).
-
-## License, Assets, And Trademarks
-
-The utility code and documentation text in this repository are released under the Apache License 2.0. This aligns the app layer with the Apache-2.0 licensing used by upstream VoxCPM2/OpenBMB while keeping this project independent.
-
-Mascots, logos, brand images, SparkleSnap marks, screenshots, and README/demo media are not licensed as Apache-2.0 code. They are covered separately by [docs/ASSET_LICENSE.md](docs/ASSET_LICENSE.md), so contributors can use the app while the visual identity stays distinct from the code license.
-
-Third-party models, libraries, and assets remain under their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE).
-
-This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.
+Third-party models, libraries, and assets keep their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE). VoiceGen is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm and related marks are trademarks of Advanced Micro Devices, Inc.

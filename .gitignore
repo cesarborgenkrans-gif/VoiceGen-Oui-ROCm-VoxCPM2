@@ -31,6 +31,10 @@ outputs/*
 *.flac
 *.ogg
 
+# Curated public README samples. All other generated audio remains local.
+!docs/assets/voicegen-sample-01.wav
+!docs/assets/voicegen-sample-02.wav
+
 # Global logs
 *.log
 
