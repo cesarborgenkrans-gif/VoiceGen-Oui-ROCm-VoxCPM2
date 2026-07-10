@@ -5,50 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VoiceGen (rocm-voxcpm)</title>
   <meta name="description" content="ROCm-powered VoxCPM2 voice generation for AMD GPU users." />
-  <style>html[data-voicegen-direct-file="true"] body { visibility: hidden; }</style>
   <script>
-    (() => {
-      if (window.location.protocol !== 'file:') return;
+    if (window.location.protocol === 'file:') {
       document.documentElement.dataset.voicegenDirectFile = 'true';
-      const appUrl = 'http://localhost:3113/';
-      const healthUrl = 'http://127.0.0.1:3113/api/health';
-
-      const showLauncherMessage = () => {
-        const render = () => {
-          document.body.innerHTML = `
-            <main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#edf8fa;color:#18333a;font-family:system-ui,sans-serif;">
-              <section style="max-width:620px;border:1px solid #8ecbd3;background:white;padding:24px;border-radius:6px;box-shadow:0 16px 40px rgba(24,51,58,.12);">
-                <h1 style="margin:0 0 12px;font-size:24px;">Start VoiceGen first</h1>
-                <p style="line-height:1.55;">This file is the frontend served by the VoiceGen backend. Run the launcher from the repository root:</p>
-                <code style="display:block;padding:12px;background:#e7f5f7;border:1px solid #b8dfe4;overflow-wrap:anywhere;">.\\start_voicegen_voxcpm_wsl_rocm7.ps1</code>
-              </section>
-            </main>`;
-          document.body.style.visibility = 'visible';
-        };
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', render, { once: true });
-        } else {
-          render();
-        }
-      };
-
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 1800);
-      fetch(healthUrl, { cache: 'no-store', signal: controller.signal })
-        .then((response) => {
-          if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
-          return response.json();
-        })
-        .then((health) => {
-          if (health.status !== 'ok') throw new Error('VoiceGen is not ready.');
-          window.clearTimeout(timeout);
-          window.location.replace(appUrl);
-        })
-        .catch(() => {
-          window.clearTimeout(timeout);
-          showLauncherMessage();
-        });
-    })();
+    }
   </script>
   <link rel="icon" type="image/png" href="_frontend/assets/img/waifuvoice-favicon.png" />
   <link rel="stylesheet" href="_frontend/css/css/design-system.css" />
@@ -56,6 +16,44 @@
   <link rel="stylesheet" href="_frontend/css/css/cockpit.css" />
   <style>
     /* Specific tweaks for Voice Forge layout inside Cockpit */
+    .browser-preview-warning {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      z-index: 10000;
+      width: min(620px, calc(100vw - 32px));
+      transform: translateX(-50%);
+      border: 1px solid #31c7da;
+      border-radius: 6px;
+      background: rgba(247, 253, 255, 0.97);
+      box-shadow: 0 16px 40px rgba(24, 51, 58, 0.22);
+      color: #18333a;
+      padding: 16px 18px;
+      font-family: var(--font-body);
+    }
+    html[data-voicegen-direct-file="true"] .browser-preview-warning { display: block; }
+    .browser-preview-warning .preview-label {
+      color: #147790;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .browser-preview-warning h1 { margin: 5px 0 7px; font-size: 20px; letter-spacing: 0; }
+    .browser-preview-warning p { margin: 0; font-size: 13px; line-height: 1.5; }
+    .browser-preview-warning code {
+      display: block;
+      margin-top: 10px;
+      border: 1px solid #b8dfe4;
+      border-radius: 4px;
+      background: #e7f5f7;
+      color: #18333a;
+      padding: 9px 10px;
+      font-family: var(--font-mono);
+      overflow-wrap: anywhere;
+    }
     .chat-feed { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; flex: 1; }
     .input-group { display: flex; flex-direction: column; gap: 6px; }
     .input-group label { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
@@ -834,6 +832,13 @@
   </style>
 </head>
 <body>
+  <aside class="browser-preview-warning" role="alert" aria-live="polite">
+    <div class="preview-label">Browser preview</div>
+    <h1>Start VoiceGen first</h1>
+    <p>This file is the frontend served by the VoiceGen backend. Run the launcher from the repository root:</p>
+    <code>.\start_voicegen_voxcpm_wsl_rocm7.ps1</code>
+  </aside>
+
   <svg width="0" height="0" style="position:absolute; pointer-events: none;">
     <defs>
       <g id="art-cloud">
