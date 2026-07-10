@@ -51,6 +51,8 @@ Paste validation output:
 - Generation mode tested: text / clone / continuation / streaming
 - Voice language:
 - Generation completed: yes / no
+- Approximate generation speed: ___ it/s
+- Generation settings and text length:
 - Approximate generation time:
 - VRAM behavior:
 

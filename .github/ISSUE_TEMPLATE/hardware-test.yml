@@ -1,0 +1,82 @@
+name: AMD GPU hardware test
+description: Report a VoiceGen and VoxCPM2 result on an AMD GPU.
+title: "[Hardware] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing VoiceGen on another AMD GPU. Please include exact versions and paste the relevant validation output.
+
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Success
+        - Partial success
+        - Failed
+    validations:
+      required: true
+
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU model
+      placeholder: AMD Radeon RX ...
+    validations:
+      required: true
+
+  - type: input
+    id: gfx
+    attributes:
+      label: Reported gfx target
+      placeholder: gfx1100
+
+  - type: input
+    id: host
+    attributes:
+      label: Host OS and AMD driver
+      placeholder: Windows 11; Adrenalin ...
+    validations:
+      required: true
+
+  - type: input
+    id: wsl
+    attributes:
+      label: WSL/Linux environment
+      placeholder: WSL2; Ubuntu 22.04
+    validations:
+      required: true
+
+  - type: input
+    id: rocm
+    attributes:
+      label: ROCm and PyTorch versions
+      placeholder: ROCm ...; torch ...; HIP ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: PyTorch validation output
+      description: Include torch.cuda.is_available(), torch.version.hip, and the detected device name.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: generation
+    attributes:
+      label: VoxCPM2 generation result
+      description: Include the generation mode, text length, approximate speed in it/s if known, completion status, and VRAM behavior.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and notes
+      description: Paste useful failure logs, workarounds, or setup details. Remove personal paths and secrets.
+      render: text

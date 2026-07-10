@@ -1,12 +1,14 @@
-![VoiceGen rocm-voxcpm](app/_frontend/assets/img/waifuvoice-logo-rocm.png)
-
 # VoiceGen (rocm-voxcpm)
 
 **ROCm-powered VoxCPM2 voice generation for AMD GPU users.**
 
 VoiceGen is a utility repo: a local app, launcher, and setup path that puts VoxCPM2 into practice on AMD GPUs through ROCm. It is not the upstream VoxCPM2 baseline, model, or training project. It is the practical layer around that code path so more AMD GPU users can actually try the feature, test hardware, and contribute fixes.
 
-The current verified path runs on an **RX 7900 XTX**. The next step is community testing: try it on your AMD card, report what works, and help turn this into a useful starting point for ROCm voice generation.
+**Reference hardware:** AMD Radeon RX 7900 XTX / `gfx1100`
+
+**Observed performance:** up to approximately **8 it/s** in the reference VoxCPM2 voice-generation setup.
+
+This is a reference measurement from the project development setup, not a universal speed guarantee. Actual performance depends on voice-generation settings, text length, ROCm and PyTorch versions, WSL configuration, and GPU.
 
 ![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
 
@@ -19,7 +21,7 @@ If you have an AMD GPU and want VoxCPM2 off the CPU path, this repo is for you.
 - **Open a report** if setup works, partly works, or fails in a useful way.
 - **Send fixes** for ROCm setup notes, launcher portability, docs, or runtime behavior.
 
-The most helpful contribution right now is a hardware test report: GPU model, ROCm version, PyTorch ROCm result, and whether VoxCPM2 generation completed. Use [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md).
+The most helpful contribution right now is a hardware test report: GPU model, ROCm version, PyTorch ROCm result, generation result, and measured speed. Use [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md), then [open a hardware report on GitHub](https://github.com/cesarborgenkrans-gif/VoiceGen-ROCm-VoxCPM2/issues/new?template=hardware-test.yml).
 
 ## What This Is
 
@@ -29,31 +31,16 @@ VoiceGen gives you:
 - A browser GUI for writing a spoken script and voice design.
 - A Windows PowerShell launcher for the WSL2 + ROCm + VoxCPM2 path.
 - Local output/history folders for generated audio.
-- Setup notes for ROCm 7.2, ROCDXG, and PyTorch ROCm wheels.
+- Setup notes for ROCm, ROCDXG, and PyTorch ROCm wheels.
 - A contribution path for AMD GPU compatibility results.
 
 This is not a polished commercial product, and it is not a replacement for upstream VoxCPM2. It is an open utility project for ROCm users who want to get VoxCPM2 voice generation running locally and make the path easier for the next person.
 
-## What This Is Not
+## Reference Setup
 
-- Not the upstream VoxCPM2 baseline model or training code.
-- Not a claim that every AMD GPU works.
-- Not a redistribution point for VoxCPM2 model weights or ROCm system packages.
-- Not an AMD or OpenBMB project.
+The reference result above was produced on the RX 7900 XTX / `gfx1100` path. Other AMD GPUs are welcome to test, but their results are not represented by this reference benchmark until someone reports them. Share successful runs, partial results, and useful failures through the [hardware report workflow](https://github.com/cesarborgenkrans-gif/VoiceGen-ROCm-VoxCPM2/issues/new?template=hardware-test.yml).
 
-## Verified So Far
-
-The current confirmed path is:
-
-- AMD Radeon RX 7900 XTX / `gfx1100`
-- Windows + WSL2
-- Ubuntu 22.04
-- ROCm 7.2 packages
-- ROCDXG from `ROCm/librocdxg`
-- PyTorch ROCm wheels
-- Local VoxCPM2 model files
-
-Other AMD GPUs may work, but they are not confirmed yet. Please contribute test results instead of assuming support.
+This is not the upstream VoxCPM2 baseline model or training code, a redistribution point for model weights or ROCm packages, or an AMD/OpenBMB project.
 
 ## Quick Start
 
@@ -66,17 +53,7 @@ pip install -r requirements.txt
 pip check
 ```
 
-Install the ROCm/WSL pieces before running the app:
-
-- WSL2 with Ubuntu 22.04.
-- AMD Windows driver with WSL ROCm support.
-- `/dev/dxg` visible inside WSL.
-- ROCm 7.2 packages for Ubuntu 22.04.
-- Built and installed `ROCm/librocdxg`.
-- PyTorch ROCm wheels installed in the WSL environment.
-- `rocminfo` sees your AMD GPU.
-
-The detailed setup guide is [docs/ROCM_WSL_SETUP.md](docs/ROCM_WSL_SETUP.md).
+Install the ROCm/WSL pieces described in the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) before running the app. That guide contains the version-specific commands and validation gates, so the README can remain focused on the stable project path.
 
 ## Model Files
 
