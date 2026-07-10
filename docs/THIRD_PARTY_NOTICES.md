@@ -12,7 +12,7 @@ VoiceGen Oui! mascots, logos, brand images, SparkleSnap marks, screenshots, and 
 
 ## VoxCPM
 
-The app integrates VoxCPM through the `voxcpm` Python package and expects local VoxCPM2 model files under `models/VoxCPM2/`.
+The app integrates VoxCPM through the `voxcpm` Python package and expects local VoxCPM2 model files. The default VoiceGen Oui! location is `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`; `VOXCPM_MODEL_PATH` can select another location.
 
 VoxCPM2/OpenBMB is the upstream model/code project. VoiceGen Oui! is not the upstream VoxCPM2 baseline and does not replace the upstream project; it is a practical utility layer for testing that path on ROCm-enabled AMD GPU setups.
 

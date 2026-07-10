@@ -41,10 +41,10 @@ pip check
 
 ## Local Model Files
 
-Model weights are not pip dependencies and are not committed to git. Place the VoxCPM2 snapshot under:
+Model weights are not pip dependencies and are not committed to git. Run `download_voicegen_oui_models.ps1` to install the VoxCPM2 snapshot under:
 
 ```text
-models/VoxCPM2/
+%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2\
 ```
 
 or set:

@@ -22,7 +22,13 @@ Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The tw
 
 This is not the upstream VoxCPM2 model or training project. It is the utility layer that makes the ROCm path practical on Windows: write a voice design, generate locally, compare results, and help improve AMD GPU compatibility for the next person.
 
-Need the environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md). Model weights are installed locally under `models/VoxCPM2/` or pointed to with `VOXCPM_MODEL_PATH`; they are never committed here.
+Need the environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md). Then download the upstream model into your local VoiceGen Oui! data folder:
+
+```powershell
+.\download_voicegen_oui_models.ps1
+```
+
+The script downloads `openbmb/VoxCPM2` to `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, confirms the required model files exist, and never adds them to git. Use `VOXCPM_MODEL_PATH` when your model lives elsewhere.
 
 ## Run
 

@@ -126,13 +126,19 @@ If PyTorch loads a bundled HSA runtime instead of the system ROCm runtime, ROCm 
 
 ## 6. Model Files
 
-Download VoxCPM2 model files locally. The default path is under the VoiceGen project root:
+From Windows PowerShell, run the repository model installer after the WSL environment exists:
 
-```text
-models/VoxCPM2/
+```powershell
+.\download_voicegen_oui_models.ps1
 ```
 
-You can keep the model anywhere and point the app at it:
+It downloads the upstream `openbmb/VoxCPM2` snapshot into the default user-data location:
+
+```text
+%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2\
+```
+
+The script asks the user to review the upstream model card and license before downloading, verifies `config.json`, `model.safetensors`, and `audiovae.pth`, and does not commit model files to git. You can keep the model anywhere and point the app at it:
 
 ```bash
 export VOXCPM_MODEL_PATH=/path/to/VoxCPM2
@@ -176,7 +182,7 @@ $env:VOICEGEN_OUI_WSL_USER = "root"
 $env:VOICEGEN_OUI_WSL_VENV = "/root/voxcpm-wsl-rocm72"
 $env:VOICEGEN_OUI_DATA_ROOT = "$env:LOCALAPPDATA\VoiceGenOui"
 $env:VOICEGEN_OUI_APP_ROOT = "D:\path\to\VoiceGen-Oui-ROCm-VoxCPM2\app"
-$env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/models/VoxCPM2"
+$env:VOXCPM_MODEL_PATH = "D:\path\to\models\VoxCPM2"
 ```
 
 If `VOICEGEN_OUI_WSL_VENV` is not set, the launcher checks `voicegen-oui-rocm72`, `voxcpm-wsl-rocm72`, and `voxcpm-wsl-rocm` under the selected WSL user home.
