@@ -1,6 +1,6 @@
 # ROCm + WSL2 Setup Notes
 
-This document summarizes the AMD GPU path used by WaifuVoice. It is written as a reproducible setup guide, not as a dump of local development notes.
+This document summarizes the AMD GPU path used by VoiceGen (rocm-voxcpm). It is written as a reproducible setup guide, not as a dump of local development notes.
 
 The verified development target was:
 
@@ -16,7 +16,7 @@ Other AMD ROCm-supported cards may work, but they should be validated with the s
 
 ## 1. Windows And WSL Prerequisites
 
-Install a current AMD Adrenalin driver that supports ROCm on WSL. Then install or update WSL2 and Ubuntu 22.04.
+Install a current AMD Adrenalin driver that supports ROCm on WSL, such as version 26.3.1. Then install or update WSL2 and Ubuntu 22.04.
 
 Inside WSL, verify the Windows GPU bridge is visible:
 
@@ -97,9 +97,10 @@ python3 -m venv ~/waifuvoice-rocm72
 source ~/waifuvoice-rocm72/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
+pip check
 ```
 
-The repository requirements use the ROCm 7.2 PyTorch wheel index.
+The repository requirements use the ROCm 7.2 PyTorch wheel index. The VoiceGen backend itself uses Python's standard-library `ThreadingHTTPServer`, so FastAPI, Uvicorn, Requests, and AioHTTP are not required unless the backend is rewritten later. See [DEPENDENCIES.md](DEPENDENCIES.md) for the dependency boundary.
 
 Validate PyTorch:
 
@@ -125,7 +126,7 @@ If PyTorch loads a bundled HSA runtime instead of the system ROCm runtime, ROCm 
 
 ## 6. Model Files
 
-Download VoxCPM2 model files locally. The default path is under the WaifuVoice lobby root:
+Download VoxCPM2 model files locally. The default path is under the VoiceGen project root:
 
 ```text
 models/VoxCPM2/
@@ -159,7 +160,7 @@ AMD_SERIALIZE_KERNEL=3
 
 Those old flags were useful for a previous ROCm path, but they are intentionally not used in the current ROCm 7 launcher.
 
-## 8. Running WaifuVoice
+## 8. Running VoiceGen
 
 From Windows PowerShell:
 
@@ -172,11 +173,13 @@ Optional launcher overrides:
 ```powershell
 $env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
 $env:WAIFUVOICE_WSL_USER = "root"
-$env:WAIFUVOICE_WSL_VENV = "/home/you/waifuvoice-rocm72"
-$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/WaifuVoice"
-$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/WaifuVoice/app"
+$env:WAIFUVOICE_WSL_VENV = "/root/voxcpm-wsl-rocm72"
+$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/VoiceGen"
+$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/VoiceGen/app"
 $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/models/VoxCPM2"
 ```
+
+If `WAIFUVOICE_WSL_VENV` is not set, the launcher checks `waifuvoice-rocm72`, `voxcpm-wsl-rocm72`, and `voxcpm-wsl-rocm` under the selected WSL user home. The `WAIFUVOICE_*` names are retained v1 compatibility names.
 
 Open:
 
@@ -190,6 +193,7 @@ Use these gates before calling a setup working:
 
 ```bash
 rocminfo | grep -E "Name:|gfx"
+pip check
 python3 -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0))"
 cd app
 python3 _backend/server.py

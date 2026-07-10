@@ -1,3 +1,9 @@
+```text
+     /\_/\
+    ( ^.^ )  counting good reasons on tiny fingies
+     > ^ <
+```
+
 # Personas
 
 Custom Persona Lab profiles are saved here by default:

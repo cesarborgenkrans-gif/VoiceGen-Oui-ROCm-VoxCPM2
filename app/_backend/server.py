@@ -625,7 +625,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     print("====================================================")
-    print("WaifuVoice Forge (VoxCPM Backend) active at:")
+    print("VoiceGen (rocm-voxcpm) VoxCPM backend active at:")
     print(f"  http://localhost:{PORT}")
     print("====================================================")
     server = ThreadingHTTPServer((HOST, PORT), Handler)

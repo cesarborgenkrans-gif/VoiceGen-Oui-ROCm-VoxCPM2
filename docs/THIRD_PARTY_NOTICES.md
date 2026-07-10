@@ -1,6 +1,8 @@
 # Third-Party Notices
 
-This repository is intended to contain the WaifuVoice Forge app code, not bundled model weights or Python dependencies.
+This repository is intended to contain the VoiceGen (rocm-voxcpm) app code, not bundled model weights or Python dependencies.
+
+This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB.
 
 ## VoxCPM
 
@@ -12,9 +14,11 @@ Users should review the upstream VoxCPM package, model card, and license terms b
 
 The AMD GPU runtime uses PyTorch ROCm wheels. Install them through `requirements.txt` in the WSL environment rather than committing them to the repository.
 
-## ROCm And ROCDXG
+## AMD ROCm And ROCDXG
 
 ROCm, HIP, and ROCDXG are AMD components installed on the host WSL environment. They are external system dependencies and are not redistributed by this repository.
+
+AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.
 
 ## Voice Cloning Safety
 

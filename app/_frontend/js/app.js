@@ -12,6 +12,7 @@ const FRONTEND_BASE = '_frontend/';
 const CUSTOM_PERSONAS_KEY = 'waifuvoice.customPersonas.v1';
 const LLM_OPTIONS_KEY = 'waifuvoice.llmOptions.v1';
 const CLONE_TOOLS_KEY = 'waifuvoice.cloneToolsEnabled.v1';
+const LARGE_PROMPT_TEXT_KEY = 'waifuvoice.largePromptText.v1';
 const PERSONA_LAB_DRAFT_KEY = 'waifuvoice.personaLabDraft.v1';
 const TSUKI_DIALOGUE_KEY = 'waifuvoice.tsukiDialogue.v1';
 const SCRIPT_SAMPLE_SPEED = 34;
@@ -128,6 +129,28 @@ function writeCloneToolsEnabled(enabled) {
   localStorage.setItem(CLONE_TOOLS_KEY, JSON.stringify(!!enabled));
 }
 
+function readLargePromptTextEnabled() {
+  try {
+    return JSON.parse(localStorage.getItem(LARGE_PROMPT_TEXT_KEY) || 'false') === true;
+  } catch {
+    return false;
+  }
+}
+
+function writeLargePromptTextEnabled(enabled) {
+  localStorage.setItem(LARGE_PROMPT_TEXT_KEY, JSON.stringify(!!enabled));
+}
+
+function applyPromptTextSize(enabled) {
+  document.body.classList.toggle('prompt-text-large', !!enabled);
+}
+
+function syncLlmOptionsVisibility() {
+  const enabled = !!$('#llm-enabled-input')?.checked;
+  const fields = $('#llm-options-fields');
+  if (fields) fields.hidden = !enabled;
+}
+
 function readDialogueHistory() {
   try {
     const parsed = JSON.parse(localStorage.getItem(TSUKI_DIALOGUE_KEY) || '[]');
@@ -184,19 +207,23 @@ function populateOptionsModal() {
   $('#llm-provider-input').value = options.provider;
   $('#llm-endpoint-input').value = options.endpoint;
   $('#llm-model-input').value = options.model || '';
-  $('#llm-context-input').value = Number(options.context_tokens) === 8192 ? '8192' : '4096';
   $('#clone-tools-enabled-input').checked = !!state.cloneToolsEnabled;
+  $('#large-prompt-text-input').checked = readLargePromptTextEnabled();
+  syncLlmOptionsVisibility();
 }
 
 function saveOptionsFromModal() {
   state.cloneToolsEnabled = $('#clone-tools-enabled-input').checked;
   writeCloneToolsEnabled(state.cloneToolsEnabled);
+  const largePromptTextEnabled = $('#large-prompt-text-input').checked;
+  writeLargePromptTextEnabled(largePromptTextEnabled);
+  applyPromptTextSize(largePromptTextEnabled);
   const options = {
     enabled: $('#llm-enabled-input').checked,
     provider: $('#llm-provider-input').value,
     endpoint: $('#llm-endpoint-input').value.trim(),
     model: $('#llm-model-input').value.trim(),
-    context_tokens: Number($('#llm-context-input').value || 4096) === 8192 ? 8192 : 4096
+    context_tokens: readLlmOptions().context_tokens || 4096
   };
   writeLlmOptions(options);
   syncCloneToolsVisibility();
@@ -1574,14 +1601,25 @@ const termData = {
   cfg: '<strong>CFG Scale (Classifier-Free Guidance)</strong> determines how strictly the model adheres to your text prompt versus its own unconditional prior. Higher values force it to follow instructions more strictly but may sound robotic, while lower values give the model more creative freedom.',
   timesteps: '<strong>Inference Timesteps</strong> control the number of diffusion steps used for generation. More steps can improve fidelity but take longer.',
   maxlen: '<strong>Max Length</strong> is the maximum number of acoustic tokens the model can generate. Longer sequences require more VRAM.',
+  'vocal-seed': '<strong>Vocal Seed</strong> controls repeatability. Use <code>-1</code> for a fresh random take, or lock a positive number when you want to compare prompt edits while keeping the same underlying voice behavior.',
   denoise: '<strong>Denoise Audio</strong> applies the model denoiser when clone or continuation audio is supplied.',
-  voicedesign: '<strong>Voice Design</strong> creates a voice from a written description instead of uploaded reference audio.',
-  voicelanguage: '<strong>VoxCPM2 Language</strong> is the target voice-generation language sent with the synthesis request. It is not the app menu language.',
-  personas: '<strong>Personas</strong> are shareable voice design packages. A Persona can be imported from JSON or Markdown, exported again, and usually contains the voice instruction plus optional character background, personality, target language, and a sample line. To make your own, write a strong Voice Design Instruction, export it as JSON or MD, then share that file with another Waifu Voice user.',
-  llmfeedback: '<strong>LLM Feedback</strong> sends generated-output metadata to your configured local LM Studio or Ollama model and asks: How can I improve this voice? It uses Tsuki Hoshi as the assistant persona, expects a short reply, and works best with small local instruct models using about 4096 context tokens.',
-  zeroshot: '<strong>Zero-Shot Clone</strong> uses a short reference clip to imitate acoustic signature, pitch, and timbre.',
-  continuation: '<strong>Continuation</strong> uses prompt audio and exact transcription so the model continues from the supplied performance.',
-  credits: '<p><strong>WaifuVoice Forge App</strong> engineered and developed by <strong>Cesar Borgenkrans</strong>.</p><p><strong>VoxCPM Engine</strong> developed by OpenBMB (Tsinghua University).</p>'
+  voicedesign: '<strong>Voice Design</strong> creates a voice from written direction instead of uploaded reference audio. The strongest designs usually separate <em>Voice Attribute</em>, <em>Environment</em>, and <em>Detailed notes</em> so pitch, accent, pacing, texture, and performance intent are clear.',
+  'preset-library': '<strong>Preset Library</strong> is the fast browsing area for reusable voice ingredients. The Personas tab loads complete voice identities, while Voices, Moods, Styles, and Scenes can be blended into a custom Voice Design Instruction.',
+  'persona-lab': '<strong>Persona Lab</strong> is the dedicated editor for custom voice personas. Open an existing persona, create a new one, duplicate a good starting point, then save, import, export, or apply it to the main synthesis form.',
+  'script-samples': '<strong>Spoken Script Samples</strong> are short test lines designed to produce useful listening comparisons. They change the spoken script, not the persona itself, and are helpful when testing seeds or prompt changes.',
+  voicelanguage: '<strong>VoxCPM2 Language</strong> is the target voice-generation language sent with the synthesis request. It does not translate the script and it does not change the app menu language.',
+  personas: '<strong>Personas</strong> are shareable voice design packages. A Persona can be imported from JSON or Markdown, exported again, and usually contains the voice instruction plus optional character background, personality, target language, and a sample line.',
+  llmfeedback: '<strong>LLM Feedback</strong> sends generated-output metadata to your configured local LM Studio or Ollama model and asks: How can I improve this voice? It uses Tsuki Hoshi as the assistant persona, expects a short reply, and works best with small local instruct models.',
+  'tsuki-dialogue': '<strong>Tsuki Dialogue</strong> shows the latest local LLM feedback beneath the mascot. Click the dialogue text to open the full message, or use History to revisit earlier feedback replies.',
+  'queue-history': '<strong>Queue / History</strong> lists the latest generated clips, capped to the most recent takes. Use Play to replay a clip and Get Feedback to ask your configured local LLM for voice-design advice based on that take.',
+  'generated-output': '<strong>Generated Output</strong> is the current audio result area. It shows the active player, download link, and recent generated clips written to the local <code>outputs/</code> folder.',
+  autoplay: '<strong>Auto Play</strong> plays a generated clip as soon as synthesis finishes. Turn it off when you want silent batch testing or when you are comparing waveforms first.',
+  options: '<strong>Options</strong> controls optional local features. Enable Clone / Continue before those consent-sensitive tools appear, enable Local LLM Feedback before provider fields are shown, toggle VRAM warnings or telemetry visibility, and make only the Spoken Script plus Voice Design text larger.',
+  'vram-telemetry': '<strong>VRAM Telemetry</strong> is an advisory quality-of-life panel for AMD/ROCm sessions. It estimates free and used GPU memory, warns when a model load may be tight, and can be hidden from Options without disabling synthesis.',
+  'cooldown-gpu': '<strong>Cool Down GPU</strong> unloads the current in-process model session and restarts the backend path so VRAM can be released. The next Synthesize Audio click reloads VoxCPM, similar to starting a fresh session.',
+  zeroshot: '<strong>Zero-Shot Clone</strong> uses a short reference clip to imitate acoustic signature, pitch, and timbre. It only appears after Clone / Continue is enabled in Options so consent-sensitive tools stay tucked away by default.',
+  continuation: '<strong>Continuation</strong> uses prompt audio and exact transcription so the model continues from the supplied performance. It shares the Clone / Continue panel and should be used only with audio you have the right to use.',
+  credits: '<p><strong>VoiceGen (rocm-voxcpm)</strong> engineered and developed by <strong>Cesar Borgenkrans</strong>.</p><p><strong>VoxCPM Engine</strong> developed by OpenBMB (Tsinghua University).</p><p>This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB.</p>'
 };
 
 function escapeHtml(value) {
@@ -1684,6 +1722,8 @@ $('#btn-options')?.addEventListener('click', () => {
   openModal('options-modal');
 });
 $('#btn-save-options')?.addEventListener('click', saveOptionsFromModal);
+$('#llm-enabled-input')?.addEventListener('change', syncLlmOptionsVisibility);
+$('#btn-author-info')?.addEventListener('click', () => openModal('author-modal'));
 $('#voice-language-button')?.addEventListener('click', () => {
   $('#voice-language-button')?.setAttribute('aria-expanded', 'true');
   populateLanguageSelect();
@@ -1759,6 +1799,15 @@ historyList?.addEventListener('click', (e) => {
   if (target.dataset.action === 'feedback') requestVoiceFeedback(filename);
 });
 
+document.querySelectorAll('.cockpit-brand, #angel-frame').forEach((fixedSidebarPart) => {
+  fixedSidebarPart.addEventListener('wheel', (event) => {
+    const scrollRegion = document.querySelector('.sidebar-scroll-region');
+    if (!scrollRegion) return;
+    scrollRegion.scrollTop += event.deltaY;
+    event.preventDefault();
+  }, { passive: false });
+});
+
 $('#cfg-input').addEventListener('input', (e) => { $('#val-cfg').textContent = e.target.value; });
 $('#steps-input').addEventListener('input', (e) => { $('#val-steps').textContent = e.target.value; });
 $('#maxlen-input').addEventListener('input', (e) => { $('#val-maxlen').textContent = e.target.value; });
@@ -1804,6 +1853,7 @@ document.querySelectorAll('.term-item').forEach((item) => {
 });
 
 setDownloadDisabled(true);
+applyPromptTextSize(readLargePromptTextEnabled());
 syncCloneToolsVisibility();
 loadDialogueHistory();
 loadPresetLibrary();

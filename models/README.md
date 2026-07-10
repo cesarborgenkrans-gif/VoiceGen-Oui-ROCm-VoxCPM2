@@ -1,3 +1,9 @@
+```text
+     /\_/\
+    ( . . )  pocket clerk is doing its bestie
+    (  v  )
+```
+
 # Models
 
 Place local model snapshots here. The default VoxCPM2 path is:

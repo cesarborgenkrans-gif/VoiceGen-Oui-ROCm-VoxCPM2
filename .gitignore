@@ -7,10 +7,15 @@ __pycache__/
 *.pyo
 .pytest_cache/
 .mypy_cache/
-
+.ruff_cache/
+.coverage
+htmlcov/
 # Local model weights and Hugging Face caches
 models/*
 !models/README.md
+!models/VoxCPM2/
+models/VoxCPM2/*
+!models/VoxCPM2/README.md
 .cache/
 .huggingface/
 *.safetensors
@@ -25,16 +30,9 @@ outputs/*
 *.mp3
 *.flac
 *.ogg
-mid-test/*.wav
-mid-test/*.log
 
-# ROCm bring-up snapshots and local installers
-mid-test/
-mid-test/snapshots/
-mid-test/*.deb
-mid-test/test_*.py
-mid-test/_gpu_synth_*.py
-mid-test/start_waifuvoice_vox*.ps1
+# Global logs
+*.log
 
 # Recycled design experiments and machine-local shortcuts
 _app_recycle/
@@ -58,3 +56,8 @@ personas/presets_custom.json
 Thumbs.db
 .idea/
 .vscode/
+*.swp
+*~
+
+# Frontend/JS tooling
+node_modules/

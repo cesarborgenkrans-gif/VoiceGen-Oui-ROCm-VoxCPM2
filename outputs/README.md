@@ -1,3 +1,9 @@
+```text
+      __
+    (o o)  badge bird says hiii but professional-ish
+     /V\
+```
+
 # Outputs
 
 Generated audio files and `metadata.json` are written here by default.

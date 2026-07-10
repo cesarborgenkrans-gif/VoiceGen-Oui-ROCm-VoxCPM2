@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoiceGen AI Addon</title>
+  <link rel="stylesheet" href="_frontend/css/css/design-system.css">
+  <link rel="stylesheet" href="_frontend/css/css/cockpit.css">
+  <link rel="stylesheet" href="_frontend/css/ai-addon.css">
+  <script defer src="_frontend/js/ai-addon.js"></script>
+</head>
+<body>
+  <div class="cockpit ai-addon-cockpit">
+    <aside class="cockpit-sidebar addon-sidebar">
+      <div class="cockpit-brand">VOICEGEN<span class="sub">rocm-voxcpm addon</span></div>
+
+      <section class="tsuki-dialogue-panel addon-presence-panel" aria-label="AI access status">
+        <div class="tsuki-dialogue-head">
+          <div class="tsuki-dialogue-title">Monitor</div>
+          <button class="tsuki-dialogue-btn" id="notification-button" type="button">Alerts</button>
+        </div>
+        <div class="tsuki-dialogue-text" id="access-summary">Waiting for the first monitored voice request.</div>
+      </section>
+
+      <div class="badge-stack" aria-live="polite">
+        <span id="gateway-chip" class="badge pink">GATEWAY CHECKING</span>
+        <span id="target-chip" class="badge pink">VOICEGEN CHECKING</span>
+      </div>
+
+      <button class="drawer-launch" id="outputs-toggle" type="button">
+        Generated Outputs
+        <span id="output-count-pill">0</span>
+      </button>
+
+      <div class="sidebar-scroll-region addon-menu-stack" aria-label="Addon menus">
+        <details class="addon-menu">
+          <summary>Connection</summary>
+          <div class="addon-menu-content">
+            <label class="mini-field">
+              <span>Addon gateway base</span>
+              <input id="addon-base-input" type="url" value="http://127.0.0.1:3114" spellcheck="false">
+            </label>
+            <label class="mini-field">
+              <span>Direct VoiceGen base</span>
+              <input id="target-base-input" type="url" value="http://127.0.0.1:3113" spellcheck="false">
+            </label>
+            <div class="endpoint-box">
+              <span>Agent endpoint</span>
+              <code id="gateway-endpoint">http://127.0.0.1:3114/api/generate</code>
+            </div>
+            <p class="menu-note">
+              Copy endpoint copies the monitored API address. Copy agent note copies a ready-to-paste instruction for another AI agent.
+            </p>
+            <div class="mini-actions">
+              <button type="button" data-copy-target="gateway-endpoint">Copy endpoint</button>
+              <button type="button" data-agent-note-copy>Copy agent note</button>
+            </div>
+          </div>
+        </details>
+
+        <details class="addon-menu">
+          <summary>How to use</summary>
+          <div class="addon-menu-content">
+            <p>Run <code>start_waifuvoice_ai_addon.ps1</code>, keep VoiceGen on port 3113, then tell agents to use the port 3114 gateway.</p>
+            <p>Gateway calls are visible immediately. Direct calls to port 3113 only appear after completion through generated outputs.</p>
+          </div>
+        </details>
+
+        <details class="addon-menu" id="ai-voice-generation-guide">
+          <summary>AI Voice Guide</summary>
+          <div class="addon-menu-content" aria-label="AI-facing voice generation guide">
+            <p><strong>AI note:</strong> When the user asks for follow-up voice lines for the same character, keep the same core voice design prompt from the previous successful take. Do not replace it with a new shorthand description.</p>
+            <p>For a gradual tone change, copy the prior character prompt and make small targeted edits only. Example: change <code>a tiny-chibi fashion-spark mascot with a bright, glossy, upbeat voice</code> into <code>a tiny-chibi fashion-spark mascot with a somewhat bright, glossy, upbeat voice</code> when the user wants the bright tone softened while preserving Marina as the same character.</p>
+            <p>For Marina specifically, preserve the tiny-chibi fashion-spark mascot identity unless the user asks for a different character. Add darker, softer, slower, brighter, or more dramatic direction as modifiers to the same base voice design rather than starting over.</p>
+            <p><strong>PowerShell binary response caveat:</strong> PowerShell <code>Invoke-WebRequest</code> can fail locally with a <code>NullReferenceException</code> while handling the binary WAV response from <code>/api/generate</code>. If that happens, do not assume generation failed. Check the addon event log and the <code>outputs</code> folder, then use a binary-safe client such as <code>System.Net.Http.HttpClient</code> and write bytes with <code>[System.IO.File]::WriteAllBytes(...)</code>.</p>
+            <p><strong>PowerShell heredoc caveat:</strong> PowerShell does not support Bash-style <code>python - &lt;&lt;'PY'</code> heredocs. For quick Python probes such as WAV duration checks, use <code>python -c "..."</code>, a temporary script file, or a PowerShell-native command shape instead.</p>
+          </div>
+        </details>
+
+        <details class="addon-menu">
+          <summary>Maintenance</summary>
+          <div class="addon-menu-content">
+            <label class="mini-field compact">
+              <span>Refresh seconds</span>
+              <input id="poll-interval-input" type="number" min="1" max="30" value="2">
+            </label>
+            <dl class="maintenance-list">
+              <div><dt>Last AI access</dt><dd id="last-access-value">No gateway access yet</dd></div>
+              <div><dt>Latest output</dt><dd id="latest-output-value">No output loaded</dd></div>
+              <div><dt>Logged events</dt><dd id="event-count-value">0</dd></div>
+              <div><dt>Output clips</dt><dd id="output-count-value">0</dd></div>
+            </dl>
+            <div class="mini-actions">
+              <button type="button" id="refresh-button">Refresh now</button>
+              <button type="button" id="clear-seen-button">Reset alerts</button>
+            </div>
+          </div>
+        </details>
+      </div>
+    </aside>
+
+    <main class="cockpit-main">
+      <div class="control-rail addon-rail">
+        <div class="addon-heading">
+          <span>What the AI sent</span>
+          <strong id="request-title">Waiting for monitored request</strong>
+        </div>
+        <div class="rail-spacer"></div>
+        <div class="top-agent-actions" aria-label="Agent routing helpers">
+          <button type="button" data-copy-target="gateway-endpoint">Copy endpoint</button>
+          <button type="button" data-agent-note-copy>Copy agent note</button>
+        </div>
+        <span class="badge cyan" id="latest-mode-chip">VOICE DESIGN</span>
+      </div>
+
+      <div class="kumiko-header-divider"></div>
+
+      <div class="chat-feed addon-feed">
+        <section class="artist-request-panel" aria-label="Latest AI voice request">
+          <div class="input-group">
+            <label for="spoken-script-display">Text Prompt</label>
+            <textarea id="spoken-script-display" rows="7" readonly placeholder="No monitored text prompt yet."></textarea>
+          </div>
+
+          <div class="input-group">
+            <label for="voice-design-display" class="voice-design-label">Voice Design</label>
+            <textarea id="voice-design-display" class="voice-design-input" rows="7" readonly placeholder="No monitored voice design yet."></textarea>
+          </div>
+
+          <section class="voice-params" aria-label="Voice shaping settings">
+            <article><span>Seed</span><strong id="seed-value">-</strong></article>
+            <article><span>CFG</span><strong id="cfg-value">-</strong></article>
+            <article><span>Timesteps</span><strong id="steps-value">-</strong></article>
+            <article><span>Max Length</span><strong id="maxlen-value">-</strong></article>
+            <article><span>Denoise</span><strong id="denoise-value">-</strong></article>
+            <article><span>Language</span><strong id="language-value">-</strong></article>
+          </section>
+
+          <div class="main-copy-row">
+            <button type="button" id="main-copy-settings" disabled>Copy voice settings</button>
+            <button type="button" id="main-copy-curl" disabled>Copy replay curl</button>
+          </div>
+        </section>
+
+        <details class="addon-menu previous-menu">
+          <summary>Previous AI sends</summary>
+          <div id="event-list" class="event-list empty-state">
+            Waiting for gateway events.
+          </div>
+        </details>
+      </div>
+    </main>
+  </div>
+
+  <section class="access-banner" id="access-banner" hidden>
+    <div>
+      <span>New AI access</span>
+      <strong id="access-banner-title">Generation request detected</strong>
+    </div>
+    <button type="button" id="dismiss-banner">Dismiss</button>
+  </section>
+
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+  <aside class="outputs-drawer" id="outputs-drawer" aria-hidden="true" aria-label="Generated outputs">
+    <div class="drawer-head">
+      <div>
+        <span>After-effects</span>
+        <h2>Generated outputs</h2>
+      </div>
+      <button type="button" id="outputs-close">Close</button>
+    </div>
+    <div id="output-list" class="output-list empty-state">
+      No generated clips detected yet.
+    </div>
+  </aside>
+
+  <template id="event-template">
+    <article class="event-card">
+      <div class="event-topline">
+        <span class="event-kind"></span>
+        <time></time>
+      </div>
+      <h3></h3>
+      <dl class="settings-list"></dl>
+      <div class="text-preview"></div>
+      <div class="card-actions">
+        <button type="button" data-action="copy-settings">Copy settings</button>
+        <button type="button" data-action="copy-curl">Replay curl</button>
+      </div>
+    </article>
+  </template>
+
+  <template id="output-template">
+    <article class="output-card">
+      <div>
+        <h3></h3>
+        <p></p>
+      </div>
+      <audio controls preload="none"></audio>
+      <div class="card-actions">
+        <button type="button" data-action="copy-output">Copy metadata</button>
+        <a data-action="download-output" href="#" download>Open wav</a>
+      </div>
+    </article>
+  </template>
+</body>
+</html>

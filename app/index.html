@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WaifuVoice Forge</title>
-  <meta name="description" content="A local-first voice forge UI tuned for VoxCPM2 voice synthesis." />
+  <title>VoiceGen (rocm-voxcpm)</title>
+  <meta name="description" content="ROCm-powered VoxCPM2 voice generation for AMD GPU users." />
+  <link rel="icon" type="image/png" href="_frontend/assets/img/waifuvoice-favicon.png" />
   <link rel="stylesheet" href="_frontend/css/css/design-system.css" />
   <link rel="stylesheet" href="_frontend/css/css/shape-library.css" />
   <link rel="stylesheet" href="_frontend/css/css/cockpit.css" />
@@ -42,6 +43,11 @@
     }
     .voice-design-label { color: #ff69b4 !important; text-shadow: 0 0 8px rgba(255,105,180,0.4); }
     .voice-design-input:focus { border-color: #ff69b4 !important; box-shadow: 0 0 20px rgba(255, 105, 180, 0.5) !important; }
+    body.prompt-text-large #text-input,
+    body.prompt-text-large #voice-input {
+      font-size: 19.5px;
+      line-height: 1.45;
+    }
     
     .action-row { display: flex; gap: 12px; margin-top: 10px; align-items: center; }
     .action-row button {
@@ -66,32 +72,44 @@
     .cockpit-sidebar {
       scrollbar-color: rgba(49, 199, 218, 0.85) rgba(211, 245, 250, 0.24);
       scrollbar-width: thin;
+      overflow: hidden;
     }
-    .cockpit-sidebar::-webkit-scrollbar { width: 12px; }
-    .cockpit-sidebar::-webkit-scrollbar-track {
+    .sidebar-scroll-region {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      padding: 2px 4px 2px 0;
+      scrollbar-color: rgba(49, 199, 218, 0.85) rgba(211, 245, 250, 0.24);
+      scrollbar-width: thin;
+    }
+    .sidebar-scroll-region::-webkit-scrollbar { width: 12px; }
+    .sidebar-scroll-region::-webkit-scrollbar-track {
       background: linear-gradient(180deg, rgba(211,245,250,0.3), rgba(129,236,236,0.08));
       border-left: 1px solid rgba(129,236,236,0.18);
       border-radius: 999px;
     }
-    .cockpit-sidebar::-webkit-scrollbar-thumb {
+    .sidebar-scroll-region::-webkit-scrollbar-thumb {
       background: linear-gradient(180deg, #b8f7ff, #31c7da 45%, #147790);
       border: 2px solid rgba(245,253,255,0.86);
       border-radius: 999px;
       box-shadow: inset 0 0 0 1px rgba(20,119,144,0.18), 0 0 10px rgba(49,199,218,0.26);
     }
-    .cockpit-sidebar::-webkit-scrollbar-button:single-button {
+    .sidebar-scroll-region::-webkit-scrollbar-button:single-button {
       display: block;
       height: 13px;
       border-radius: 8px;
       background: linear-gradient(180deg, rgba(184,247,255,0.95), rgba(49,199,218,0.86));
       border: 1px solid rgba(20,119,144,0.24);
     }
-    .cockpit-sidebar::-webkit-scrollbar-button:single-button:vertical:decrement {
+    .sidebar-scroll-region::-webkit-scrollbar-button:single-button:vertical:decrement {
       background:
         linear-gradient(45deg, transparent 0 40%, #147790 40% 60%, transparent 60%),
         linear-gradient(180deg, rgba(184,247,255,0.95), rgba(49,199,218,0.86));
     }
-    .cockpit-sidebar::-webkit-scrollbar-button:single-button:vertical:increment {
+    .sidebar-scroll-region::-webkit-scrollbar-button:single-button:vertical:increment {
       background:
         linear-gradient(135deg, transparent 0 40%, #147790 40% 60%, transparent 60%),
         linear-gradient(180deg, rgba(184,247,255,0.95), rgba(49,199,218,0.86));
@@ -400,6 +418,15 @@
       padding: 8px;
       font-size: 12px;
     }
+    .llm-options-fields {
+      display:grid;
+      gap:10px;
+      padding:10px;
+      border:1px solid rgba(20,119,144,0.16);
+      border-radius:6px;
+      background:rgba(255,255,255,0.38);
+    }
+    .llm-options-fields[hidden] { display:none; }
     .options-help { color:#335e66; font-size:12px; line-height:1.45; }
     .dialogue-history-list { display:grid; gap:8px; }
     .dialogue-history-item { border:1px solid rgba(20,119,144,0.18); background:rgba(255,255,255,0.62); color:#18333a; border-radius:4px; padding:8px; text-align:left; cursor:pointer; }
@@ -674,13 +701,62 @@
       place-items:center;
     }
     .inference-panel.is-collapsed .inference-toggle { transform: rotate(180deg); }
+    .app-footer {
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+      padding:2px 2px 0;
+      font-family:var(--font-mono);
+      font-size:10px;
+      color:#456b72;
+      letter-spacing:.3px;
+    }
     .app-trademark {
       font-family:var(--font-mono);
       font-size:10px;
       color:#456b72;
       text-align:right;
-      padding:2px 2px 0;
       letter-spacing:.3px;
+    }
+    .app-author-link {
+      border:0;
+      background:transparent;
+      color:#147790;
+      font-family:var(--font-mono);
+      font-size:10px;
+      letter-spacing:.3px;
+      cursor:pointer;
+      padding:0;
+      text-decoration:underline;
+      text-underline-offset:3px;
+    }
+    .app-author-link:hover,
+    .app-author-link:focus-visible {
+      color:var(--accent-pink);
+      outline:none;
+    }
+    .author-link-grid {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .author-link-grid a {
+      border:1px solid rgba(20,119,144,0.24);
+      background:rgba(255,255,255,0.62);
+      color:#147790;
+      border-radius:4px;
+      padding:7px 9px;
+      font-family:var(--font-mono);
+      font-size:10px;
+      text-transform:uppercase;
+      text-decoration:none;
+    }
+    .author-link-grid a:hover,
+    .author-link-grid a:focus-visible {
+      border-color:var(--accent-pink);
+      color:var(--accent-pink);
+      outline:none;
     }
 
     /* Terminology Guide Overlay */
@@ -731,7 +807,7 @@
   <div class="cockpit">
     <!-- ===== Sidebar ===== -->
     <aside class="cockpit-sidebar">
-      <div class="cockpit-brand">WAIFU <span>VOICE</span><span class="sub">VoxCPM edition</span></div>
+      <div class="cockpit-brand">VOICEGEN<span class="sub">rocm-voxcpm</span></div>
 
       <!-- Angel frame: Tsuki Hoshi's resting spot in the sidebar -->
       <div class="angel-frame theme-cloud" id="angel-frame">
@@ -746,6 +822,7 @@
           <div class="angel-frame-bg-label">✦ TSUKI HOSHI ✦</div>
           </div>
 
+      <div class="sidebar-scroll-region" aria-label="Sidebar controls">
       <section class="tsuki-dialogue-panel" aria-label="Tsuki Hoshi Feedback">
         <div class="tsuki-dialogue-head">
           <div class="tsuki-dialogue-title">Tsuki Hoshi</div>
@@ -813,6 +890,7 @@
           <div class="vram-cooldown-status" id="vram-cooldown-status">One-shot model unload. Next synthesis reloads VoxCPM.</div>
         </div>
       </section>
+      </div>
     </aside>
 
       <!-- ===== Main ===== -->
@@ -948,7 +1026,10 @@
             </div>
           </div>
         </div>
-        <div class="app-trademark">Angel Forge [local:3113]</div>
+        <div class="app-footer">
+          <button class="app-author-link" id="btn-author-info" type="button">sparklesnap.dev</button>
+          <div class="app-trademark">Angel Forge [local:3113]</div>
+        </div>
       </div> <!-- End chat-feed -->
       
       <!-- Terminology Guide Overlay -->
@@ -958,11 +1039,22 @@
           <div class="term-item active" data-term="cfg">CFG Scale</div>
           <div class="term-item" data-term="timesteps">Timesteps</div>
           <div class="term-item" data-term="maxlen">Max Length</div>
+          <div class="term-item" data-term="vocal-seed">Vocal Seed</div>
           <div class="term-item" data-term="denoise">Denoise Audio</div>
           <div class="term-item" data-term="voicedesign">Voice Design</div>
+          <div class="term-item" data-term="preset-library">Preset Library</div>
+          <div class="term-item" data-term="persona-lab">Persona Lab</div>
+          <div class="term-item" data-term="script-samples">Spoken Script Samples</div>
           <div class="term-item" data-term="voicelanguage">VoxCPM2 Language</div>
           <div class="term-item" data-term="personas">Personas</div>
           <div class="term-item" data-term="llmfeedback">LLM Feedback</div>
+          <div class="term-item" data-term="tsuki-dialogue">Tsuki Dialogue</div>
+          <div class="term-item" data-term="queue-history">Queue / History</div>
+          <div class="term-item" data-term="generated-output">Generated Output</div>
+          <div class="term-item" data-term="autoplay">Auto Play</div>
+          <div class="term-item" data-term="options">Options</div>
+          <div class="term-item" data-term="vram-telemetry">VRAM Telemetry</div>
+          <div class="term-item" data-term="cooldown-gpu">Cool Down GPU</div>
           <div class="term-item" data-term="zeroshot">Zero-Shot Clone</div>
           <div class="term-item" data-term="continuation">Continuation</div>
           <div style="flex: 1;"></div>
@@ -981,6 +1073,25 @@
             <button class="modal-close" type="button" data-close-modal="dialogue-modal">Close</button>
           </div>
           <div id="dialogue-modal-body"></div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="author-modal">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2>VoiceGen Author</h2>
+            <button class="modal-close" type="button" data-close-modal="author-modal">Close</button>
+          </div>
+          <div class="options-help">
+            <p><strong>Author:</strong> Cesar Borgenkrans</p>
+            <p><strong>GitHub:</strong> cesarborgenkrans-gif</p>
+            <p><strong>First release:</strong> 2026</p>
+            <p><strong>Website:</strong> sparklesnap.dev, website in progress, soon live.</p>
+          </div>
+          <div class="author-link-grid">
+            <a href="https://github.com/cesarborgenkrans-gif" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+            <a href="https://sparklesnap.dev/" target="_blank" rel="noopener noreferrer">sparklesnap.dev</a>
+          </div>
         </div>
       </div>
 
@@ -1026,33 +1137,31 @@
             <button class="modal-close" type="button" data-close-modal="options-modal">Close</button>
           </div>
           <div class="options-grid">
-            <label><span><input type="checkbox" id="llm-enabled-input"> Enable Local LLM Feedback</span></label>
             <label><span><input type="checkbox" id="clone-tools-enabled-input"> Enable Clone / Continue</span></label>
-            <label>Provider
-              <select id="llm-provider-input">
-                <option value="lmstudio">LM Studio OpenAI-compatible</option>
-                <option value="ollama">Ollama Chat API</option>
-                <option value="openai-compatible">Other OpenAI-compatible Local Server</option>
-              </select>
-            </label>
-            <label>Endpoint
-              <input id="llm-endpoint-input" type="text" value="http://127.0.0.1:1234">
-            </label>
-            <label>Model
-              <input id="llm-model-input" type="text" placeholder="e.g. qwen2.5:3b-instruct-q4, llama-3.2-3b-instruct">
-            </label>
-            <label>Recommended Context Tokens
-              <select id="llm-context-input">
-                <option value="4096">4096</option>
-                <option value="8192">8192</option>
-              </select>
-            </label>
+            <label><span><input type="checkbox" id="llm-enabled-input"> Enable Local LLM Feedback</span></label>
+            <div class="llm-options-fields" id="llm-options-fields" hidden>
+              <label>Provider
+                <select id="llm-provider-input">
+                  <option value="lmstudio">LM Studio OpenAI-compatible</option>
+                  <option value="ollama">Ollama Chat API</option>
+                  <option value="openai-compatible">Other OpenAI-compatible Local Server</option>
+                </select>
+              </label>
+              <label>Endpoint
+                <input id="llm-endpoint-input" type="text" value="http://127.0.0.1:1234">
+              </label>
+              <label>Model
+                <input id="llm-model-input" type="text" placeholder="e.g. qwen2.5:3b-instruct-q4, llama-3.2-3b-instruct">
+              </label>
+              <div class="options-help">These fields connect Tsuki Hoshi feedback to your local LM Studio, Ollama, or OpenAI-compatible server.</div>
+            </div>
             <label><span><input type="checkbox" id="vram-warning-enabled-input" checked> VRAM overload warnings</span></label>
             <label><span><input type="checkbox" id="vram-telemetry-visible-input" checked> Show VRAM telemetry</span></label>
+            <label><span><input type="checkbox" id="large-prompt-text-input"> 1.5x Spoken Script / Voice Design text</span></label>
             <button class="top-action" id="btn-save-options" type="button">Save Options</button>
           </div>
           <div class="options-help">
-            Recommended: LM Studio or Ollama with a small instruct model and either 4096 or 8192 context tokens. This feature only needs a small window; use modern edge models around 1B-4B parameters or small quantizations that fit within about 4GB VRAM/RAM, such as Qwen, Gemma, Llama, Phi, or other efficient local assistant models.
+            Recommended: LM Studio or Ollama with a small instruct model. This feature only needs a small context window; use modern edge models around 1B-4B parameters or small quantizations that fit within about 4GB VRAM/RAM, such as Qwen, Gemma, Llama, Phi, or other efficient local assistant models.
           </div>
         </div>
       </div>

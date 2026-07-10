@@ -1,72 +1,74 @@
-# WaifuVoice Forge VoxCPM
+![VoiceGen rocm-voxcpm](app/_frontend/assets/img/waifuvoice-logo-rocm.png)
 
-Local-first VoxCPM voice synthesis UI for giving waifus, husbandos, mascots, and original personas a voice on your own machine.
+# VoiceGen (rocm-voxcpm)
 
-The repository root is the **WaifuVoice lobby**: user-owned models, generated audio, and custom personas live beside the app code instead of inside it.
+**ROCm-powered VoxCPM2 voice generation for AMD GPU users.**
 
-```text
-WaifuVoice/
-  app/                  source code and UI
-  models/               local model snapshots, ignored by git
-  outputs/              generated audio, ignored by git
-  personas/             custom Persona Lab data, ignored by git except examples
-```
+VoiceGen is a local-first GUI for testing high-quality VoxCPM2 voice generation on AMD GPUs through ROCm. The current verified path runs on an **RX 7900 XTX**. The next step is community testing: try it on your AMD card, report what works, and help turn this into a useful starting point for ROCm voice generation.
 
-The current verified development path runs VoxCPM2 on an AMD Radeon RX 7900 XTX through Windows + WSL2 + Ubuntu 22.04 + ROCm 7.2 + ROCDXG + PyTorch ROCm wheels. Your WSL username, project path, virtual environment path, and model path do not need to match the author's machine.
+![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
 
-## Current Status
+## Try It, Test It, Improve It
 
-- VoxCPM2 generation works end-to-end on AMD ROCm through WSL2.
-- The ROCm 7 launcher is `start_waifuvoice_vox_wsl_rocm7.ps1`.
-- The backend serves the app at `http://localhost:3113`.
-- Math SDPA is intentionally used. Flash SDPA was tested on the current `gfx1100` stack and was not promoted because it did not improve generation speed meaningfully.
+If you have an AMD GPU and want VoxCPM2 off the CPU path, this repo is for you.
 
-```text
-  __
-(o o)  BADGE BIRD
- /V\   shiny lil status board
-```
+- **Try it** if you run Windows + WSL2 and want a ROCm route for VoxCPM2.
+- **Test another AMD card** if you have something besides an RX 7900 XTX.
+- **Open a report** if setup works, partly works, or fails in a useful way.
+- **Send fixes** for ROCm setup notes, launcher portability, docs, or runtime behavior.
 
-## What Is Not Committed
+The most helpful contribution right now is a hardware test report: GPU model, ROCm version, PyTorch ROCm result, and whether VoxCPM2 generation completed. Use [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md).
 
-This repository ships source code, setup instructions, and lightweight placeholder files only.
+## What This Is
 
-- Model weights are not committed. Default location: `models/VoxCPM2/`.
-- Python virtual environments are not committed.
-- Generated WAV files are not committed. Default location: `outputs/`.
-- Custom Persona Lab data is not committed. Default file: `personas/presets_custom.json`.
-- Local ROCm experiments, snapshots, installers, and machine-specific notes are not committed.
+VoiceGen gives you:
 
-```text
- /\_/\
-( . . )  POCKET GUIDE
-(  v  )  smol setup helper, big checklist energy
-```
+- A browser GUI for writing a spoken script and voice design.
+- A Windows PowerShell launcher for the WSL2 + ROCm + VoxCPM2 path.
+- Local output/history folders for generated audio.
+- Setup notes for ROCm 7.2, ROCDXG, and PyTorch ROCm wheels.
+- A contribution path for AMD GPU compatibility results.
 
-## Install
+This is not a polished commercial product. It is an open starting point for ROCm users who want to get VoxCPM2 voice generation running locally and make the path easier for the next person.
 
-Create a Python environment inside WSL. This path is only an example:
+## Verified So Far
+
+The current confirmed path is:
+
+- AMD Radeon RX 7900 XTX / `gfx1100`
+- Windows + WSL2
+- Ubuntu 22.04
+- ROCm 7.2 packages
+- ROCDXG from `ROCm/librocdxg`
+- PyTorch ROCm wheels
+- Local VoxCPM2 model files
+
+Other AMD GPUs may work, but they are not confirmed yet. Please contribute test results instead of assuming support.
+
+## Quick Start
+
+Clone the repo, then create a Python environment inside WSL. This path is only an example:
 
 ```bash
 python3 -m venv ~/waifuvoice-rocm72
 source ~/waifuvoice-rocm72/bin/activate
 pip install -r requirements.txt
+pip check
 ```
 
-Install ROCm 7.2-compatible system packages and ROCDXG inside WSL before running the app. The short version is:
+Install the ROCm/WSL pieces before running the app:
 
-- Use WSL2 with Ubuntu 22.04.
-- Use an AMD Windows driver with WSL ROCm support.
-- Confirm `/dev/dxg` exists inside WSL.
-- Install ROCm 7.2 packages for Ubuntu 22.04.
-- Build and install `ROCm/librocdxg`.
-- Verify `/opt/rocm/lib/librocdxg.so` and `/opt/rocm/share/rocdxg/dids.conf`.
-- Verify `rocminfo` sees your AMD GPU.
-- Install PyTorch ROCm 7.2 wheels in the WSL Python environment.
+- WSL2 with Ubuntu 22.04.
+- AMD Windows driver with WSL ROCm support.
+- `/dev/dxg` visible inside WSL.
+- ROCm 7.2 packages for Ubuntu 22.04.
+- Built and installed `ROCm/librocdxg`.
+- PyTorch ROCm wheels installed in the WSL environment.
+- `rocminfo` sees your AMD GPU.
 
-See [docs/ROCM_WSL_SETUP.md](docs/ROCM_WSL_SETUP.md) for the detailed process and validation commands.
+The detailed setup guide is [docs/ROCM_WSL_SETUP.md](docs/ROCM_WSL_SETUP.md).
 
-## Configure
+## Model Files
 
 Download VoxCPM2 model files locally and place them under:
 
@@ -74,23 +76,11 @@ Download VoxCPM2 model files locally and place them under:
 models/VoxCPM2/
 ```
 
-Or point the app at another model path:
+Model weights are not committed to this repo. You can also keep the model elsewhere:
 
 ```powershell
 $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/VoxCPM2"
 ```
-
-The launcher has defaults, but all important local paths are configurable:
-
-```powershell
-$env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
-$env:WAIFUVOICE_WSL_USER = "root"
-$env:WAIFUVOICE_WSL_VENV = "/home/you/waifuvoice-rocm72"
-$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/WaifuVoice"
-$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/WaifuVoice/app"
-```
-
-If `WAIFUVOICE_DATA_ROOT` and `WAIFUVOICE_APP_ROOT` are not set, the launcher converts the cloned Windows folder and its `app/` child to WSL paths automatically.
 
 ## Run
 
@@ -106,22 +96,44 @@ Then open:
 http://localhost:3113
 ```
 
-The launcher binds the server inside WSL with `HOST=0.0.0.0` so Windows can reach it through `localhost:3113`. The Python server defaults to `HOST=127.0.0.1` when run directly.
+The launcher name still contains `waifuvoice` for v1 compatibility. The same is true for `WAIFUVOICE_*` environment variables, localStorage keys, and output filename prefixes. They are internal compatibility names, not the public project name.
 
-Opening `app/index.html` directly with `file:///` can call the local backend at `http://localhost:3113`, but the HTTP route is the preferred path.
+Optional path overrides:
 
-## License
-
-The app code in this repository is released under the MIT License. Third-party models, libraries, and assets remain under their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
----
-
-## Kawaii Companion Notes
-
-```text
- /\_/\
-( ^.^ )  thanks for visiting
- > ^ <   may your voices render cleanly
+```powershell
+$env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
+$env:WAIFUVOICE_WSL_USER = "root"
+$env:WAIFUVOICE_WSL_VENV = "/root/voxcpm-wsl-rocm72"
+$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/VoiceGen"
+$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/VoiceGen/app"
 ```
 
-Small local tools deserve a little warmth. Have fun, keep consent in the loop, and let the generated voices stay kind.
+## What Is Not Committed
+
+This repository ships source code, setup instructions, and lightweight placeholder files only.
+
+- Model weights.
+- Python virtual environments.
+- Generated WAV files.
+- Custom Persona Lab data.
+- Local ROCm experiments, installers, logs, and machine-specific notes.
+
+## Contributing
+
+Contributions are welcome when they make AMD GPU voice generation easier to reproduce.
+
+Good first contributions:
+
+- A test report for another AMD GPU.
+- A clearer ROCm/WSL validation step.
+- A launcher fix for a different local path or WSL user.
+- A PyTorch ROCm compatibility note.
+- A docs correction that saves someone else an hour.
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), or open a report using [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md).
+
+## License And Trademarks
+
+The app code in this repository is released under the MIT License. Third-party models, libraries, and assets remain under their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).
+
+This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.
