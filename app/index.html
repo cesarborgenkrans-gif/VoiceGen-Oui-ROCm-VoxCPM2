@@ -232,16 +232,22 @@
     .top-control { display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); border-radius:4px; padding:5px 8px; }
     .top-control label { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
     .top-select { min-width:118px; max-width:160px; padding:6px 8px; font-size:11px; border-radius:4px; animation:none; background:rgba(0,0,0,0.26); cursor:pointer; }
-    .voice-language-control { background:rgba(71, 185, 116, 0.12); border-color:rgba(47, 155, 91, 0.38); }
-    .voice-language-button { display:grid; gap:1px; min-width:172px; border:1px solid rgba(47, 155, 91, 0.68); background:linear-gradient(135deg, rgba(97, 218, 137, 0.28), rgba(41, 153, 85, 0.14)); color:#18333a; border-radius:999px; padding:6px 11px; cursor:pointer; text-align:left; animation:voiceLanguageInvitation 2.4s cubic-bezier(0.2, 0, 0, 1) 3 both; }
-    .voice-language-button span { font-family:var(--font-mono); font-size:9px; color:#167241; text-transform:uppercase; letter-spacing:1px; }
+    .voice-language-control { border:0; background:transparent; padding:0; }
+    .voice-language-button { display:grid; gap:1px; min-width:172px; position:relative; isolation:isolate; overflow:hidden; border:0; background:linear-gradient(135deg, rgba(163, 233, 183, 0.48), rgba(95, 194, 132, 0.24)); color:#18333a; border-radius:6px; padding:7px 12px; cursor:pointer; text-align:left; box-shadow:inset 0 0 0 1px rgba(31, 124, 70, 0.16), 0 3px 10px rgba(41, 153, 85, 0.08); transition:background 180ms ease, box-shadow 180ms ease; }
+    .voice-language-button > span:not(.voice-language-signal), .voice-language-button > strong { position:relative; z-index:1; }
+    .voice-language-button > span:not(.voice-language-signal) { font-family:var(--font-mono); font-size:9px; color:#167241; text-transform:uppercase; letter-spacing:1px; }
     .voice-language-button strong { font-size:12px; letter-spacing:0; }
-    .voice-language-button:hover, .voice-language-button:focus-visible { border-color:#167241; background:linear-gradient(135deg, rgba(97, 218, 137, 0.42), rgba(41, 153, 85, 0.22)); box-shadow:0 0 0 3px rgba(71, 185, 116, 0.22); outline:none; }
-    @keyframes voiceLanguageInvitation {
-      0%, 100% { box-shadow:0 0 0 0 rgba(71, 185, 116, 0); transform:translateY(0); }
-      45% { box-shadow:0 0 0 5px rgba(71, 185, 116, 0.18); transform:translateY(-1px); }
-    }
-    @media (prefers-reduced-motion: reduce) { .voice-language-button { animation:none; } }
+    .voice-language-signal { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+    .voice-language-signal::before { content:""; position:absolute; inset:-60% -34%; background:linear-gradient(108deg, transparent 42%, rgba(255,255,255,0.52) 49%, rgba(210,255,224,0.22) 53%, transparent 61%); transform:translateX(-42%) rotate(2deg); animation:voiceLanguageSweep 7.6s ease-in-out infinite; }
+    .voice-language-signal i { position:absolute; width:3px; height:3px; border-radius:50%; background:rgba(24, 120, 63, 0.48); box-shadow:0 0 7px rgba(111, 219, 148, 0.4); animation:voiceLanguageParticles 5.4s ease-in-out infinite; }
+    .voice-language-signal i:nth-child(1) { top:24%; left:14%; animation-delay:-0.7s; }
+    .voice-language-signal i:nth-child(2) { top:68%; left:42%; animation-delay:-2.3s; }
+    .voice-language-signal i:nth-child(3) { top:31%; left:76%; animation-delay:-3.9s; }
+    .voice-language-button:hover { background:linear-gradient(135deg, rgba(178, 242, 194, 0.64), rgba(100, 202, 139, 0.32)); box-shadow:inset 0 0 0 1px rgba(31, 124, 70, 0.22), 0 5px 14px rgba(41, 153, 85, 0.12); }
+    .voice-language-button:focus-visible { outline:2px solid rgba(22, 114, 65, 0.62); outline-offset:2px; }
+    @keyframes voiceLanguageSweep { 0%, 66%, 100% { transform:translateX(-42%) rotate(2deg); opacity:0; } 12%, 48% { opacity:0.72; } 56% { transform:translateX(42%) rotate(2deg); opacity:0; } }
+    @keyframes voiceLanguageParticles { 0%, 100% { transform:translate3d(0, 0, 0) scale(0.72); opacity:0.16; } 43% { transform:translate3d(15px, -4px, 0) scale(1); opacity:0.7; } 68% { transform:translate3d(24px, 2px, 0) scale(0.82); opacity:0.26; } }
+    @media (prefers-reduced-motion: reduce) { .voice-language-signal::before, .voice-language-signal i { animation:none; } }
     .top-action { border:1px solid var(--accent-cyan); background:rgba(0,255,255,0.1); color:var(--accent-cyan); border-radius:4px; padding:8px 10px; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; cursor:pointer; font-weight:bold; }
     .top-action.active { border-color:var(--accent-pink); color:var(--accent-pink); background:rgba(255,0,128,0.12); }
 
@@ -958,6 +964,7 @@
           <button id="voice-language-button" class="voice-language-button" type="button" aria-haspopup="dialog" aria-expanded="false">
             <span>VoxCPM2 Voice Language</span>
             <strong id="voice-language-current">English</strong>
+            <span class="voice-language-signal" aria-hidden="true"><i></i><i></i><i></i></span>
           </button>
           <select id="language-select" class="top-select" aria-label="VoxCPM2 generation language" hidden>
             <option value="English">English</option>
