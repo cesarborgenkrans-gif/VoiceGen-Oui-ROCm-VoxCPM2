@@ -6,7 +6,7 @@
 
 ## Listen
 
-| Voice sample 01 | Voice sample 02 |
+| Sales pitch | Helpful narrator |
 | --- | --- |
 | [▶ Play WAV](https://github.com/cesarborgenkrans-gif/attach/raw/main/audio/voicegen-sample-01.wav) | [▶ Play WAV](https://github.com/cesarborgenkrans-gif/attach/raw/main/audio/voicegen-sample-02.wav) |
 
