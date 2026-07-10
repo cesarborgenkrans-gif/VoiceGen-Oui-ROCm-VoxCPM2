@@ -1,6 +1,6 @@
 # ROCm + WSL2 Setup Notes
 
-This document summarizes the AMD GPU path used by VoiceGen (rocm-voxcpm). It is written as a reproducible setup guide, not as a dump of local development notes.
+This document summarizes the AMD GPU path used by VoiceGen Oui! (ROCm-VoxCPM2). It is written as a reproducible setup guide, not as a dump of local development notes.
 
 The verified development target was:
 
@@ -93,8 +93,8 @@ For an RX 7900 XTX, expect `gfx1100` somewhere in the output.
 Create a WSL virtual environment wherever you prefer:
 
 ```bash
-python3 -m venv ~/waifuvoice-rocm72
-source ~/waifuvoice-rocm72/bin/activate
+python3 -m venv ~/voicegen-oui-rocm72
+source ~/voicegen-oui-rocm72/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 pip check
@@ -165,21 +165,21 @@ Those old flags were useful for a previous ROCm path, but they are intentionally
 From Windows PowerShell:
 
 ```powershell
-.\start_voicegen_voxcpm_wsl_rocm7.ps1
+.\start_voicegen_oui_voxcpm_wsl_rocm7.ps1
 ```
 
 Optional launcher overrides:
 
 ```powershell
-$env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
-$env:WAIFUVOICE_WSL_USER = "root"
-$env:WAIFUVOICE_WSL_VENV = "/root/voxcpm-wsl-rocm72"
-$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/VoiceGen"
-$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/VoiceGen/app"
+$env:VOICEGEN_OUI_WSL_DISTRO = "Ubuntu-22.04"
+$env:VOICEGEN_OUI_WSL_USER = "root"
+$env:VOICEGEN_OUI_WSL_VENV = "/root/voxcpm-wsl-rocm72"
+$env:VOICEGEN_OUI_DATA_ROOT = "$env:LOCALAPPDATA\VoiceGenOui"
+$env:VOICEGEN_OUI_APP_ROOT = "D:\path\to\VoiceGen-Oui-ROCm-VoxCPM2\app"
 $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/models/VoxCPM2"
 ```
 
-If `WAIFUVOICE_WSL_VENV` is not set, the launcher checks `waifuvoice-rocm72`, `voxcpm-wsl-rocm72`, and `voxcpm-wsl-rocm` under the selected WSL user home.
+If `VOICEGEN_OUI_WSL_VENV` is not set, the launcher checks `voicegen-oui-rocm72`, `voxcpm-wsl-rocm72`, and `voxcpm-wsl-rocm` under the selected WSL user home.
 
 Open:
 

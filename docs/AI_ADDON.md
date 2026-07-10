@@ -1,4 +1,4 @@
-# VoiceGen AI Addon
+# VoiceGen Oui! AI Addon
 
 This addon is an add-only monitor and gateway for AI-driven VoiceGen usage. It does not modify the existing VoiceGen frontend, backend, models, personas, or output code.
 
@@ -19,7 +19,7 @@ When an AI agent generates a voice, the addon gives the user a separate screen t
 - `app/_frontend/css/ai-addon.css` - dashboard styling.
 - `app/_frontend/js/ai-addon.js` - dashboard polling, notifications, copy buttons, and rendering.
 - `app/_backend/ai_addon_server.py` - separate gateway and monitor server.
-- `start_voicegen_ai_addon.ps1` - Windows launcher for the addon.
+- `start_voicegen_oui_ai_addon.ps1` - Windows launcher for the addon.
 - `docs/AI_ADDON.md` - this guide.
 
 ## Recommended Run Flow
@@ -28,7 +28,7 @@ When an AI agent generates a voice, the addon gives the user a separate screen t
 2. Start the addon:
 
 ```powershell
-.\start_voicegen_ai_addon.ps1
+.\start_voicegen_oui_ai_addon.ps1
 ```
 
 3. Open the addon dashboard:
@@ -87,12 +87,12 @@ The log is capped to the most recent 200 events by default. It stores text and p
 Optional configuration:
 
 ```powershell
-$env:WAIFUVOICE_AI_ADDON_PORT = "3114"
-$env:WAIFUVOICE_AI_ADDON_TARGET = "http://127.0.0.1:3113"
-$env:WAIFUVOICE_AI_ADDON_LOG = "D:\path\to\ai_addon_events.json"
-$env:WAIFUVOICE_AI_ADDON_MAX_EVENTS = "200"
-$env:WAIFUVOICE_AI_ADDON_TEXT_STORE_LIMIT = "24000"
-$env:WAIFUVOICE_AI_ADDON_PROXY_TIMEOUT = "900"
+$env:VOICEGEN_OUI_AI_ADDON_PORT = "3114"
+$env:VOICEGEN_OUI_AI_ADDON_TARGET = "http://127.0.0.1:3113"
+$env:VOICEGEN_OUI_AI_ADDON_LOG = "D:\path\to\ai_addon_events.json"
+$env:VOICEGEN_OUI_AI_ADDON_MAX_EVENTS = "200"
+$env:VOICEGEN_OUI_AI_ADDON_TEXT_STORE_LIMIT = "24000"
+$env:VOICEGEN_OUI_AI_ADDON_PROXY_TIMEOUT = "900"
 ```
 
 ## Agent Instruction Snippet
@@ -100,7 +100,7 @@ $env:WAIFUVOICE_AI_ADDON_PROXY_TIMEOUT = "900"
 Use this when instructing an AI agent:
 
 ```text
-Use the VoiceGen AI Addon gateway so the user can monitor voice generation.
+Use the VoiceGen Oui! AI Addon gateway so the user can monitor voice generation.
 POST JSON to http://127.0.0.1:3114/api/generate.
 Include text, voice_design, language, mode, cfg_value, inference_timesteps, max_len, seed, denoise, preset_state, and consent_ack when relevant.
 Do not call the direct VoiceGen /api/generate endpoint unless the user explicitly asks to bypass monitoring.

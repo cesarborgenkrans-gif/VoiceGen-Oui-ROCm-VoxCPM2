@@ -2,7 +2,7 @@ import os
 
 
 GIB = 1024 ** 3
-DEFAULT_REQUIRED_GIB = float(os.environ.get("WAIFUVOICE_VRAM_REQUIRED_GIB", "7.0"))
+DEFAULT_REQUIRED_GIB = float(os.environ.get("VOICEGEN_OUI_VRAM_REQUIRED_GIB") or os.environ.get("WAIFUVOICE_VRAM_REQUIRED_GIB") or "7.0")
 
 
 def _round_gib(value):

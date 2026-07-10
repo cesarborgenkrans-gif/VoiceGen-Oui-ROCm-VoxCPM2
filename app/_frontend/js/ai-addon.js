@@ -3,10 +3,10 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
   const STORAGE = {
-    addonBase: 'waifuvoice.aiAddon.addonBase.v1',
-    targetBase: 'waifuvoice.aiAddon.targetBase.v1',
-    pollSeconds: 'waifuvoice.aiAddon.pollSeconds.v1',
-    seenEvents: 'waifuvoice.aiAddon.seenEvents.v1'
+    addonBase: 'voicegen_oui.aiAddon.addonBase.v1',
+    targetBase: 'voicegen_oui.aiAddon.targetBase.v1',
+    pollSeconds: 'voicegen_oui.aiAddon.pollSeconds.v1',
+    seenEvents: 'voicegen_oui.aiAddon.seenEvents.v1'
   };
 
   const state = {
@@ -169,7 +169,7 @@
 
   function agentNote() {
     return [
-      'Use the VoiceGen AI Addon gateway so the user can monitor voice generation.',
+      'Use the VoiceGen Oui! AI Addon gateway so the user can monitor voice generation.',
       `POST JSON to ${addonUrl('/api/generate')}.`,
       'Include text, voice_design, language, mode, cfg_value, inference_timesteps, max_len, seed, denoise, preset_state, and consent_ack when relevant.',
       'Do not call the direct VoiceGen /api/generate endpoint unless the user explicitly asks to bypass monitoring.'
@@ -322,7 +322,7 @@
 
     const openLink = $('[data-action="download-output"]', node);
     openLink.href = audioUrl;
-    openLink.download = output.filename || 'waifuvoice-output.wav';
+    openLink.download = output.filename || 'voicegen-oui-output.wav';
 
     $('[data-action="copy-output"]', node).onclick = () => {
       copyText(JSON.stringify(output, null, 2));

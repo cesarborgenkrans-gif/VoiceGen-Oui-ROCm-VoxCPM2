@@ -24,8 +24,8 @@ from gpu_runtime_control import cool_down_engine
 from vram_telemetry import get_vram_telemetry
 
 ROOT = Path(__file__).resolve().parent
-APP_ROOT = Path(os.environ.get("WAIFUVOICE_APP_ROOT", str(ROOT.parent))).expanduser().resolve()
-DATA_ROOT = Path(os.environ.get("WAIFUVOICE_DATA_ROOT", str(APP_ROOT.parent))).expanduser().resolve()
+APP_ROOT = Path(os.environ.get("VOICEGEN_OUI_APP_ROOT") or os.environ.get("WAIFUVOICE_APP_ROOT") or str(ROOT.parent)).expanduser().resolve()
+DATA_ROOT = Path(os.environ.get("VOICEGEN_OUI_DATA_ROOT") or os.environ.get("WAIFUVOICE_DATA_ROOT") or str(APP_ROOT.parent)).expanduser().resolve()
 PORT = int(os.environ.get("PORT", "3113"))
 HOST = os.environ.get("HOST", "127.0.0.1")
 MAX_JSON_BODY = int(os.environ.get("MAX_JSON_BODY", str(50 * 1024 * 1024)))
@@ -37,10 +37,10 @@ ALLOWED_ORIGINS = {
 }
 
 MODEL_PATH = os.environ.get("VOXCPM_MODEL_PATH", str(DATA_ROOT / "models" / "VoxCPM2"))
-OUTPUTS_DIR = Path(os.environ.get("WAIFUVOICE_OUTPUTS_DIR", str(DATA_ROOT / "outputs"))).expanduser().resolve()
+OUTPUTS_DIR = Path(os.environ.get("VOICEGEN_OUI_OUTPUTS_DIR") or os.environ.get("WAIFUVOICE_OUTPUTS_DIR") or str(DATA_ROOT / "outputs")).expanduser().resolve()
 METADATA_PATH = OUTPUTS_DIR / "metadata.json"
 CUSTOM_PERSONAS_PATH = Path(
-    os.environ.get("WAIFUVOICE_CUSTOM_PERSONAS_PATH", str(DATA_ROOT / "personas" / "presets_custom.json"))
+    os.environ.get("VOICEGEN_OUI_CUSTOM_PERSONAS_PATH") or os.environ.get("WAIFUVOICE_CUSTOM_PERSONAS_PATH") or str(DATA_ROOT / "personas" / "presets_custom.json")
 ).expanduser().resolve()
 
 ENGINE_LOCK = threading.Lock()
@@ -564,7 +564,7 @@ class Handler(BaseHTTPRequestHandler):
                     full_audio = np.concatenate(accumulated_chunks)
                     outputs_dir = str(OUTPUTS_DIR)
                     os.makedirs(outputs_dir, exist_ok=True)
-                    filename = f"waifuvoice_voxcpm_{uuid.uuid4().hex[:8]}.wav"
+                    filename = f"voicegen_oui_voxcpm_{uuid.uuid4().hex[:8]}.wav"
                     out_path_target = os.path.join(outputs_dir, filename)
                     sf.write(str(out_path_target), full_audio, final_sr)
                     write_output_metadata(
@@ -577,7 +577,7 @@ class Handler(BaseHTTPRequestHandler):
             # Save permanently to the lobby outputs folder.
             outputs_dir = str(OUTPUTS_DIR)
             os.makedirs(outputs_dir, exist_ok=True)
-            filename = f"waifuvoice_voxcpm_{uuid.uuid4().hex[:8]}.wav"
+            filename = f"voicegen_oui_voxcpm_{uuid.uuid4().hex[:8]}.wav"
             out_path_target = os.path.join(outputs_dir, filename)
             
             with ENGINE_LOCK:
@@ -634,7 +634,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     print("====================================================")
-    print("VoiceGen (rocm-voxcpm) VoxCPM backend active at:")
+    print("VoiceGen Oui! (ROCm-VoxCPM2) backend active at:")
     print(f"  http://localhost:{PORT}")
     print("====================================================")
     server = ThreadingHTTPServer((HOST, PORT), Handler)

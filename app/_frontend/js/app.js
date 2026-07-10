@@ -9,12 +9,12 @@ const downloadLink = $('#download-link');
 const historyList = $('#history-list');
 const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3113' : '';
 const FRONTEND_BASE = '_frontend/';
-const CUSTOM_PERSONAS_KEY = 'waifuvoice.customPersonas.v1';
-const LLM_OPTIONS_KEY = 'waifuvoice.llmOptions.v1';
-const CLONE_TOOLS_KEY = 'waifuvoice.cloneToolsEnabled.v1';
-const LARGE_PROMPT_TEXT_KEY = 'waifuvoice.largePromptText.v1';
-const PERSONA_LAB_DRAFT_KEY = 'waifuvoice.personaLabDraft.v1';
-const TSUKI_DIALOGUE_KEY = 'waifuvoice.tsukiDialogue.v1';
+const CUSTOM_PERSONAS_KEY = 'voicegen_oui.customPersonas.v1';
+const LLM_OPTIONS_KEY = 'voicegen_oui.llmOptions.v1';
+const CLONE_TOOLS_KEY = 'voicegen_oui.cloneToolsEnabled.v1';
+const LARGE_PROMPT_TEXT_KEY = 'voicegen_oui.largePromptText.v1';
+const PERSONA_LAB_DRAFT_KEY = 'voicegen_oui.personaLabDraft.v1';
+const TSUKI_DIALOGUE_KEY = 'voicegen_oui.tsukiDialogue.v1';
 const SCRIPT_SAMPLE_SPEED = 34;
 
 function apiPath(path) {
@@ -91,7 +91,7 @@ function setAudioBlob(blob, filename = null) {
   state.objectUrl = url;
   audioPlayer.src = url;
   downloadLink.href = url;
-  downloadLink.download = filename || `waifuvoice_voxcpm_${Date.now()}.wav`;
+  downloadLink.download = filename || `voicegen_oui_voxcpm_${Date.now()}.wav`;
   setDownloadDisabled(false);
 }
 
@@ -1602,7 +1602,7 @@ if (userGuideButton) {
 
 const termData = {
   cfg: '<strong>CFG Scale (Classifier-Free Guidance)</strong> determines how strictly the model adheres to your text prompt versus its own unconditional prior. Higher values force it to follow instructions more strictly but may sound robotic, while lower values give the model more creative freedom.',
-  timesteps: '<strong>Inference Timesteps</strong> control how many diffusion steps run inside each acoustic generation iteration. VoiceGen starts at <code>8</code>: the project&apos;s preferred quality-and-speed setting for the RX 7900 XTX reference setup. More steps reduce <code>it/s</code>; compare by listening before you keep a higher setting.',
+  timesteps: '<strong>Inference Timesteps</strong> control how many diffusion steps run inside each acoustic generation iteration. VoiceGen Oui! starts at <code>8</code>: the project&apos;s preferred quality-and-speed setting for the RX 7900 XTX reference setup. More steps reduce <code>it/s</code>; compare by listening before you keep a higher setting.',
   maxlen: '<strong>Max Length</strong> is the maximum number of acoustic tokens the model may generate. It is a ceiling, not a target: VoxCPM2 can stop much earlier, so setting 4096 does not mean every request runs 4096 iterations.',
   'vocal-seed': '<strong>Vocal Seed</strong> controls repeatability. Use <code>-1</code> for a fresh random take, or lock a positive number when you want to compare prompt edits while keeping the same underlying voice behavior.',
   denoise: '<strong>Denoise Audio</strong> applies the model denoiser when clone or continuation audio is supplied.',
@@ -1623,7 +1623,7 @@ const termData = {
   'cooldown-gpu': '<strong>Cool Down GPU</strong> unloads the current in-process model session and restarts the backend path so VRAM can be released. The next Synthesize Audio click reloads VoxCPM, similar to starting a fresh session.',
   zeroshot: '<strong>Zero-Shot Clone</strong> uses a short reference clip to imitate acoustic signature, pitch, and timbre. It only appears after Clone / Continue is enabled in Options so consent-sensitive tools stay tucked away by default.',
   continuation: '<strong>Continuation</strong> uses prompt audio and exact transcription so the model continues from the supplied performance. It shares the Clone / Continue panel and should be used only with audio you have the right to use.',
-  credits: '<p><strong>VoiceGen (rocm-voxcpm)</strong> engineered and developed by <strong>Cesar Borgenkrans</strong>.</p><p><strong>VoxCPM Engine</strong> developed by OpenBMB (Tsinghua University).</p><p>This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB.</p>'
+  credits: '<p><strong>VoiceGen Oui! (ROCm-VoxCPM2)</strong> engineered and developed by <strong>Cesar Borgenkrans</strong>.</p><p><strong>VoxCPM Engine</strong> developed by OpenBMB (Tsinghua University).</p><p>This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB.</p>'
 };
 
 function escapeHtml(value) {

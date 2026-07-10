@@ -1,6 +1,6 @@
 # AMD GPU Test Report
 
-Use this template when reporting a successful or failed VoiceGen (rocm-voxcpm) setup.
+Use this template when reporting a successful or failed VoiceGen Oui! (ROCm-VoxCPM2) setup.
 
 ## Result
 

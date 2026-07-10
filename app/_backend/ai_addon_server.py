@@ -13,23 +13,23 @@ from urllib.parse import unquote, urlparse
 
 
 ROOT = Path(__file__).resolve().parent
-APP_ROOT = Path(os.environ.get("WAIFUVOICE_APP_ROOT", str(ROOT.parent))).expanduser().resolve()
-DATA_ROOT = Path(os.environ.get("WAIFUVOICE_DATA_ROOT", str(APP_ROOT.parent))).expanduser().resolve()
+APP_ROOT = Path(os.environ.get("VOICEGEN_OUI_APP_ROOT") or os.environ.get("WAIFUVOICE_APP_ROOT") or str(ROOT.parent)).expanduser().resolve()
+DATA_ROOT = Path(os.environ.get("VOICEGEN_OUI_DATA_ROOT") or os.environ.get("WAIFUVOICE_DATA_ROOT") or str(APP_ROOT.parent)).expanduser().resolve()
 
-HOST = os.environ.get("WAIFUVOICE_AI_ADDON_HOST", "127.0.0.1")
-PORT = int(os.environ.get("WAIFUVOICE_AI_ADDON_PORT", "3114"))
-TARGET_BASE = os.environ.get("WAIFUVOICE_AI_ADDON_TARGET", "http://127.0.0.1:3113").rstrip("/")
-MAX_JSON_BODY = int(os.environ.get("WAIFUVOICE_AI_ADDON_MAX_JSON_BODY", str(64 * 1024 * 1024)))
-MAX_EVENTS = int(os.environ.get("WAIFUVOICE_AI_ADDON_MAX_EVENTS", "200"))
-PROXY_TIMEOUT = int(os.environ.get("WAIFUVOICE_AI_ADDON_PROXY_TIMEOUT", "900"))
+HOST = os.environ.get("VOICEGEN_OUI_AI_ADDON_HOST") or os.environ.get("WAIFUVOICE_AI_ADDON_HOST") or "127.0.0.1"
+PORT = int(os.environ.get("VOICEGEN_OUI_AI_ADDON_PORT") or os.environ.get("WAIFUVOICE_AI_ADDON_PORT") or "3114")
+TARGET_BASE = (os.environ.get("VOICEGEN_OUI_AI_ADDON_TARGET") or os.environ.get("WAIFUVOICE_AI_ADDON_TARGET") or "http://127.0.0.1:3113").rstrip("/")
+MAX_JSON_BODY = int(os.environ.get("VOICEGEN_OUI_AI_ADDON_MAX_JSON_BODY") or os.environ.get("WAIFUVOICE_AI_ADDON_MAX_JSON_BODY") or str(64 * 1024 * 1024))
+MAX_EVENTS = int(os.environ.get("VOICEGEN_OUI_AI_ADDON_MAX_EVENTS") or os.environ.get("WAIFUVOICE_AI_ADDON_MAX_EVENTS") or "200")
+PROXY_TIMEOUT = int(os.environ.get("VOICEGEN_OUI_AI_ADDON_PROXY_TIMEOUT") or os.environ.get("WAIFUVOICE_AI_ADDON_PROXY_TIMEOUT") or "900")
 
-OUTPUTS_DIR = Path(os.environ.get("WAIFUVOICE_OUTPUTS_DIR", str(DATA_ROOT / "outputs"))).expanduser().resolve()
+OUTPUTS_DIR = Path(os.environ.get("VOICEGEN_OUI_OUTPUTS_DIR") or os.environ.get("WAIFUVOICE_OUTPUTS_DIR") or str(DATA_ROOT / "outputs")).expanduser().resolve()
 EVENTS_PATH = Path(
-    os.environ.get("WAIFUVOICE_AI_ADDON_LOG", str(OUTPUTS_DIR / "ai_addon_events.json"))
+    os.environ.get("VOICEGEN_OUI_AI_ADDON_LOG") or os.environ.get("WAIFUVOICE_AI_ADDON_LOG") or str(DATA_ROOT / "logs" / "ai_addon_events.json")
 ).expanduser().resolve()
 
 EVENT_LOCK = threading.Lock()
-TEXT_STORE_LIMIT = int(os.environ.get("WAIFUVOICE_AI_ADDON_TEXT_STORE_LIMIT", "24000"))
+TEXT_STORE_LIMIT = int(os.environ.get("VOICEGEN_OUI_AI_ADDON_TEXT_STORE_LIMIT") or os.environ.get("WAIFUVOICE_AI_ADDON_TEXT_STORE_LIMIT") or "24000")
 
 
 def utc_now():

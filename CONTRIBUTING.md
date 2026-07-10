@@ -1,6 +1,6 @@
-# Contributing To VoiceGen (rocm-voxcpm)
+# Contributing To VoiceGen Oui! (ROCm-VoxCPM2)
 
-VoiceGen is a utility repo for helping AMD GPU users run VoxCPM2 voice generation through ROCm. It is not the upstream VoxCPM2 baseline; it is the practical app, launcher, and setup layer that helps more hardware reach and test the feature. The current verified setup is an RX 7900 XTX on Windows + WSL2 + Ubuntu 22.04 + ROCm 7.2. Other AMD cards need community testing.
+VoiceGen Oui! is a utility repo for helping AMD GPU users run VoxCPM2 voice generation through ROCm. It is not the upstream VoxCPM2 baseline; it is the practical app, launcher, and setup layer that helps more hardware reach and test the feature. The current verified setup is an RX 7900 XTX on Windows + WSL2 + Ubuntu 22.04 + ROCm 7.2. Other AMD cards need community testing.
 
 ## Good Contributions
 

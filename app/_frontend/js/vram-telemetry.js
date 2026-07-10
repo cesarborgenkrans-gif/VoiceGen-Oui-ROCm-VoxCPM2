@@ -1,5 +1,5 @@
 const VRAM_API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3113' : '';
-const VRAM_OPTIONS_KEY = 'waifuvoice.vramOptions.v1';
+const VRAM_OPTIONS_KEY = 'voicegen_oui.vramOptions.v1';
 
 function vramApiPath(path) {
   return `${VRAM_API_BASE}${path}`;
