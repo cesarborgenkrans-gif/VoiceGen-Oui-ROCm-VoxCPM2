@@ -1115,7 +1115,7 @@ async function generate() {
   const voice_design = $('#voice-input').value.trim();
   const language = getLanguageValue();
   const cfg_value = Number($('#cfg-input').value || 2.0);
-  const inference_timesteps = Number($('#steps-input').value || 10);
+  const inference_timesteps = Number($('#steps-input').value || 8);
   const max_len = Number($('#maxlen-input').value || 4096);
   const seed = Number($('#seed-input').value || -1);
   const denoise = $('#denoise-input').checked;
@@ -1602,7 +1602,7 @@ if (userGuideButton) {
 
 const termData = {
   cfg: '<strong>CFG Scale (Classifier-Free Guidance)</strong> determines how strictly the model adheres to your text prompt versus its own unconditional prior. Higher values force it to follow instructions more strictly but may sound robotic, while lower values give the model more creative freedom.',
-  timesteps: '<strong>Inference Timesteps</strong> control how many diffusion steps run inside each acoustic generation iteration. More steps can improve fidelity but reduce <code>it/s</code>; fewer steps are faster but should be compared by listening before you keep the setting.',
+  timesteps: '<strong>Inference Timesteps</strong> control how many diffusion steps run inside each acoustic generation iteration. VoiceGen starts at <code>8</code>: the project&apos;s preferred quality-and-speed setting for the RX 7900 XTX reference setup. More steps reduce <code>it/s</code>; compare by listening before you keep a higher setting.',
   maxlen: '<strong>Max Length</strong> is the maximum number of acoustic tokens the model may generate. It is a ceiling, not a target: VoxCPM2 can stop much earlier, so setting 4096 does not mean every request runs 4096 iterations.',
   'vocal-seed': '<strong>Vocal Seed</strong> controls repeatability. Use <code>-1</code> for a fresh random take, or lock a positive number when you want to compare prompt edits while keeping the same underlying voice behavior.',
   denoise: '<strong>Denoise Audio</strong> applies the model denoiser when clone or continuation audio is supplied.',

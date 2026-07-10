@@ -202,7 +202,7 @@ def build_generation_metadata(payload, filename, sample_rate, mode, iteration_ra
         "prompt_text": (payload.get("prompt_text") or "").strip(),
         "seed": int(payload.get("seed", -1)),
         "cfg_value": float(payload.get("cfg_value", 2.0)),
-        "inference_timesteps": int(payload.get("inference_timesteps", 10)),
+        "inference_timesteps": int(payload.get("inference_timesteps", 8)),
         "max_len": int(payload.get("max_len", 4096)),
         "denoise": bool(payload.get("denoise", False)),
         "sample_rate": sample_rate,
@@ -492,7 +492,7 @@ class Handler(BaseHTTPRequestHandler):
             max_len = int(payload.get("max_len", 4096))
             seed = int(payload.get("seed", -1))
             cfg_value = float(payload.get("cfg_value", 2.0))
-            inference_timesteps = int(payload.get("inference_timesteps", 10))
+            inference_timesteps = int(payload.get("inference_timesteps", 8))
             denoise = bool(payload.get("denoise", False))
             mode = (payload.get("mode") or "voice-design").strip()
             consent_ack = bool(payload.get("consent_ack", False))

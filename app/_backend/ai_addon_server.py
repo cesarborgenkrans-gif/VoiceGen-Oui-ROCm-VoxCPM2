@@ -122,7 +122,7 @@ def summarize_payload(payload):
         "prompt_text_length": len(prompt_text),
         "seed": payload.get("seed", -1),
         "cfg_value": payload.get("cfg_value", 2.0),
-        "inference_timesteps": payload.get("inference_timesteps", 10),
+        "inference_timesteps": payload.get("inference_timesteps", 8),
         "max_len": payload.get("max_len", 4096),
         "denoise": bool(payload.get("denoise", False)),
         "consent_ack": bool(payload.get("consent_ack", False)),

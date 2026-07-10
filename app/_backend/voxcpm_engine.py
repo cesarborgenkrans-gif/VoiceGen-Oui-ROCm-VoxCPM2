@@ -108,7 +108,7 @@ class VoxCPMEngine:
             return f"({' '.join(instructions)}){text}"
         return text
 
-    def generate_design(self, text, language, instruct, reference_wav_path=None, output_path="output.wav", cfg_value=2.0, inference_timesteps=10, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
+    def generate_design(self, text, language, instruct, reference_wav_path=None, output_path="output.wav", cfg_value=2.0, inference_timesteps=8, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
         import torch
         import numpy as np
         if seed is not None and seed >= 0:
@@ -147,7 +147,7 @@ class VoxCPMEngine:
         
         return output_path, sample_rate, rate_capture.last_rate
 
-    def generate_design_stream(self, text, language, instruct, reference_wav_path=None, cfg_value=2.0, inference_timesteps=10, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
+    def generate_design_stream(self, text, language, instruct, reference_wav_path=None, cfg_value=2.0, inference_timesteps=8, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
         import torch
         import numpy as np
         if seed is not None and seed >= 0:

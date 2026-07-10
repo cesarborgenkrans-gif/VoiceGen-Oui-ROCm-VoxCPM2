@@ -148,7 +148,7 @@
       voice_design: settings.voice_design || '',
       prompt_text: settings.prompt_text || '',
       cfg_value: Number(settings.cfg_value ?? 2.0),
-      inference_timesteps: Number(settings.inference_timesteps ?? 10),
+      inference_timesteps: Number(settings.inference_timesteps ?? 8),
       max_len: Number(settings.max_len ?? 4096),
       seed: Number(settings.seed ?? -1),
       denoise: !!settings.denoise,
@@ -239,7 +239,7 @@
     setValue('#voice-design-display', settings.voice_design || '');
     setText('#seed-value', settings.seed ?? -1);
     setText('#cfg-value', settings.cfg_value ?? 2.0);
-    setText('#steps-value', settings.inference_timesteps ?? 10);
+    setText('#steps-value', settings.inference_timesteps ?? 8);
     setText('#maxlen-value', settings.max_len ?? 4096);
     setText('#denoise-value', settings.denoise ? 'On' : 'Off');
     setText('#language-value', settings.language || 'English');
@@ -274,7 +274,7 @@
       $('.settings-list', node).innerHTML = [
         field('Seed', settings.seed ?? -1),
         field('CFG', settings.cfg_value ?? 2.0),
-        field('Steps', settings.inference_timesteps ?? 10),
+        field('Steps', settings.inference_timesteps ?? 8),
         field('Mode', settings.mode || 'voice-design'),
         field('Language', settings.language || 'English'),
         field('Audio', response?.response?.filename || 'pending')

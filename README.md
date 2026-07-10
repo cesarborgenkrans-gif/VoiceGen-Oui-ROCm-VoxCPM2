@@ -8,7 +8,27 @@ VoiceGen is a utility repo: a local app, launcher, and setup path that puts VoxC
 
 **Observed performance:** up to approximately **8 it/s** in the reference VoxCPM2 voice-generation setup.
 
-This is a reference measurement from the project development setup, not a universal speed guarantee. Actual performance depends on voice-generation settings, text length, ROCm and PyTorch versions, WSL configuration, and GPU.
+Actual performance depends on voice-generation settings, text length, ROCm and PyTorch versions, WSL configuration, and GPU.
+
+## Run
+
+From the repo root in Windows PowerShell:
+
+```powershell
+.\start_voicegen_voxcpm_wsl_rocm7.ps1
+```
+
+The launcher waits for the backend health check, then opens VoiceGen in your default browser. To start without opening a browser:
+
+```powershell
+.\start_voicegen_voxcpm_wsl_rocm7.ps1 -NoBrowser
+```
+
+Manual browser address:
+
+```text
+http://localhost:3113
+```
 
 ![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
 
@@ -75,26 +95,6 @@ Model weights are not committed to this repo. You can also keep the model elsewh
 
 ```powershell
 $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/VoxCPM2"
-```
-
-## Run
-
-From the repo root in Windows PowerShell:
-
-```powershell
-.\start_voicegen_voxcpm_wsl_rocm7.ps1
-```
-
-The launcher waits for the backend health check, then opens VoiceGen in your default browser. To start without opening a browser:
-
-```powershell
-.\start_voicegen_voxcpm_wsl_rocm7.ps1 -NoBrowser
-```
-
-Manual browser address:
-
-```text
-http://localhost:3113
 ```
 
 ## What Is Not Committed
