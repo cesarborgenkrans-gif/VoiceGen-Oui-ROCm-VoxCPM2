@@ -142,10 +142,12 @@ Good first contributions:
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md), or open a report using [docs/TEST_REPORT_TEMPLATE.md](docs/TEST_REPORT_TEMPLATE.md).
 
-## License And Trademarks
+## License, Assets, And Trademarks
 
-The utility code in this repository is released under the Apache License 2.0. This aligns the app layer with the Apache-2.0 licensing used by upstream VoxCPM2/OpenBMB while keeping this project independent.
+The utility code and documentation text in this repository are released under the Apache License 2.0. This aligns the app layer with the Apache-2.0 licensing used by upstream VoxCPM2/OpenBMB while keeping this project independent.
 
-Third-party models, libraries, and assets remain under their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).
+Mascots, logos, brand images, SparkleSnap marks, screenshots, and README/demo media are not licensed as Apache-2.0 code. They are covered separately by [docs/ASSET_LICENSE.md](docs/ASSET_LICENSE.md), so contributors can use the app while the visual identity stays distinct from the code license.
+
+Third-party models, libraries, and assets remain under their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE).
 
 This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.

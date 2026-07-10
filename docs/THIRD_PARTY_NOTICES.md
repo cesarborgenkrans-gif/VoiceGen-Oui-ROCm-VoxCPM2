@@ -8,6 +8,8 @@ This project is independent and is not affiliated with, sponsored by, or endorse
 
 The VoiceGen utility code in this repository is released under the Apache License 2.0. Third-party projects, models, packages, drivers, and assets remain under their own license terms.
 
+VoiceGen mascots, logos, brand images, SparkleSnap marks, screenshots, and README/demo media are not licensed under Apache-2.0. See [ASSET_LICENSE.md](ASSET_LICENSE.md) for the separate asset and brand-use terms.
+
 ## VoxCPM
 
 The app integrates VoxCPM through the `voxcpm` Python package and expects local VoxCPM2 model files under `models/VoxCPM2/`.
