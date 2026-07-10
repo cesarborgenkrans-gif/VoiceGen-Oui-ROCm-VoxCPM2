@@ -4,7 +4,9 @@
 
 **ROCm-powered VoxCPM2 voice generation for AMD GPU users.**
 
-VoiceGen is a local-first GUI for testing high-quality VoxCPM2 voice generation on AMD GPUs through ROCm. The current verified path runs on an **RX 7900 XTX**. The next step is community testing: try it on your AMD card, report what works, and help turn this into a useful starting point for ROCm voice generation.
+VoiceGen is a utility repo: a local app, launcher, and setup path that puts VoxCPM2 into practice on AMD GPUs through ROCm. It is not the upstream VoxCPM2 baseline, model, or training project. It is the practical layer around that code path so more AMD GPU users can actually try the feature, test hardware, and contribute fixes.
+
+The current verified path runs on an **RX 7900 XTX**. The next step is community testing: try it on your AMD card, report what works, and help turn this into a useful starting point for ROCm voice generation.
 
 ![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
 
@@ -23,13 +25,21 @@ The most helpful contribution right now is a hardware test report: GPU model, RO
 
 VoiceGen gives you:
 
+- A utility layer around VoxCPM2: GUI, launcher, and ROCm/WSL notes.
 - A browser GUI for writing a spoken script and voice design.
 - A Windows PowerShell launcher for the WSL2 + ROCm + VoxCPM2 path.
 - Local output/history folders for generated audio.
 - Setup notes for ROCm 7.2, ROCDXG, and PyTorch ROCm wheels.
 - A contribution path for AMD GPU compatibility results.
 
-This is not a polished commercial product. It is an open starting point for ROCm users who want to get VoxCPM2 voice generation running locally and make the path easier for the next person.
+This is not a polished commercial product, and it is not a replacement for upstream VoxCPM2. It is an open utility project for ROCm users who want to get VoxCPM2 voice generation running locally and make the path easier for the next person.
+
+## What This Is Not
+
+- Not the upstream VoxCPM2 baseline model or training code.
+- Not a claim that every AMD GPU works.
+- Not a redistribution point for VoxCPM2 model weights or ROCm system packages.
+- Not an AMD or OpenBMB project.
 
 ## Verified So Far
 
@@ -134,6 +144,8 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md), or open a report using [docs/TEST
 
 ## License And Trademarks
 
-The app code in this repository is released under the MIT License. Third-party models, libraries, and assets remain under their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).
+The utility code in this repository is released under the Apache License 2.0. This aligns the app layer with the Apache-2.0 licensing used by upstream VoxCPM2/OpenBMB while keeping this project independent.
+
+Third-party models, libraries, and assets remain under their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).
 
 This project is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.
