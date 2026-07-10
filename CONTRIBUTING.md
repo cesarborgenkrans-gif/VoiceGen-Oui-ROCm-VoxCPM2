@@ -26,7 +26,7 @@ Useful reports include:
 
 ## Pull Request Expectations
 
-- Keep internal `WAIFUVOICE_*` environment variables, launcher script names, output prefixes, and localStorage keys unless the change includes a migration plan.
+- Coordinate changes to environment variables, output prefixes, and localStorage keys with a migration plan.
 - Do not commit model weights, generated audio, virtual environments, caches, local logs, or machine-specific setup files.
 - Treat mascots, logos, brand images, SparkleSnap marks, screenshots, and demo media as separate from the Apache-2.0 code license; see [docs/ASSET_LICENSE.md](docs/ASSET_LICENSE.md).
 - Keep setup docs specific to commands and validation gates that someone else can repeat.

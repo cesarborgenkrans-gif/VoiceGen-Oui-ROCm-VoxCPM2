@@ -19,7 +19,7 @@ When an AI agent generates a voice, the addon gives the user a separate screen t
 - `app/_frontend/css/ai-addon.css` - dashboard styling.
 - `app/_frontend/js/ai-addon.js` - dashboard polling, notifications, copy buttons, and rendering.
 - `app/_backend/ai_addon_server.py` - separate gateway and monitor server.
-- `start_waifuvoice_ai_addon.ps1` - Windows launcher for the addon. The script name is retained for v1 compatibility.
+- `start_voicegen_ai_addon.ps1` - Windows launcher for the addon.
 - `docs/AI_ADDON.md` - this guide.
 
 ## Recommended Run Flow
@@ -28,7 +28,7 @@ When an AI agent generates a voice, the addon gives the user a separate screen t
 2. Start the addon:
 
 ```powershell
-.\start_waifuvoice_ai_addon.ps1
+.\start_voicegen_ai_addon.ps1
 ```
 
 3. Open the addon dashboard:

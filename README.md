@@ -82,25 +82,13 @@ $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/VoxCPM2"
 From the repo root in Windows PowerShell:
 
 ```powershell
-.\start_waifuvoice_vox_wsl_rocm7.ps1
+.\start_voicegen_voxcpm_wsl_rocm7.ps1
 ```
 
 Then open:
 
 ```text
 http://localhost:3113
-```
-
-The launcher name still contains `waifuvoice` for v1 compatibility. The same is true for `WAIFUVOICE_*` environment variables, localStorage keys, and output filename prefixes. They are internal compatibility names, not the public project name.
-
-Optional path overrides:
-
-```powershell
-$env:WAIFUVOICE_WSL_DISTRO = "Ubuntu-22.04"
-$env:WAIFUVOICE_WSL_USER = "root"
-$env:WAIFUVOICE_WSL_VENV = "/root/voxcpm-wsl-rocm72"
-$env:WAIFUVOICE_DATA_ROOT = "/mnt/d/path/to/VoiceGen"
-$env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/VoiceGen/app"
 ```
 
 ## What Is Not Committed

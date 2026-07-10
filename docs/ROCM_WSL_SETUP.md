@@ -165,7 +165,7 @@ Those old flags were useful for a previous ROCm path, but they are intentionally
 From Windows PowerShell:
 
 ```powershell
-.\start_waifuvoice_vox_wsl_rocm7.ps1
+.\start_voicegen_voxcpm_wsl_rocm7.ps1
 ```
 
 Optional launcher overrides:
@@ -179,7 +179,7 @@ $env:WAIFUVOICE_APP_ROOT = "/mnt/d/path/to/VoiceGen/app"
 $env:VOXCPM_MODEL_PATH = "/mnt/d/path/to/models/VoxCPM2"
 ```
 
-If `WAIFUVOICE_WSL_VENV` is not set, the launcher checks `waifuvoice-rocm72`, `voxcpm-wsl-rocm72`, and `voxcpm-wsl-rocm` under the selected WSL user home. The `WAIFUVOICE_*` names are retained v1 compatibility names.
+If `WAIFUVOICE_WSL_VENV` is not set, the launcher checks `waifuvoice-rocm72`, `voxcpm-wsl-rocm72`, and `voxcpm-wsl-rocm` under the selected WSL user home.
 
 Open:
 

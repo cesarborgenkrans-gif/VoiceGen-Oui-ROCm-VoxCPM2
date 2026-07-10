@@ -34,7 +34,7 @@ VoiceGen/
   outputs/                     generated WAV files and metadata, ignored by git
   personas/                    user custom persona store, ignored by git except examples
   requirements.txt             Python dependency list
-  start_waifuvoice_vox_wsl_rocm7.ps1
+  start_voicegen_voxcpm_wsl_rocm7.ps1
 ```
 
 ## Backend Defaults
@@ -65,8 +65,6 @@ VOXCPM_MODEL_PATH              optional model folder override
 ```
 
 If `WAIFUVOICE_WSL_VENV` is not set, the launcher automatically checks for a `.venv` or `venv` inside the root of this repository. This allows for fully portable, cloned setups without requiring any environment variables.
-
-The `WAIFUVOICE_*` names are retained v1 compatibility names and should not be renamed as part of the public rebrand.
 
 If no local virtual environment is found, it falls back to checking these global root-user runtime paths in order:
 
