@@ -129,7 +129,7 @@ If PyTorch loads a bundled HSA runtime instead of the system ROCm runtime, ROCm 
 From Windows PowerShell, run the repository model installer after the WSL environment exists:
 
 ```powershell
-.\download_voicegen_oui_models.ps1
+.\download_voxcpm_models.ps1
 ```
 
 It downloads the upstream `openbmb/VoxCPM2` snapshot into the default user-data location:

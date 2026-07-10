@@ -77,7 +77,7 @@ Because this addon is add-only, direct calls into the original VoiceGen backend 
 Gateway events are stored locally at:
 
 ```text
-outputs\ai_addon_events.json
+%LOCALAPPDATA%\VoiceGenOui\logs\ai_addon_events.json
 ```
 
 The log is capped to the most recent 200 events by default. It stores text and prompt settings, but does not store raw `ref_audio_base64` or `prompt_audio_base64` data.
