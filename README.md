@@ -4,20 +4,19 @@
 
 ![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
 
+## Listen
+
+| Voice sample 01 | Voice sample 02 |
+| --- | --- |
+| [▶ Play WAV](https://github.com/cesarborgenkrans-gif/attach/raw/main/audio/voicegen-sample-01.wav) | [▶ Play WAV](https://github.com/cesarborgenkrans-gif/attach/raw/main/audio/voicegen-sample-02.wav) |
+
 VoiceGen is the practical ROCm layer around VoxCPM2: a local GUI, Windows-to-WSL launcher, and reproducible setup path for AMD GPU users who want to generate voices without falling back to CPU.
 
 **Reference hardware:** AMD Radeon RX 7900 XTX / `gfx1100`
 
 **Quality / speed setting:** `8` timesteps is the project setting for the fastest generation that still meets VoiceGen's target quality. Recorded RX 7900 XTX reference sessions have reached **8.24-8.64 it/s** with this setting.
 
-Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/).
-
-## Listen
-
-- [Voice sample 01 (WAV)](docs/assets/voicegen-sample-01.wav)
-- [Voice sample 02 (WAV)](docs/assets/voicegen-sample-02.wav)
-
-These two curated samples are intentional public demo media. Ordinary generated audio remains local and gitignored.
+Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The two samples above are intentional public demo media; ordinary generated audio remains local and gitignored.
 
 ## What It Unlocks
 
