@@ -28,7 +28,7 @@ Need the environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETU
 .\download_voxcpm_models.ps1
 ```
 
-The script downloads `openbmb/VoxCPM2` to `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, using native Windows PowerShell and `curl.exe`; it does not need WSL or the ROCm environment. It shows a resumable progress bar for every upstream file, confirms the required model files exist, and never adds them to git. When opened by double-click, it keeps the terminal open after completion or an error. Use `-NoPause` in an existing terminal, or `VOXCPM_MODEL_PATH` when your model lives elsewhere.
+The script downloads `openbmb/VoxCPM2` to `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, using native Windows PowerShell and `curl.exe`; it does not need WSL or the ROCm environment. It keeps a braille spinner in the terminal title while curl shows resumable progress bars for every upstream file, confirms the required model files exist, and never adds them to git. When opened by double-click, it keeps the terminal open after completion or an error. Use `-NoPause` in an existing terminal, or `VOXCPM_MODEL_PATH` when your model lives elsewhere.
 
 ## Run
 
@@ -56,6 +56,12 @@ The most useful contribution is a hardware test report with your GPU, ROCm versi
 
 The repository contains source code, docs, lightweight placeholders, and the curated README demo media above. Runtime outputs, custom personas, logs, and optional user-managed models live in `%LOCALAPPDATA%\VoiceGenOui`; model weights, Python environments, and `.env` files are not committed. See [.gitignore](.gitignore) and [the path guide](docs/dev_paths.md) for the exact rules.
 
+## License And Notices
+
+The utility code and documentation are [Apache-2.0](LICENSE). Mascots, logos, SparkleSnap marks, screenshots, and README/demo media are separate reserved assets under [docs/ASSET_LICENSE.md](docs/ASSET_LICENSE.md).
+
+Third-party models, libraries, and assets keep their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE). VoiceGen Oui! is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm and related marks are trademarks of Advanced Micro Devices, Inc.
+
 ## Cite VoxCPM
 
 VoiceGen Oui! is a utility layer around the upstream VoxCPM work. If it helps your research or project, please cite the VoxCPM2 technical report and the original VoxCPM paper as requested by [OpenBMB](https://github.com/OpenBMB/VoxCPM):
@@ -76,8 +82,5 @@ VoiceGen Oui! is a utility layer around the upstream VoxCPM work. If it helps yo
 }
 ```
 
-## License And Notices
-
-The utility code and documentation are [Apache-2.0](LICENSE). Mascots, logos, SparkleSnap marks, screenshots, and README/demo media are separate reserved assets under [docs/ASSET_LICENSE.md](docs/ASSET_LICENSE.md).
-
-Third-party models, libraries, and assets keep their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE). VoiceGen Oui! is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm and related marks are trademarks of Advanced Micro Devices, Inc.
+Enjoy and have fun,
+SparkleSnap

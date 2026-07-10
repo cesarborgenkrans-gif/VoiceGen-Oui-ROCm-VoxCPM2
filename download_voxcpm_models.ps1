@@ -9,13 +9,50 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-function Show-KawaiiSpinner([string]$Message) {
-    $frames = @([char]0x280B, [char]0x2819, [char]0x2839, [char]0x2838, [char]0x283C, [char]0x2834, [char]0x2826, [char]0x2827, [char]0x2807, [char]0x280F)
-    foreach ($frame in $frames) {
-        Write-Host -NoNewline "`r[$frame] $Message"
-        Start-Sleep -Milliseconds 70
+function Convert-ToCommandLineArgument([string]$Value) {
+    if ($Value.Contains('"')) {
+        throw "The downloader cannot pass a command-line argument containing a double quote."
     }
-    Write-Host "`r[ok] $Message"
+    if ($Value -match "\s") {
+        return '"' + $Value + '"'
+    }
+    return $Value
+}
+
+function Invoke-CurlWithTitleSpinner([string]$CurlPath, [string[]]$Arguments, [string]$Label) {
+    $frames = @([char]0x280B, [char]0x2819, [char]0x2839, [char]0x2838, [char]0x283C, [char]0x2834, [char]0x2826, [char]0x2827, [char]0x2807, [char]0x280F)
+    $originalTitle = $null
+    $canUpdateTitle = $false
+    try {
+        $originalTitle = $Host.UI.RawUI.WindowTitle
+        $canUpdateTitle = $true
+    } catch {
+        Write-Host "Downloading $Label. This terminal does not support title updates." -ForegroundColor DarkYellow
+    }
+
+    try {
+        $commandLine = ($Arguments | ForEach-Object { Convert-ToCommandLineArgument $_ }) -join ' '
+        $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+        $startInfo.FileName = $CurlPath
+        $startInfo.Arguments = $commandLine
+        $startInfo.UseShellExecute = $false
+        $process = [System.Diagnostics.Process]::Start($startInfo)
+        $frameIndex = 0
+        while (-not $process.HasExited) {
+            if ($canUpdateTitle) {
+                $Host.UI.RawUI.WindowTitle = "VoiceGen Oui! [$($frames[$frameIndex % $frames.Count])] Downloading $Label"
+            }
+            Start-Sleep -Milliseconds 120
+            $frameIndex++
+            $process.Refresh()
+        }
+        $process.WaitForExit()
+        return $process.ExitCode
+    } finally {
+        if ($canUpdateTitle) {
+            $Host.UI.RawUI.WindowTitle = $originalTitle
+        }
+    }
 }
 
 $PauseAtEnd = -not $NoPause -and -not $WhatIfPreference
@@ -60,7 +97,7 @@ if ($missingBefore.Count -eq 0 -and -not $Force) {
 }
 
 New-Item -ItemType Directory -Force -Path $ModelDestination | Out-Null
-Show-KawaiiSpinner "Reading the upstream model manifest..."
+Write-Host "Reading the upstream model manifest..." -ForegroundColor DarkCyan
 
 $encodedModelId = ($ModelId.Split('/') | ForEach-Object { [uri]::EscapeDataString($_) }) -join '/'
 $manifestUrl = "https://huggingface.co/api/models/$encodedModelId/tree/main?recursive=true&expand=false"
@@ -101,8 +138,8 @@ foreach ($modelFile in $modelFiles) {
         $curlArgs += @("--header", "Authorization: Bearer $env:HF_TOKEN")
     }
     $curlArgs += $downloadUrl
-    & $curl.Source @curlArgs
-    if ($LASTEXITCODE -ne 0) {
+    $curlExitCode = Invoke-CurlWithTitleSpinner $curl.Source $curlArgs $modelFile.path
+    if ($curlExitCode -ne 0) {
         throw "Download failed for $($modelFile.path). Re-run the installer to resume it."
     }
     if (-not (Test-Path $targetPath -PathType Leaf) -or (Get-Item $targetPath).Length -ne $expectedSize) {

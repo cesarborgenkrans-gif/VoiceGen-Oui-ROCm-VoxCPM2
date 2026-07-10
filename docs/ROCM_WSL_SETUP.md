@@ -138,7 +138,7 @@ It downloads the upstream `openbmb/VoxCPM2` snapshot into the default user-data 
 %LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2\
 ```
 
-The download step is native Windows PowerShell and does not require WSL, ROCm, or the GPU environment. The script asks the user to review the upstream model card and license before downloading, shows a resumable `curl.exe` progress bar for each Hugging Face file, verifies `config.json`, `model.safetensors`, and `audiovae.pth`, and does not commit model files to git. When launched by double-click, it waits for Enter after success or failure so its output remains visible. You can keep the model anywhere and point the app at it:
+The download step is native Windows PowerShell and does not require WSL, ROCm, or the GPU environment. The script asks the user to review the upstream model card and license before downloading, keeps a braille spinner in the terminal title while curl shows a resumable progress bar for each Hugging Face file, verifies `config.json`, `model.safetensors`, and `audiovae.pth`, and does not commit model files to git. When launched by double-click, it waits for Enter after success or failure so its output remains visible. You can keep the model anywhere and point the app at it:
 
 ```bash
 export VOXCPM_MODEL_PATH=/path/to/VoxCPM2
