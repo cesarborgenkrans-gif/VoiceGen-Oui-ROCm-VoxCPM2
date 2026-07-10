@@ -1184,9 +1184,12 @@ async function generate() {
     });
     if (!res.ok) throw new Error(await res.text());
     const filename = res.headers.get('X-Output-Filename');
+    const iterationRate = Number.parseFloat(res.headers.get('X-Iteration-Rate') || '');
     const blob = await res.blob();
     setAudioBlob(blob, filename);
-    rawStatus.textContent = '> Audio generated and loaded into the player.';
+    rawStatus.textContent = Number.isFinite(iterationRate) && iterationRate > 0
+      ? `> Audio generated and loaded into the player.\n> Final observed speed: ${iterationRate.toFixed(2)} it/s`
+      : '> Audio generated and loaded into the player.';
     setStatus('DONE', 'ok');
     setHint('Audio generation finished perfectly.', 'ok');
     await loadHistory();

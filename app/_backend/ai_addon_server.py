@@ -199,7 +199,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Accept")
         self.send_header(
             "Access-Control-Expose-Headers",
-            "X-Sample-Rate, X-Model-Source, X-Output-Filename, Content-Disposition",
+            "X-Sample-Rate, X-Model-Source, X-Output-Filename, X-Iteration-Rate, Content-Disposition",
         )
         if extra_headers:
             for key, value in extra_headers.items():
@@ -255,6 +255,7 @@ class Handler(BaseHTTPRequestHandler):
             "X-Sample-Rate": response_header(headers, "X-Sample-Rate"),
             "X-Model-Source": response_header(headers, "X-Model-Source"),
             "X-Output-Filename": response_header(headers, "X-Output-Filename"),
+            "X-Iteration-Rate": response_header(headers, "X-Iteration-Rate"),
         }
 
     def addon_status(self):
@@ -369,6 +370,7 @@ class Handler(BaseHTTPRequestHandler):
                             "filename": response_header(response.headers, "X-Output-Filename"),
                             "sample_rate": response_header(response.headers, "X-Sample-Rate"),
                             "model_source": response_header(response.headers, "X-Model-Source"),
+                            "iteration_rate": response_header(response.headers, "X-Iteration-Rate"),
                             "elapsed_ms": elapsed_ms,
                             "bytes": len(body),
                         },

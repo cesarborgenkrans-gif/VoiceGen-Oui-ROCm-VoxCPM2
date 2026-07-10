@@ -1,4 +1,8 @@
+import contextlib
 import os
+import re
+import sys
+
 import torch
 # MIOpen (ROCm's cuDNN) works on gfx1100 as of ROCm 6.2.4. Earlier code disabled
 # cudnn to dodge the ROCm 6.1.3 MIOpen conv crash, but that rerouted convolutions
@@ -14,6 +18,48 @@ try:
     torch.backends.cuda.enable_math_sdp(True)
 except Exception:
     pass
+
+
+ITERATION_RATE_PATTERN = re.compile(r"([0-9]+(?:\.[0-9]+)?)\s*(it/s|s/it)")
+
+
+def parse_iteration_rate(text):
+    matches = list(ITERATION_RATE_PATTERN.finditer(str(text or "")))
+    if not matches:
+        return None
+    value = float(matches[-1].group(1))
+    if value <= 0:
+        return None
+    return value if matches[-1].group(2) == "it/s" else 1.0 / value
+
+
+class TqdmRateCapture:
+    def __init__(self, stream):
+        self.stream = stream
+        self.buffer = ""
+        self.last_rate = None
+
+    def write(self, value):
+        text = str(value)
+        self.stream.write(text)
+        self.buffer = (self.buffer + text)[-2048:]
+        rate = parse_iteration_rate(self.buffer)
+        if rate is not None:
+            self.last_rate = rate
+        return len(text)
+
+    def flush(self):
+        return self.stream.flush()
+
+    def isatty(self):
+        return self.stream.isatty()
+
+    def fileno(self):
+        return self.stream.fileno()
+
+    @property
+    def encoding(self):
+        return getattr(self.stream, "encoding", "utf-8")
 
 # Explicitly handle AMD on Windows via DirectML if available, 
 # otherwise let VoxCPM handle cuda/cpu fallback
@@ -75,16 +121,18 @@ class VoxCPMEngine:
         print(f"   Text: {final_text}")
         print(f"   Max Len: {max_len}")
         
-        audio_array = self.model.generate(
-            text=final_text,
-            reference_wav_path=reference_wav_path,
-            prompt_wav_path=prompt_wav_path,
-            prompt_text=prompt_text,
-            cfg_value=cfg_value,
-            inference_timesteps=inference_timesteps,
-            max_len=max_len,
-            denoise=denoise and (reference_wav_path is not None or prompt_wav_path is not None)
-        )
+        rate_capture = TqdmRateCapture(sys.stderr)
+        with contextlib.redirect_stderr(rate_capture):
+            audio_array = self.model.generate(
+                text=final_text,
+                reference_wav_path=reference_wav_path,
+                prompt_wav_path=prompt_wav_path,
+                prompt_text=prompt_text,
+                cfg_value=cfg_value,
+                inference_timesteps=inference_timesteps,
+                max_len=max_len,
+                denoise=denoise and (reference_wav_path is not None or prompt_wav_path is not None)
+            )
         
         import soundfile as sf
         import numpy as np
@@ -97,7 +145,7 @@ class VoxCPMEngine:
             
         sf.write(str(output_path), audio_array, sample_rate)
         
-        return output_path, sample_rate
+        return output_path, sample_rate, rate_capture.last_rate
 
     def generate_design_stream(self, text, language, instruct, reference_wav_path=None, cfg_value=2.0, inference_timesteps=10, denoise=False, prompt_wav_path=None, prompt_text=None, max_len=4096, seed=-1):
         import torch

@@ -85,7 +85,13 @@ From the repo root in Windows PowerShell:
 .\start_voicegen_voxcpm_wsl_rocm7.ps1
 ```
 
-Then open:
+The launcher waits for the backend health check, then opens VoiceGen in your default browser. To start without opening a browser:
+
+```powershell
+.\start_voicegen_voxcpm_wsl_rocm7.ps1 -NoBrowser
+```
+
+Manual browser address:
 
 ```text
 http://localhost:3113

@@ -149,6 +149,7 @@ def output_record_from_file(path, metadata):
         "max_len": None,
         "denoise": False,
         "sample_rate": None,
+        "iteration_rate": None,
         "preset_state": {},
         "consent_ack": False,
     }
@@ -189,7 +190,7 @@ def write_output_metadata(filename, updates):
     save_metadata(metadata)
     return current
 
-def build_generation_metadata(payload, filename, sample_rate, mode):
+def build_generation_metadata(payload, filename, sample_rate, mode, iteration_rate=None):
     return {
         "filename": filename,
         "created_at": utc_now(),
@@ -205,6 +206,7 @@ def build_generation_metadata(payload, filename, sample_rate, mode):
         "max_len": int(payload.get("max_len", 4096)),
         "denoise": bool(payload.get("denoise", False)),
         "sample_rate": sample_rate,
+        "iteration_rate": round(float(iteration_rate), 2) if iteration_rate else None,
         "preset_state": payload.get("preset_state") or {},
         "consent_ack": bool(payload.get("consent_ack", False)),
     }
@@ -328,7 +330,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Vary", "Origin")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.send_header("Access-Control-Expose-Headers", "X-Sample-Rate, X-Model-Source, X-Output-Filename")
+        self.send_header(
+            "Access-Control-Expose-Headers",
+            "X-Sample-Rate, X-Model-Source, X-Output-Filename, X-Iteration-Rate",
+        )
         if extra_headers:
             for key, value in extra_headers.items():
                 self.send_header(key, value)
@@ -576,7 +581,7 @@ class Handler(BaseHTTPRequestHandler):
             out_path_target = os.path.join(outputs_dir, filename)
             
             with ENGINE_LOCK:
-                out_path, sr = engine.generate_design(
+                out_path, sr, iteration_rate = engine.generate_design(
                     text=text,
                     language=language,
                     instruct=voice_design,
@@ -595,23 +600,27 @@ class Handler(BaseHTTPRequestHandler):
                 raise RuntimeError("Synthesis returned no audio data.")
             write_output_metadata(
                 filename,
-                build_generation_metadata(payload, filename, sr, mode),
+                build_generation_metadata(payload, filename, sr, mode, iteration_rate),
             )
 
             with open(out_path, "rb") as f:
                 wav_data = f.read()
                 
             # Do not remove out_path; leave it in the lobby outputs folder.
+            response_headers = {
+                "Content-Disposition": f'inline; filename="{filename}"',
+                "X-Sample-Rate": str(sr),
+                "X-Model-Source": "VoxCPM2",
+                "X-Output-Filename": filename,
+            }
+            if iteration_rate:
+                response_headers["X-Iteration-Rate"] = f"{iteration_rate:.2f}"
+
             self.send_payload(
                 200,
                 wav_data,
                 "audio/wav",
-                extra_headers={
-                    "Content-Disposition": f'inline; filename="{filename}"',
-                    "X-Sample-Rate": str(sr),
-                    "X-Model-Source": "VoxCPM2",
-                    "X-Output-Filename": filename,
-                },
+                extra_headers=response_headers,
             )
         except Exception as exc:
             self.send_error_json(500, f"{type(exc).__name__}: {exc}")
