@@ -142,6 +142,7 @@ cd $QuotedAppRoot
 source $QuotedVenv/bin/activate
 python3 _backend/server.py
 "@
+$BashCommand = $BashCommand -replace "`r`n", "`n"
 
 Write-Host "WSL distro: $WslDistro" -ForegroundColor DarkCyan
 Write-Host "Windows data root: $DataRoot" -ForegroundColor DarkCyan
