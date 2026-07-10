@@ -9,7 +9,7 @@ Unless a specific file says otherwise, the following assets are separate from th
 - Mascot and character art.
 - Logo, favicon, and project branding images.
 - SparkleSnap-branded marks or watermarks.
-- README/demo media, including animated GIFs and screenshots.
+- README/demo media, including animated GIFs, screenshots, and reference audio samples.
 - Image files under `app/_frontend/assets/img/`.
 - Image and media files under `docs/assets/`.
 

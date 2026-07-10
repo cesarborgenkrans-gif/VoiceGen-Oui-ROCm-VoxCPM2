@@ -12,6 +12,14 @@ This is a reference measurement from the project development setup, not a univer
 
 ![VoiceGen GUI demo: type a voice design, then generate audio](docs/assets/voicegen-rocm-voxcpm-gui-demo.gif)
 
+Hear a short sample generated through the same VoiceGen / VoxCPM2 path:
+
+<audio controls preload="metadata" src="docs/assets/voicegen-reference-rx7900xtx.wav">
+  Your browser does not support the audio player. [Download the WAV sample](docs/assets/voicegen-reference-rx7900xtx.wav).
+</audio>
+
+[Download the reference WAV sample](docs/assets/voicegen-reference-rx7900xtx.wav)
+
 ## Try It, Test It, Improve It
 
 If you have an AMD GPU and want VoxCPM2 off the CPU path, this repo is for you.
