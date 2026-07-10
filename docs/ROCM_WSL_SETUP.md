@@ -1,6 +1,6 @@
 # ROCm + WSL2 Setup Notes
 
-This document summarizes the AMD GPU path used by VoiceGen Oui! (ROCm-VoxCPM2). It is written as a reproducible setup guide, not as a dump of local development notes.
+This document summarizes the AMD GPU path used by VoiceGen Oui! (ROCm-VoxCPM2). It is written as a reproducible setup guide!
 
 The verified development target was:
 
