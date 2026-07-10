@@ -9,43 +9,6 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-function Convert-ToWslPath([string]$Value) {
-    if ($Value.StartsWith("/")) {
-        return $Value
-    }
-
-    $fullPath = [System.IO.Path]::GetFullPath($Value)
-    if ($fullPath -notmatch "^(?<drive>[A-Za-z]):\\(?<rest>.*)$") {
-        throw "VoiceGen Oui! requires a local Windows drive path, not: $Value"
-    }
-
-    $drive = $Matches.drive.ToLowerInvariant()
-    $rest = $Matches.rest -replace "\\", "/"
-    return "/mnt/$drive/$rest"
-}
-
-function Quote-Bash([string]$Value) {
-    $singleQuote = [string][char]39
-    $escapedSingleQuote = $singleQuote + '"' + $singleQuote + '"' + $singleQuote
-    return $singleQuote + $Value.Replace($singleQuote, $escapedSingleQuote) + $singleQuote
-}
-
-function Get-WslVenv([string]$Distro, [string]$User) {
-    if ($env:VOICEGEN_OUI_WSL_VENV) {
-        return $env:VOICEGEN_OUI_WSL_VENV
-    }
-
-    $WslHome = if ($User -eq "root") { "/root" } else { "/home/$User" }
-    foreach ($candidate in @("$WslHome/voicegen-oui-rocm72", "$WslHome/voxcpm-wsl-rocm72", "$WslHome/voxcpm-wsl-rocm")) {
-        & wsl.exe -d $Distro -u $User -- test -f "$candidate/bin/activate"
-        if ($LASTEXITCODE -eq 0) {
-            return $candidate
-        }
-    }
-
-    throw "No compatible WSL Python venv found. Set VOICEGEN_OUI_WSL_VENV to the venv containing VoxCPM."
-}
-
 function Show-KawaiiSpinner([string]$Message) {
     $frames = @([char]0x280B, [char]0x2819, [char]0x2839, [char]0x2838, [char]0x283C, [char]0x2834, [char]0x2826, [char]0x2827, [char]0x2807, [char]0x280F)
     foreach ($frame in $frames) {
@@ -70,8 +33,6 @@ $ModelDestination = if ($Destination) {
     Join-Path $DataRoot "models\VoxCPM2"
 }
 $ModelDestination = [System.IO.Path]::GetFullPath($ModelDestination)
-$WslDistro = if ($env:VOICEGEN_OUI_WSL_DISTRO) { $env:VOICEGEN_OUI_WSL_DISTRO } else { "Ubuntu-22.04" }
-$WslUser = if ($env:VOICEGEN_OUI_WSL_USER) { $env:VOICEGEN_OUI_WSL_USER } else { "root" }
 $RequiredFiles = @("config.json", "model.safetensors", "audiovae.pth")
 
 Write-Host "VoiceGen Oui! VoxCPM2 Model Installer" -ForegroundColor Cyan
@@ -99,50 +60,62 @@ if ($missingBefore.Count -eq 0 -and -not $Force) {
 }
 
 New-Item -ItemType Directory -Force -Path $ModelDestination | Out-Null
-Show-KawaiiSpinner "Preparing the WSL download bridge..."
-$WslDestination = Convert-ToWslPath $ModelDestination
-$WslVenv = Get-WslVenv $WslDistro $WslUser
-$QuotedDestination = Quote-Bash $WslDestination
-$QuotedVenv = Quote-Bash $WslVenv
-$QuotedModelId = Quote-Bash $ModelId
-$ForceDownload = if ($Force) { "True" } else { "False" }
+Show-KawaiiSpinner "Reading the upstream model manifest..."
 
-$BashCommand = @"
-set -e
-source $QuotedVenv/bin/activate
-export PYTHONUNBUFFERED=1
-export HF_HUB_DISABLE_PROGRESS_BARS=0
-python3 -c 'import huggingface_hub' || python3 -m pip install huggingface-hub
-export VOICEGEN_OUI_MODEL_DEST=$QuotedDestination
-export VOICEGEN_OUI_MODEL_ID=$QuotedModelId
-export VOICEGEN_OUI_FORCE_DOWNLOAD=$ForceDownload
-python3 - <<'PY'
-import os
-from pathlib import Path
-from huggingface_hub import snapshot_download
+$encodedModelId = ($ModelId.Split('/') | ForEach-Object { [uri]::EscapeDataString($_) }) -join '/'
+$manifestUrl = "https://huggingface.co/api/models/$encodedModelId/tree/main?recursive=true&expand=false"
+$manifest = Invoke-RestMethod -Uri $manifestUrl -TimeoutSec 60
+$modelFiles = @($manifest | Where-Object { $_.type -eq "file" -and $_.path -notmatch "(^|/)\.\.($|/)" })
+if ($modelFiles.Count -eq 0) {
+    throw "The Hugging Face model manifest did not contain downloadable files."
+}
 
-target = Path(os.environ['VOICEGEN_OUI_MODEL_DEST'])
-model_id = os.environ['VOICEGEN_OUI_MODEL_ID']
-snapshot_download(
-    repo_id=model_id,
-    local_dir=target,
-    force_download=os.environ['VOICEGEN_OUI_FORCE_DOWNLOAD'] == 'True',
-)
+$curl = Get-Command curl.exe -ErrorAction SilentlyContinue
+if (-not $curl) {
+    throw "curl.exe was not found. VoiceGen Oui! needs the built-in Windows curl command to download model files."
+}
 
-required = ('config.json', 'model.safetensors', 'audiovae.pth')
-missing = [name for name in required if not (target / name).is_file()]
-if missing:
-    raise SystemExit('Download finished, but required model files are missing: ' + ', '.join(missing))
-print('Verified VoxCPM2 model files in ' + str(target))
-PY
-"@
+Write-Host "Downloading $($modelFiles.Count) upstream files now. Each file shows curl's normal resumable progress bar." -ForegroundColor Cyan
+$fileIndex = 0
+foreach ($modelFile in $modelFiles) {
+    $fileIndex++
+    $relativePath = $modelFile.path -replace '/', '\\'
+    $targetPath = Join-Path $ModelDestination $relativePath
+    $targetDirectory = Split-Path -Parent $targetPath
+    New-Item -ItemType Directory -Force -Path $targetDirectory | Out-Null
 
-Write-Host "Using WSL distro: $WslDistro" -ForegroundColor DarkCyan
-Write-Host "Using WSL venv:   $WslVenv" -ForegroundColor DarkCyan
-Write-Host "Downloading model files now. Hugging Face progress bars and file output will appear below." -ForegroundColor Cyan
-& wsl.exe -d $WslDistro -u $WslUser -- bash -lc $BashCommand
-if ($LASTEXITCODE -ne 0) {
-    throw "Model download failed. Read the WSL output above for the upstream download error."
+    $expectedSize = [int64]$modelFile.size
+    if ((Test-Path $targetPath -PathType Leaf) -and -not $Force -and (Get-Item $targetPath).Length -eq $expectedSize) {
+        Write-Host "[$fileIndex/$($modelFiles.Count)] Already complete: $($modelFile.path)" -ForegroundColor DarkGreen
+        continue
+    }
+    if ($Force -and (Test-Path $targetPath -PathType Leaf)) {
+        Remove-Item -LiteralPath $targetPath -Force
+    }
+
+    $encodedPath = ($modelFile.path.Split('/') | ForEach-Object { [uri]::EscapeDataString($_) }) -join '/'
+    $downloadUrl = "https://huggingface.co/$encodedModelId/resolve/main/$encodedPath"
+    Write-Host "[$fileIndex/$($modelFiles.Count)] Downloading: $($modelFile.path)" -ForegroundColor Cyan
+    $curlArgs = @("--location", "--fail", "--continue-at", "-", "--progress-bar", "--output", $targetPath)
+    if ($env:HF_TOKEN) {
+        $curlArgs += @("--header", "Authorization: Bearer $env:HF_TOKEN")
+    }
+    $curlArgs += $downloadUrl
+    & $curl.Source @curlArgs
+    if ($LASTEXITCODE -ne 0) {
+        throw "Download failed for $($modelFile.path). Re-run the installer to resume it."
+    }
+    if (-not (Test-Path $targetPath -PathType Leaf) -or (Get-Item $targetPath).Length -ne $expectedSize) {
+        throw "Downloaded file size does not match the upstream manifest: $($modelFile.path)"
+    }
+}
+
+$incompleteFiles = @($modelFiles | Where-Object {
+    $target = Join-Path $ModelDestination ($_.path -replace '/', '\\')
+    -not (Test-Path $target -PathType Leaf) -or (Get-Item $target).Length -ne [int64]$_.size
+})
+if ($incompleteFiles.Count -gt 0) {
+    throw "Model download is incomplete: $($incompleteFiles.path -join ', ')"
 }
 
 $missingAfter = $RequiredFiles | Where-Object { -not (Test-Path (Join-Path $ModelDestination $_) -PathType Leaf) }

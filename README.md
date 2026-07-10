@@ -28,7 +28,7 @@ Need the environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETU
 .\download_voicegen_oui_models.ps1
 ```
 
-The script downloads `openbmb/VoxCPM2` to `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, shows the upstream download progress in the terminal, confirms the required model files exist, and never adds them to git. When opened by double-click, it keeps the terminal open after completion or an error. Use `-NoPause` in an existing terminal, or `VOXCPM_MODEL_PATH` when your model lives elsewhere.
+The script downloads `openbmb/VoxCPM2` to `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, using native Windows PowerShell and `curl.exe`; it does not need WSL or the ROCm environment. It shows a resumable progress bar for every upstream file, confirms the required model files exist, and never adds them to git. When opened by double-click, it keeps the terminal open after completion or an error. Use `-NoPause` in an existing terminal, or `VOXCPM_MODEL_PATH` when your model lives elsewhere.
 
 ## Run
 
