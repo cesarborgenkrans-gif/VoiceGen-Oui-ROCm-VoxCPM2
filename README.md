@@ -15,7 +15,7 @@
 | Default (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-02.mp4) |
 | Dark Priestess (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-02.mp4) |
 
-VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Windows-to-WSL bridge for AMD GPU users. It makes the ROCm path approachable on Windows, where the usable route is WSL2 rather than the direct Linux setup many AMD users already have.
+VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a friendly local GUI and Windows-to-WSL2 bridge that helps AMD GPU users start generating voices locally instead of falling back to CPU.
 
 **Reference hardware:** AMD Radeon RX 7900 XTX / `gfx1100`
 
@@ -29,9 +29,28 @@ VoiceGen Oui! exists for Windows users with AMD GPUs. Its central piece is the [
 
 On top of that working foundation, VoiceGen Oui! provides a ready-to-use local GUI for voice design, generation, output comparison, and practical GPU testing. This is not the upstream VoxCPM2 model or training project; it is the utility layer that makes the ROCm route usable on Windows and easier for the next AMD user to reproduce.
 
-The WSL2 and ROCm environment is a documented, one-time manual setup; VoiceGen Oui! does not install ROCm automatically. After that environment is ready, the launcher handles the normal app startup and opens the GUI in your browser.
-
 VoiceGen Oui! supports 30 voice-generation languages. Start with ready-made persona presets, or use Persona Lab to create and save your own. The soft green, animated **VoxCPM2 Voice Language** button keeps language switching easy to find, while the visual interface makes voice design practical without editing configuration files. The goal is simple: make the latest local voice-generation technology feel approachable, creative, and as welcoming as a warm hug.
+
+## Setup
+
+Download or clone VoiceGen Oui! right away. The repository stays lightweight because models and generated audio live in your local user-data folder.
+
+The one-time Windows foundation is short:
+
+- An AMD driver that supports ROCm on WSL.
+- WSL2 with Ubuntu 22.04.
+- ROCm 7.2 with ROCDXG.
+- Python 3 with virtual-environment support inside WSL.
+
+Once those prerequisites are in place, open the cloned repository inside WSL, activate your Python virtual environment, and let `requirements.txt` install the Python side:
+
+```bash
+pip install -r requirements.txt
+```
+
+That installs the pinned PyTorch ROCm packages, VoxCPM, and the other Python dependencies used by VoiceGen Oui!. Then download the model files below and use the launcher.
+
+New to WSL2 or ROCm? The [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) walks through the one-time setup with validation checks. For installation troubleshooting, use [CONTRIBUTING.md](CONTRIBUTING.md) to report where the setup stopped, share logs, or contribute a setup fix for the next Windows AMD user.
 
 ## Model Files
 
@@ -41,7 +60,7 @@ Get the upstream VoxCPM2 model directly from [OpenBMB on Hugging Face](https://h
 .\download_voxcpm_models.ps1
 ```
 
-The script downloads only the upstream model files into that folder with native Windows PowerShell and `curl.exe`; it does not install WSL2, ROCm, or the Python environment. Complete the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) before launching VoiceGen Oui!.
+The script downloads the upstream model files into that folder with native Windows PowerShell and `curl.exe`. It keeps the large model outside the repository and ready for the launcher to find.
 
 ## Run
 
