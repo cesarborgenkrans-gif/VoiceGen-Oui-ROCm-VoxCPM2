@@ -18,7 +18,7 @@ This is the current SparkleSnap reference for a polished, natural VoiceGen Oui! 
 
 Apply the **Tsuki Hoshi** persona from the Personas tab, then set the synthesis controls to the values above before generating. Keeping the seed fixed makes later prompt or script comparisons easier to reproduce.
 
-Reference media: [SparkleSnap Tsuki Hoshi high-quality sample](assets/sparklesnap-tsuki-hoshi-high-quality.mp4).
+Reference media: [SparkleSnap Tsuki Hoshi high-quality sample](assets/sparklesnap-tsuki-hoshi-high-quality.wav).
 
 ### Voice Design
 

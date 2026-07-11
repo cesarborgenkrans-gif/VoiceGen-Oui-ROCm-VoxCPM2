@@ -8,7 +8,7 @@
 
 | Persona preset | Download samples |
 | --- | --- |
-| Tsuki Hoshi | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.wav) · [Sample 4](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-04.wav) |
+| Tsuki Hoshi | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.wav) |
 | Dark Priestess | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.wav) |
 
 VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Windows-to-WSL bridge for AMD GPU users. It makes the ROCm path approachable on Windows, where the usable route is WSL2 rather than the direct Linux setup many AMD users already have.
@@ -19,7 +19,7 @@ VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Window
 
 For the official SparkleSnap high-quality voice reference using the Tsuki Hoshi persona, see [docs/QUALITY_PRESETS.md](docs/QUALITY_PRESETS.md).
 
-Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The seven samples above are intentional public demo media; ordinary generated audio remains local and gitignored.
+Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The six samples above are intentional public demo media; ordinary generated audio remains local and gitignored.
 
 ## What It Unlocks
 
