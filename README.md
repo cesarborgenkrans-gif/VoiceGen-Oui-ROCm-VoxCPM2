@@ -25,13 +25,13 @@ Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The sa
 
 ## What It Unlocks
 
-VoiceGen Oui! exists for Windows users with AMD GPUs. Its central piece is the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md): a repeatable Windows-to-WSL2 ROCm path for running VoxCPM2 on AMD hardware rather than falling back to CPU.
+<img src="docs/assets/voicegen-oui-what-it-unlocks.webp" alt="VoiceGen Oui! brings local voice generation to Windows and AMD with 30 languages, ready-made personas, custom persona creation, ROCm, and WSL2" width="860">
 
-On top of that working foundation, VoiceGen Oui! provides a ready-to-use local GUI for voice design, generation, output comparison, and practical GPU testing. This is not the upstream VoxCPM2 model or training project; it is the utility layer that makes the ROCm route usable on Windows and easier for the next AMD user to reproduce.
-
-VoiceGen Oui! supports 30 voice-generation languages. Start with ready-made persona presets, or use Persona Lab to create and save your own. The soft green, animated **VoxCPM2 Voice Language** button keeps language switching easy to find, while the visual interface makes voice design practical without editing configuration files. The goal is simple: make the latest local voice-generation technology feel approachable, creative, and as welcoming as a warm hug.
+Give your AMD GPU a welcoming local voice studio. Pick a ready-made persona, create your own in Persona Lab, switch between 30 languages, compare takes, and keep every generation on your machine. VoiceGen Oui! wraps the Windows-to-WSL2 ROCm path in a creative GUI that makes advanced voice generation feel easy to approach.
 
 ## Setup
+
+Quick access to the setup guide, here [ROCM_WSL_SETUP.md](docs/ROCM_WSL_SETUP.md) 🌟
 
 Download or clone VoiceGen Oui! right away. The repository stays lightweight because models and generated audio live in your local user-data folder.
 
@@ -50,7 +50,7 @@ pip install -r requirements.txt
 
 That installs the pinned PyTorch ROCm packages, VoxCPM, and the other Python dependencies used by VoiceGen Oui!. Then download the model files below and use the launcher.
 
-New to WSL2 or ROCm? The [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) walks through the one-time setup with validation checks. For installation troubleshooting, use [CONTRIBUTING.md](CONTRIBUTING.md) to report where the setup stopped, share logs, or contribute a setup fix for the next Windows AMD user.
+New to WSL2 or ROCm? The setup guide walks through the one-time setup with validation checks. For installation troubleshooting, use [CONTRIBUTING.md](CONTRIBUTING.md) to report where the setup stopped, share logs, or contribute a setup fix for the next Windows AMD user.
 
 ## Model Files
 
