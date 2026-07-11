@@ -6,29 +6,29 @@
 
 ## Listen
 
-**Official SparkleSnap / Tsuki Hoshi high-quality sample**
+### Official SparkleSnap / Tsuki Hoshi High-Quality Sample
 
-<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4">
-  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4">Play the high-quality sample</a>
-</video>
+[![Play the official SparkleSnap high-quality voice sample](docs/assets/sparklesnap-tsuki-hoshi-high-quality.png)](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4)
 
-**VoiceGen Oui! reference voice sample 02**
+[Play in GitHub](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4) | [Download WAV](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav)
 
-<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-02.mp4">
-  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-02.mp4">Play reference voice sample 02</a>
-</video>
+### VoiceGen Oui! Reference Voice Sample 02
 
-**VoiceGen Oui! reference voice sample 03**
+[![Play VoiceGen Oui reference voice sample 02](docs/assets/voicegen-oui-reference-sample-02.png)](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/voicegen-oui-reference-sample-02.mp4)
 
-<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-03.mp4">
-  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-03.mp4">Play reference voice sample 03</a>
-</video>
+[Play in GitHub](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/voicegen-oui-reference-sample-02.mp4) | [Download WAV](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-02.wav)
 
-**VoiceGen Oui! reference voice sample 04**
+### VoiceGen Oui! Reference Voice Sample 03
 
-<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-04.mp4">
-  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-04.mp4">Play reference voice sample 04</a>
-</video>
+[![Play VoiceGen Oui reference voice sample 03](docs/assets/voicegen-oui-reference-sample-03.png)](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/voicegen-oui-reference-sample-03.mp4)
+
+[Play in GitHub](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/voicegen-oui-reference-sample-03.mp4) | [Download WAV](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-03.wav)
+
+### VoiceGen Oui! Reference Voice Sample 04
+
+[![Play VoiceGen Oui reference voice sample 04](docs/assets/voicegen-oui-reference-sample-04.png)](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/voicegen-oui-reference-sample-04.mp4)
+
+[Play in GitHub](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/blob/main/docs/assets/voicegen-oui-reference-sample-04.mp4) | [Download WAV](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-04.wav)
 
 VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Windows-to-WSL bridge for AMD GPU users. It makes the ROCm path approachable on Windows, where the usable route is WSL2 rather than the direct Linux setup many AMD users already have.
 
@@ -42,7 +42,9 @@ Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The fo
 
 ## What It Unlocks
 
-This is not the upstream VoxCPM2 model or training project. It is the utility layer that makes the ROCm path practical on Windows: write a voice design, generate locally, compare results, and help improve AMD GPU compatibility for the next person.
+VoiceGen Oui! exists for Windows users with AMD GPUs. Its central piece is the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md): a repeatable Windows-to-WSL2 ROCm path for running VoxCPM2 on AMD hardware rather than falling back to CPU.
+
+On top of that working foundation, VoiceGen Oui! provides a ready-to-use local GUI for voice design, generation, output comparison, and practical GPU testing. This is not the upstream VoxCPM2 model or training project; it is the utility layer that makes the ROCm route usable on Windows and easier for the next AMD user to reproduce.
 
 ## Model Files
 
@@ -52,7 +54,7 @@ Get the upstream VoxCPM2 model directly from [OpenBMB on Hugging Face](https://h
 .\download_voxcpm_models.ps1
 ```
 
-The script downloads the same upstream model into that folder with native Windows PowerShell and `curl.exe`; it does not need WSL or ROCm. Need the Windows + WSL2 + ROCm environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md).
+The script downloads the same upstream model into that folder with native Windows PowerShell and `curl.exe`; it does not need WSL or ROCm. Set up the Windows + WSL2 + ROCm bridge with the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) before launching VoiceGen Oui!.
 
 ## Run
 
@@ -70,7 +72,7 @@ To stop the hidden backend later, run:
 .\stop_voicegen_oui.ps1
 ```
 
-This stops only the VoiceGen server started for this checkout. The browser tab can remain open; it will simply stop responding until you launch VoiceGen again.
+This stops only the VoiceGen server started for this checkout. The browser tab can remain open; it will simply stop responding until you launch VoiceGen again. Or use the Cool Down GPU button inside of the user interface for when you go AFK.
 
 To open your local outputs, user personas, logs, and optional user-managed models, double-click `open_voicegen_oui_data_folder.cmd` in the repository root. Custom personas are stored under `%LOCALAPPDATA%\VoiceGenOui\user-personas`.
 
