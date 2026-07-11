@@ -34,6 +34,8 @@ outputs/*
 !docs/assets/voicegen-oui-dark-priestess-reference-sample-01.wav
 !docs/assets/voicegen-oui-dark-priestess-reference-sample-02.wav
 !docs/assets/voicegen-oui-dark-priestess-reference-sample-03.wav
+!docs/assets/voicegen-oui-default-japanese-sample-01.wav
+!docs/assets/voicegen-oui-default-japanese-sample-02.wav
 
 # Global logs
 *.log
