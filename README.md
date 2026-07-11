@@ -2,6 +2,8 @@
 
 **ROCm-powered VoxCPM2 voice generation for Windows users who want to use their AMD GPU instead of falling back to CPU.**
 
+**It supports over 30 voice generation output languages!**
+
 ![VoiceGen Oui! GUI demo: type a voice design, then generate audio](docs/assets/voicegen-oui-rocm-voxcpm2-gui-demo.gif)
 
 ## Listen
@@ -24,6 +26,8 @@ Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The sa
 VoiceGen Oui! exists for Windows users with AMD GPUs. Its central piece is the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md): a repeatable Windows-to-WSL2 ROCm path for running VoxCPM2 on AMD hardware rather than falling back to CPU.
 
 On top of that working foundation, VoiceGen Oui! provides a ready-to-use local GUI for voice design, generation, output comparison, and practical GPU testing. This is not the upstream VoxCPM2 model or training project; it is the utility layer that makes the ROCm route usable on Windows and easier for the next AMD user to reproduce.
+
+VoiceGen Oui! also opens VoxCPM2 voice generation to over 30 output languages. The soft green, animated **VoxCPM2 Voice Language** button in the app makes the language controls easy to find, so you can switch languages and create multilingual voices without editing configuration files.
 
 ## Model Files
 
@@ -64,6 +68,8 @@ If you use Windows with an AMD GPU and want to help make VoxCPM2 more usable thr
 - Report successful runs, partial runs, and useful failures.
 
 The most useful contribution is a hardware test report with your GPU, ROCm version, PyTorch ROCm result, VoxCPM2 result, and observed speed. Start with [CONTRIBUTING.md](CONTRIBUTING.md) or [open a hardware report](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/issues/new?template=hardware-test.yml).
+
+VoiceGen Oui! will keep evolving, so please check back for new releases, GUI updates, more features, and fixes shaped by user feedback.
 
 ## Local-Only Files
 
