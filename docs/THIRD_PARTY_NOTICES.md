@@ -28,6 +28,10 @@ ROCm, HIP, and ROCDXG are AMD components installed on the host WSL environment. 
 
 AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.
 
+## Web Fonts
+
+The GUI requests the Outfit and JetBrains Mono typefaces from Google Fonts at runtime. Font files are not bundled in this repository. Both typefaces are distributed under the SIL Open Font License 1.1 and retain their respective authors' copyrights.
+
 ## Voice Cloning Safety
 
 Voice cloning and continuation modes can imitate voices from supplied audio. Users are responsible for obtaining consent and complying with applicable laws, platform rules, and model license terms.

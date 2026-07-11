@@ -2,18 +2,18 @@
 
 **ROCm-powered VoxCPM2 voice generation for Windows users who want to use their AMD GPU instead of falling back to CPU.**
 
-**It supports over 30 voice generation output languages!**
+**Choose from 39 voice-generation language and dialect options: 30 languages plus 9 Chinese dialects!**
 
 ![VoiceGen Oui! GUI demo: type a voice design, then generate audio](docs/assets/voicegen-oui-rocm-voxcpm2-gui-demo.gif)
 
 ## Listen
 
-| Persona preset | Download samples |
+| Persona preset | Download MP4 samples |
 | --- | --- |
-| Tsuki Hoshi | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.wav) |
-| Dark Priestess | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.wav) |
-| Default (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-01.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-02.wav) |
-| Dark Priestess (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-01.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-02.wav) |
+| Tsuki Hoshi | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.mp4) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.mp4) |
+| Dark Priestess | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.mp4) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.mp4) |
+| Default (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-02.mp4) |
+| Dark Priestess (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-02.mp4) |
 
 VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Windows-to-WSL bridge for AMD GPU users. It makes the ROCm path approachable on Windows, where the usable route is WSL2 rather than the direct Linux setup many AMD users already have.
 
@@ -29,7 +29,9 @@ VoiceGen Oui! exists for Windows users with AMD GPUs. Its central piece is the [
 
 On top of that working foundation, VoiceGen Oui! provides a ready-to-use local GUI for voice design, generation, output comparison, and practical GPU testing. This is not the upstream VoxCPM2 model or training project; it is the utility layer that makes the ROCm route usable on Windows and easier for the next AMD user to reproduce.
 
-VoiceGen Oui! also opens VoxCPM2 voice generation to over 30 output languages. The soft green, animated **VoxCPM2 Voice Language** button in the app makes the language controls easy to find, so you can switch languages and create multilingual voices without editing configuration files.
+The WSL2 and ROCm environment is a documented, one-time manual setup; VoiceGen Oui! does not install ROCm automatically. After that environment is ready, the launcher handles the normal app startup and opens the GUI in your browser.
+
+VoiceGen Oui! exposes all 39 documented output choices: 30 languages and 9 Chinese dialects. The soft green, animated **VoxCPM2 Voice Language** button in the app makes these controls easy to find, so you can switch languages and create multilingual voices without editing configuration files.
 
 ## Model Files
 
@@ -39,7 +41,7 @@ Get the upstream VoxCPM2 model directly from [OpenBMB on Hugging Face](https://h
 .\download_voxcpm_models.ps1
 ```
 
-The script downloads the same upstream model into that folder with native Windows PowerShell and `curl.exe`; it does not need WSL or ROCm. Set up the Windows + WSL2 + ROCm bridge with the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) before launching VoiceGen Oui!.
+The script downloads only the upstream model files into that folder with native Windows PowerShell and `curl.exe`; it does not install WSL2, ROCm, or the Python environment. Complete the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md) before launching VoiceGen Oui!.
 
 ## Run
 
@@ -88,10 +90,10 @@ Third-party models, libraries, and assets keep their own licenses; see [docs/THI
 VoiceGen Oui! is a utility layer around the upstream VoxCPM work. The resource which makes this project possible is the actual VoxCPM2 project, and I really appreciate their work. Here's a citation as requested by [OpenBMB](https://github.com/OpenBMB/VoxCPM):
 
 ```bibtex
-@article{zhou2026voxcpm2,
-  title   = {VoxCPM2 Technical Report},
-  author  = {Zhou, Yixuan  and Zeng, Guoyang and Liu, Xin and Li, Xiang and Yu, Renjie and Gui, Jiancheng and Wu, Jiaheng and Wang, Ziyang and Shen, Xudong and Ye, Runchuan  and Zhang, Zhisheng and Zhou, Jiuyang and Bai, Bingsong and Sun, Weiyue and Deng, Mengyuan and Shi, Qundong and Wu, Zhiyong and Liu, Zhiyuan},
-  journal = {arXiv preprint arXiv:2606.06928},
+@article{voxcpm2_2026,
+  title   = {VoxCPM2: Tokenizer-Free TTS for Multilingual Speech Generation, Creative Voice Design, and True-to-Life Cloning},
+  author  = {VoxCPM Team},
+  journal = {GitHub},
   year    = {2026},
 }
 
