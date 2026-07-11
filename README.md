@@ -2,7 +2,7 @@
 
 **ROCm-powered VoxCPM2 voice generation for Windows users who want to use their AMD GPU instead of falling back to CPU.**
 
-**Choose from 39 voice-generation language and dialect options: 30 languages plus 9 Chinese dialects!**
+**It supports 30 voice-generation languages!**
 
 ![VoiceGen Oui! GUI demo: type a voice design, then generate audio](docs/assets/voicegen-oui-rocm-voxcpm2-gui-demo.gif)
 
@@ -31,7 +31,7 @@ On top of that working foundation, VoiceGen Oui! provides a ready-to-use local G
 
 The WSL2 and ROCm environment is a documented, one-time manual setup; VoiceGen Oui! does not install ROCm automatically. After that environment is ready, the launcher handles the normal app startup and opens the GUI in your browser.
 
-VoiceGen Oui! exposes all 39 documented output choices: 30 languages and 9 Chinese dialects. The soft green, animated **VoxCPM2 Voice Language** button in the app makes these controls easy to find, so you can switch languages and create multilingual voices without editing configuration files.
+VoiceGen Oui! supports 30 voice-generation languages. Start with ready-made persona presets, or use Persona Lab to create and save your own. The soft green, animated **VoxCPM2 Voice Language** button keeps language switching easy to find, while the visual interface makes voice design practical without editing configuration files. The goal is simple: make the latest local voice-generation technology feel approachable, creative, and as welcoming as a warm hug.
 
 ## Model Files
 
