@@ -6,17 +6,10 @@
 
 ## Listen
 
-The first four samples use the **Tsuki Hoshi** preset. The final three samples use the **Dark Priestess** preset.
-
-| Persona preset | Sample | Listen |
-| --- | --- | --- |
-| Tsuki Hoshi | Official SparkleSnap high-quality sample | [![Download WAV](https://img.shields.io/badge/Download-WAV-167D7F?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav) |
-| Tsuki Hoshi | Reference voice sample 02 | [![Download WAV](https://img.shields.io/badge/Download-WAV-167D7F?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-02.wav) |
-| Tsuki Hoshi | Reference voice sample 03 | [![Download WAV](https://img.shields.io/badge/Download-WAV-167D7F?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-03.wav) |
-| Tsuki Hoshi | Reference voice sample 04 | [![Download WAV](https://img.shields.io/badge/Download-WAV-167D7F?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-04.wav) |
-| Dark Priestess | Reference voice sample 01 | [![Download WAV](https://img.shields.io/badge/Download-WAV-B43872?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.wav) |
-| Dark Priestess | Reference voice sample 02 | [![Download WAV](https://img.shields.io/badge/Download-WAV-B43872?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.wav) |
-| Dark Priestess | Reference voice sample 03 | [![Download WAV](https://img.shields.io/badge/Download-WAV-B43872?style=flat-square)](https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.wav) |
+| Persona preset | Download samples |
+| --- | --- |
+| Tsuki Hoshi | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.wav) · [Sample 4](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-04.wav) |
+| Dark Priestess | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.wav) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.wav) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.wav) |
 
 VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Windows-to-WSL bridge for AMD GPU users. It makes the ROCm path approachable on Windows, where the usable route is WSL2 rather than the direct Linux setup many AMD users already have.
 
