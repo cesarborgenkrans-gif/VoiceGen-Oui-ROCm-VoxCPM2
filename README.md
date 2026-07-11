@@ -17,9 +17,7 @@ VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Window
 
 **Quality / speed setting:** `8` timesteps is the project setting for the fastest generation that still meets VoiceGen Oui!'s target quality. Recorded RX 7900 XTX reference sessions have reached **8.24-10.03 it/s** with this setting.
 
-For the official SparkleSnap high-quality voice reference using the Tsuki Hoshi persona, see [docs/QUALITY_PRESETS.md](docs/QUALITY_PRESETS.md).
-
-Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The six samples above are intentional public demo media; ordinary generated audio remains local and gitignored.
+Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The samples are intentional public demo media; your generated audio remains local and saved to `C:\Users\*username*\AppData\Local\VoiceGenOui`.
 
 ## What It Unlocks
 
@@ -77,9 +75,9 @@ The utility code and documentation are [Apache-2.0](LICENSE). Mascots, logos, Sp
 
 Third-party models, libraries, and assets keep their own licenses; see [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE). VoiceGen Oui! is independent and is not affiliated with, sponsored by, or endorsed by AMD or OpenBMB. AMD ROCm and related marks are trademarks of Advanced Micro Devices, Inc.
 
-## Cite VoxCPM
+## Citations
 
-VoiceGen Oui! is a utility layer around the upstream VoxCPM work. If it helps your research or project, please cite the VoxCPM2 technical report and the original VoxCPM paper as requested by [OpenBMB](https://github.com/OpenBMB/VoxCPM):
+VoiceGen Oui! is a utility layer around the upstream VoxCPM work. The resource which makes this project possible is the actual VoxCPM2 project, and I really appreciate their work. Here's a citation as requested by [OpenBMB](https://github.com/OpenBMB/VoxCPM):
 
 ```bibtex
 @article{zhou2026voxcpm2,
@@ -94,6 +92,18 @@ VoiceGen Oui! is a utility layer around the upstream VoxCPM work. If it helps yo
   author = {Zhou, Yixuan and Zeng, Guoyang and Liu, Xin and Li, Xiang and Yu, Renjie and Wang, Ziyang and Ye, Runchuan and Sun, Weiyue and Gui, Jiancheng and Li, Kehan and Wu, Zhiyong and Liu, Zhiyuan},
   journal = {arXiv preprint arXiv:2509.24650},
   year = {2025}
+}
+```
+
+If my work with VoiceGen Oui! made this technology easier to approach and use, then please cite me:
+
+```bibtex
+@software{borgenkrans2026voicegenoui,
+  author = {Borgenkrans, Cesar},
+  title  = {VoiceGen Oui!: A Windows and WSL2 ROCm Utility for VoxCPM2 on AMD GPUs},
+  year   = {2026},
+  url    = {https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2},
+  note   = {Computer software}
 }
 ```
 
