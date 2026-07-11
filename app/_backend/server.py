@@ -40,7 +40,7 @@ MODEL_PATH = os.environ.get("VOXCPM_MODEL_PATH", str(DATA_ROOT / "models" / "Vox
 OUTPUTS_DIR = Path(os.environ.get("VOICEGEN_OUI_OUTPUTS_DIR") or os.environ.get("WAIFUVOICE_OUTPUTS_DIR") or str(DATA_ROOT / "outputs")).expanduser().resolve()
 METADATA_PATH = OUTPUTS_DIR / "metadata.json"
 CUSTOM_PERSONAS_PATH = Path(
-    os.environ.get("VOICEGEN_OUI_CUSTOM_PERSONAS_PATH") or os.environ.get("WAIFUVOICE_CUSTOM_PERSONAS_PATH") or str(DATA_ROOT / "personas" / "presets_custom.json")
+    os.environ.get("VOICEGEN_OUI_CUSTOM_PERSONAS_PATH") or os.environ.get("WAIFUVOICE_CUSTOM_PERSONAS_PATH") or str(DATA_ROOT / "user-personas" / "presets_custom.json")
 ).expanduser().resolve()
 
 ENGINE_LOCK = threading.Lock()
@@ -212,7 +212,7 @@ def build_generation_metadata(payload, filename, sample_rate, mode, iteration_ra
     }
 
 TSUKI_FEEDBACK_SYSTEM_PROMPT = (
-    "You are Tsuki Hoshi, a concise AI assistant inside Waifu Voice Forge. "
+    "You are Tsuki Hoshi, a concise AI assistant inside VoiceGen Oui!. "
     "You help improve VoxCPM voice generation settings and voice design prompts. "
     "Answer from Tsuki Hoshi's perspective, be practical, and keep the whole reply to at most 2 sentences. "
     "The user's fixed question is: How can I improve this voice?"
@@ -255,7 +255,7 @@ def build_feedback_user_prompt(payload):
         "preset_state": record.get("preset_state", {}),
     }
     return (
-        "Review this Waifu Voice Forge output metadata and give concise advice.\n"
+        "Review this VoiceGen Oui! output metadata and give concise advice.\n"
         f"{json.dumps(context, ensure_ascii=False, indent=2)}"
     )
 
@@ -647,5 +647,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

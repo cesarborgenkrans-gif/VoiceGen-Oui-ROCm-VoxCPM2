@@ -12,10 +12,7 @@ __pycache__/
 htmlcov/
 # Local model weights and Hugging Face caches
 models/*
-!models/README.md
-!models/VoxCPM2/
 models/VoxCPM2/*
-!models/VoxCPM2/README.md
 .cache/
 .huggingface/
 *.safetensors
@@ -25,15 +22,16 @@ models/VoxCPM2/*
 # Generated audio and local test output
 _outputs_vox/
 outputs/*
-!outputs/README.md
 *.wav
 *.mp3
 *.flac
 *.ogg
 
-# Curated public README samples. All other generated audio remains local.
-!docs/assets/voicegen-sample-01.wav
-!docs/assets/voicegen-sample-02.wav
+# Curated README media. All other generated audio remains local.
+!docs/assets/sparklesnap-tsuki-hoshi-high-quality.wav
+!docs/assets/voicegen-oui-reference-sample-02.wav
+!docs/assets/voicegen-oui-reference-sample-03.wav
+!docs/assets/voicegen-oui-reference-sample-04.wav
 
 # Global logs
 *.log

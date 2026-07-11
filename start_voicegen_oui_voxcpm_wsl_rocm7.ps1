@@ -1,5 +1,6 @@
 param(
-    [switch]$NoBrowser
+    [switch]$NoBrowser,
+    [switch]$NoPause
 )
 
 Write-Host "============================================================" -ForegroundColor Cyan
@@ -81,6 +82,18 @@ function Test-TcpPort([string]$HostName, [int]$Port, [int]$TimeoutMs = 700) {
     }
 }
 
+function Wait-ForLauncherClose {
+    if (-not $NoPause) {
+        Read-Host "VoiceGen is stopped. Press Enter to close this window"
+    }
+}
+
+trap {
+    Write-Host "VoiceGen launcher stopped with an error: $($_.Exception.Message)" -ForegroundColor Red
+    Wait-ForLauncherClose
+    exit 1
+}
+
 $WslDistro = if ($env:VOICEGEN_OUI_WSL_DISTRO) { $env:VOICEGEN_OUI_WSL_DISTRO } else { "Ubuntu-22.04" }
 $WslUser = if ($env:VOICEGEN_OUI_WSL_USER) { $env:VOICEGEN_OUI_WSL_USER } else { "root" }
 $WslVenv = Get-WslVenv
@@ -89,11 +102,27 @@ $AppRootWindows = Join-Path $SourceRootWindows "app"
 
 $DataRoot = if ($env:VOICEGEN_OUI_DATA_ROOT) { $env:VOICEGEN_OUI_DATA_ROOT } else { Join-Path $env:LOCALAPPDATA "VoiceGenOui" }
 $AppRoot = if ($env:VOICEGEN_OUI_APP_ROOT) { $env:VOICEGEN_OUI_APP_ROOT } else { $AppRootWindows }
-foreach ($RuntimeDirectory in @($DataRoot, (Join-Path $DataRoot "outputs"), (Join-Path $DataRoot "personas"), (Join-Path $DataRoot "logs"), (Join-Path $DataRoot "models"))) {
+$LegacyPersonasRoot = Join-Path $DataRoot "personas"
+$UserPersonasRoot = Join-Path $DataRoot "user-personas"
+if (Test-Path $LegacyPersonasRoot) {
+    New-Item -ItemType Directory -Path $UserPersonasRoot -Force | Out-Null
+    foreach ($LegacyItem in (Get-ChildItem $LegacyPersonasRoot -Force)) {
+        $UserItem = Join-Path $UserPersonasRoot $LegacyItem.Name
+        if (-not (Test-Path $UserItem)) {
+            Move-Item -LiteralPath $LegacyItem.FullName -Destination $UserItem
+        }
+    }
+    if (-not (Get-ChildItem $LegacyPersonasRoot -Force)) {
+        Remove-Item -LiteralPath $LegacyPersonasRoot -Force
+    }
+}
+foreach ($RuntimeDirectory in @($DataRoot, (Join-Path $DataRoot "outputs"), $UserPersonasRoot, (Join-Path $DataRoot "logs"), (Join-Path $DataRoot "models"))) {
     New-Item -ItemType Directory -Path $RuntimeDirectory -Force | Out-Null
 }
 $WslDataRoot = Convert-ToWslPath $DataRoot
 $WslAppRoot = Convert-ToWslPath $AppRoot
+$PidPathWindows = Join-Path $DataRoot "voicegen-server.pid"
+$WslPidPath = Convert-ToWslPath $PidPathWindows
 $VoiceGenUrl = "http://localhost:3113/"
 $HealthUrl = "http://127.0.0.1:3113/api/health"
 
@@ -107,6 +136,7 @@ if ($ExistingHealth) {
     if (-not $NoBrowser) {
         Start-Process $VoiceGenUrl
     }
+    Wait-ForLauncherClose
     exit 0
 }
 
@@ -126,6 +156,8 @@ $ModelPathLine = "export VOXCPM_MODEL_PATH=$(Quote-Bash (Convert-ToWslPath $Mode
 $QuotedDataRoot = Quote-Bash $WslDataRoot
 $QuotedAppRoot = Quote-Bash $WslAppRoot
 $QuotedVenv = Quote-Bash $WslVenv
+$QuotedPidPath = Quote-Bash $WslPidPath
+$BashPidToken = '$' + '$'
 
 $BashCommand = @"
 set -e
@@ -140,7 +172,8 @@ export VOICEGEN_OUI_APP_ROOT=$QuotedAppRoot
 $ModelPathLine
 cd $QuotedAppRoot
 source $QuotedVenv/bin/activate
-python3 _backend/server.py
+echo $BashPidToken > $QuotedPidPath
+exec python3 _backend/server.py
 "@
 $BashCommand = $BashCommand -replace "`r`n", "`n"
 
@@ -178,4 +211,4 @@ try {
 }
 
 Write-Host "Server process terminated." -ForegroundColor Red
-Read-Host "Press Enter to close this window"
+Wait-ForLauncherClose

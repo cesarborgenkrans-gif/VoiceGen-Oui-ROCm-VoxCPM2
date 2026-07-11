@@ -10,7 +10,7 @@ VoiceGen-Oui-ROCm-VoxCPM2/                 source checkout
 
 %LOCALAPPDATA%\VoiceGenOui\                runtime data root
   outputs/                                 generated WAV files and metadata.json
-  personas/                                custom local personas
+  user-personas/                           custom local personas
   logs/                                    AI addon event log
   models/VoxCPM2/                          preferred model installation location
 ```

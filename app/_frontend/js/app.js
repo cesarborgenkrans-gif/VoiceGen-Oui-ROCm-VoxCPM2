@@ -762,6 +762,19 @@ function updatePersonaLabPreview(persona = readPersonaLabForm()) {
   if (markdownNode) markdownNode.textContent = personaToMarkdown(persona);
 }
 
+function setPersonaLabPage(page = 'identity') {
+  const pages = ['identity', 'voice', 'character'];
+  const nextPage = pages.includes(page) ? page : 'identity';
+  const modal = $('#persona-lab-modal');
+  if (!modal) return;
+  modal.dataset.personaPage = nextPage;
+  document.querySelectorAll('[data-persona-page-button]').forEach((button) => {
+    button.classList.toggle('active', button.dataset.personaPageButton === nextPage);
+  });
+  const pageStatus = $('#persona-lab-page-status');
+  if (pageStatus) pageStatus.textContent = `Page ${pages.indexOf(nextPage) + 1} of ${pages.length}`;
+}
+
 function syncPersonaLabFromForm() {
   if (!state.personaLab) return;
   const persona = readPersonaLabForm();
@@ -786,6 +799,7 @@ function openPersonaLab(seed = null) {
   populatePersonaLabForm(state.personaLab.persona);
   updatePersonaLabPreview(state.personaLab.persona);
   renderPersonaLabPicker();
+  setPersonaLabPage('identity');
   openModal('persona-lab-modal');
 }
 
@@ -1704,6 +1718,9 @@ $('#btn-persona-lab-save')?.addEventListener('click', () => {
 $('#btn-persona-lab-apply')?.addEventListener('click', applyPersonaLabToMainForm);
 $('#btn-persona-lab-export-json')?.addEventListener('click', () => exportPersona('json'));
 $('#btn-persona-lab-export-md')?.addEventListener('click', () => exportPersona('md'));
+document.querySelectorAll('[data-persona-page-button]')?.forEach((button) => {
+  button.addEventListener('click', () => setPersonaLabPage(button.dataset.personaPageButton));
+});
 $('#persona-lab-picker')?.addEventListener('click', (event) => {
   const item = event.target.closest('.persona-lab-persona');
   if (!item) return;

@@ -492,13 +492,72 @@
     .language-option small { display:block; margin-top:3px; color:#5b767c; font-size:9px; }
     .persona-lab-modal .modal-card {
       width: min(1160px, 96vw);
-      max-height: 88vh;
+      height: min(900px, calc(100vh - 28px));
+      max-height: calc(100vh - 28px);
+      overflow: hidden;
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+    .persona-lab-nav {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px;
+      border:1px solid rgba(20,119,144,0.16);
+      border-radius:6px;
+      background:rgba(255,255,255,0.46);
+      overflow-x:auto;
+      scrollbar-width:thin;
+    }
+    .persona-lab-nav button {
+      flex:0 0 auto;
+      border:1px solid rgba(20,119,144,0.2);
+      border-radius:4px;
+      padding:7px 10px;
+      background:rgba(255,255,255,0.64);
+      color:#2b5b65;
+      cursor:pointer;
+      font-family:var(--font-mono);
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:0.7px;
+    }
+    .persona-lab-nav button:hover,
+    .persona-lab-nav button:focus-visible,
+    .persona-lab-nav button.active {
+      border-color:var(--accent-cyan);
+      color:#11606d;
+      background:rgba(129,236,236,0.28);
+      box-shadow:0 0 0 2px rgba(129,236,236,0.12);
+    }
+    .persona-lab-nav-status {
+      margin-left:auto;
+      flex:0 0 auto;
+      color:#53747b;
+      font-family:var(--font-mono);
+      font-size:9px;
+      text-transform:uppercase;
+      letter-spacing:0.7px;
     }
     .persona-lab-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
       gap: 14px;
       align-items: start;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .persona-lab-modal[data-persona-page="identity"] .persona-lab-layout,
+    .persona-lab-modal[data-persona-page="voice"] .persona-lab-layout {
+      grid-template-columns:minmax(0, 1fr);
+    }
+    .persona-lab-modal[data-persona-page="identity"] .persona-lab-preview,
+    .persona-lab-modal[data-persona-page="voice"] .persona-lab-preview {
+      display:none;
+    }
+    .persona-lab-modal[data-persona-page="identity"] [data-persona-section]:not([data-persona-section="library"]):not([data-persona-section="identity"]),
+    .persona-lab-modal[data-persona-page="voice"] [data-persona-section]:not([data-persona-section="voice"]),
+    .persona-lab-modal[data-persona-page="character"] [data-persona-section]:not([data-persona-section="character"]):not([data-persona-section="preview"]) {
+      display:none;
     }
     .persona-lab-column {
       border: 1px solid rgba(129,236,236,0.22);
@@ -510,6 +569,9 @@
       display: grid;
       gap: 12px;
       min-width: 0;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
     .persona-lab-section {
       display:grid;
@@ -670,7 +732,9 @@
       overflow:auto;
     }
     @media (max-width: 980px) {
-      .persona-lab-layout { grid-template-columns: 1fr; }
+      .persona-lab-layout { display:block; overflow:auto; }
+      .persona-lab-column { min-height:auto; overflow:visible; margin-bottom:14px; }
+      .persona-lab-column:last-child { margin-bottom:0; }
       .persona-lab-split { grid-template-columns: 1fr; }
       .persona-lab-preview-head { flex-direction:column; }
       .persona-lab-chip-row { justify-content:flex-start; }
@@ -1242,9 +1306,16 @@
             <button class="modal-close" type="button" data-close-modal="persona-lab-modal">Close</button>
           </div>
 
+          <nav class="persona-lab-nav" aria-label="Persona Lab pages">
+            <button type="button" data-persona-page-button="identity" class="active">01 Library &amp; Identity</button>
+            <button type="button" data-persona-page-button="voice">02 Voice Design</button>
+            <button type="button" data-persona-page-button="character">03 Character &amp; Export</button>
+            <span class="persona-lab-nav-status" id="persona-lab-page-status">Page 1 of 3</span>
+          </nav>
+
           <div class="persona-lab-layout">
             <div class="persona-lab-column">
-              <div class="persona-lab-section">
+              <div class="persona-lab-section" data-persona-section="library">
                 <div class="persona-lab-section-head">
                   <span>Persona Library</span>
                   <span class="persona-lab-section-meta" id="persona-lab-library-count">0 personas</span>
@@ -1252,7 +1323,7 @@
                 <div class="persona-lab-picker" id="persona-lab-picker"></div>
               </div>
               <form class="persona-lab-fields" id="persona-lab-form">
-                <div class="persona-lab-split">
+                <div class="persona-lab-split" data-persona-section="identity">
                   <label class="persona-lab-field">Title
                     <input id="persona-lab-title" data-lab-field="title" type="text" placeholder="Persona title">
                   </label>
@@ -1260,7 +1331,7 @@
                     <input id="persona-lab-label" data-lab-field="label" type="text" placeholder="Short library label">
                   </label>
                 </div>
-                <div class="persona-lab-split">
+                <div class="persona-lab-split" data-persona-section="identity">
                   <label class="persona-lab-field">Target Language
                     <select id="persona-lab-language" data-lab-field="language"></select>
                   </label>
@@ -1268,28 +1339,28 @@
                     <input id="persona-lab-tags" data-lab-field="tags" type="text" placeholder="e.g. elegant, low, cozy">
                   </label>
                 </div>
-                <label class="persona-lab-field">Voice Attribute
+                <label class="persona-lab-field" data-persona-section="voice">Voice Attribute
                   <textarea id="persona-lab-voice-attribute" data-lab-field="voice_attribute" rows="4" placeholder="Describe the voice, tone, and texture."></textarea>
                   <small>This is the voice core that becomes the main prompt body.</small>
                 </label>
-                <label class="persona-lab-field">Environment
+                <label class="persona-lab-field" data-persona-section="voice">Environment
                   <textarea id="persona-lab-environment" data-lab-field="environment" rows="3" placeholder="Where the voice lives or speaks."></textarea>
                 </label>
-                <label class="persona-lab-field">Detailed Notes
+                <label class="persona-lab-field" data-persona-section="voice">Detailed Notes
                   <textarea id="persona-lab-detailed-notes" data-lab-field="detailed_notes" rows="4" placeholder="Pacing, delivery, mood, and guardrails."></textarea>
                 </label>
-                <label class="persona-lab-field">Background
+                <label class="persona-lab-field" data-persona-section="character">Background
                   <textarea id="persona-lab-background" data-lab-field="background" rows="2" placeholder="Optional character background."></textarea>
                 </label>
-                <label class="persona-lab-field">Personality
+                <label class="persona-lab-field" data-persona-section="character">Personality
                   <textarea id="persona-lab-personality" data-lab-field="personality" rows="2" placeholder="Optional personality summary."></textarea>
                 </label>
-                <label class="persona-lab-field">Sample Line
+                <label class="persona-lab-field" data-persona-section="character">Sample Line
                   <textarea id="persona-lab-sample" data-lab-field="sample" rows="3" placeholder="One line that demonstrates the voice."></textarea>
                 </label>
               </form>
 
-              <div class="persona-lab-footer">
+              <div class="persona-lab-footer" data-persona-section="character">
                 <button class="top-action" id="btn-persona-lab-new" type="button">New</button>
                 <button class="top-action" id="btn-persona-lab-duplicate" type="button">Duplicate</button>
                 <button class="top-action" id="btn-persona-lab-save" type="button">Save</button>
@@ -1298,12 +1369,12 @@
                 <button class="persona-action" id="btn-persona-lab-export-md" type="button">Export MD</button>
               </div>
 
-              <div class="persona-lab-help">
+              <div class="persona-lab-help" data-persona-section="character">
                 The lab edits the same persona object the preset library already uses. Saving updates your local custom personas; applying copies the voice design into the main synthesis form.
               </div>
             </div>
 
-            <div class="persona-lab-column persona-lab-preview">
+            <div class="persona-lab-column persona-lab-preview" data-persona-section="preview">
               <div class="persona-lab-preview-card">
                 <div class="persona-lab-preview-head">
                   <div>
@@ -1348,9 +1419,6 @@
   <script src="_frontend/js/vram-controls.js" type="module"></script>
 </body>
 </html>
-
-
-
 
 
 

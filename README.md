@@ -6,29 +6,53 @@
 
 ## Listen
 
-| Sales pitch | Helpful narrator |
-| --- | --- |
-| [▶ Play WAV](https://github.com/cesarborgenkrans-gif/attach/raw/main/audio/voicegen-sample-01.wav) | [▶ Play WAV](https://github.com/cesarborgenkrans-gif/attach/raw/main/audio/voicegen-sample-02.wav) |
+**Official SparkleSnap / Tsuki Hoshi high-quality sample**
+
+<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4">
+  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4">Play the high-quality sample</a>
+</video>
+
+**VoiceGen Oui! reference voice sample 02**
+
+<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-02.mp4">
+  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-02.mp4">Play reference voice sample 02</a>
+</video>
+
+**VoiceGen Oui! reference voice sample 03**
+
+<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-03.mp4">
+  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-03.mp4">Play reference voice sample 03</a>
+</video>
+
+**VoiceGen Oui! reference voice sample 04**
+
+<video controls preload="metadata" src="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-04.mp4">
+  <a href="https://raw.githubusercontent.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/main/docs/assets/voicegen-oui-reference-sample-04.mp4">Play reference voice sample 04</a>
+</video>
 
 VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a local GUI and Windows-to-WSL bridge for AMD GPU users. It makes the ROCm path approachable on Windows, where the usable route is WSL2 rather than the direct Linux setup many AMD users already have.
 
 **Reference hardware:** AMD Radeon RX 7900 XTX / `gfx1100`
 
-**Quality / speed setting:** `8` timesteps is the project setting for the fastest generation that still meets VoiceGen Oui!'s target quality. Recorded RX 7900 XTX reference sessions have reached **8.24-8.64 it/s** with this setting.
+**Quality / speed setting:** `8` timesteps is the project setting for the fastest generation that still meets VoiceGen Oui!'s target quality. Recorded RX 7900 XTX reference sessions have reached **8.24-10.03 it/s** with this setting.
 
-Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The two samples above are intentional public demo media; ordinary generated audio remains local and gitignored.
+For the official SparkleSnap high-quality voice reference using the Tsuki Hoshi persona, see [docs/QUALITY_PRESETS.md](docs/QUALITY_PRESETS.md).
+
+Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The four samples above are intentional public demo media; ordinary generated audio remains local and gitignored.
 
 ## What It Unlocks
 
 This is not the upstream VoxCPM2 model or training project. It is the utility layer that makes the ROCm path practical on Windows: write a voice design, generate locally, compare results, and help improve AMD GPU compatibility for the next person.
 
-Need the environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md). Then download the upstream model into your local VoiceGen Oui! data folder:
+## Model Files
+
+Get the upstream VoxCPM2 model directly from [OpenBMB on Hugging Face](https://huggingface.co/openbmb/VoxCPM2) and place it in `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, or run the included downloader:
 
 ```powershell
 .\download_voxcpm_models.ps1
 ```
 
-The script downloads `openbmb/VoxCPM2` to `%LOCALAPPDATA%\VoiceGenOui\models\VoxCPM2`, using native Windows PowerShell and `curl.exe`; it does not need WSL or the ROCm environment. It keeps a braille spinner in the terminal title while curl shows resumable progress bars for every upstream file, confirms the required model files exist, and never adds them to git. When opened by double-click, it keeps the terminal open after completion or an error. Use `-NoPause` in an existing terminal, or `VOXCPM_MODEL_PATH` when your model lives elsewhere.
+The script downloads the same upstream model into that folder with native Windows PowerShell and `curl.exe`; it does not need WSL or ROCm. Need the Windows + WSL2 + ROCm environment first? Follow the [ROCm WSL setup guide](docs/ROCM_WSL_SETUP.md).
 
 ## Run
 
@@ -38,9 +62,17 @@ From the repository root in Windows PowerShell:
 .\start_voicegen_oui_voxcpm_wsl_rocm7.ps1
 ```
 
-The launcher waits for VoiceGen Oui! to become healthy, then opens the app in your default browser. Use `-NoBrowser` when you only want to start the backend.
+The launcher waits for VoiceGen Oui! to become healthy, then opens the app in your default browser. Use `-NoBrowser` when you only want to start the backend. The launcher window stays open when it stops or encounters an error; use `-NoPause` only for scripted launches.
 
-To open your local outputs, personas, logs, and optional user-managed models, double-click `open_voicegen_oui_data_folder.cmd` in the repository root.
+To stop the hidden backend later, run:
+
+```powershell
+.\stop_voicegen_oui.ps1
+```
+
+This stops only the VoiceGen server started for this checkout. The browser tab can remain open; it will simply stop responding until you launch VoiceGen again.
+
+To open your local outputs, user personas, logs, and optional user-managed models, double-click `open_voicegen_oui_data_folder.cmd` in the repository root. Custom personas are stored under `%LOCALAPPDATA%\VoiceGenOui\user-personas`.
 
 ## Try It, Test It, Improve It
 
