@@ -109,10 +109,10 @@ Third-party models, libraries, and assets keep their own licenses; see [docs/THI
 VoiceGen Oui! is a utility layer around the upstream VoxCPM work. The resource which makes this project possible is the actual VoxCPM2 project, and I really appreciate their work. Here's a citation as requested by [OpenBMB](https://github.com/OpenBMB/VoxCPM):
 
 ```bibtex
-@article{voxcpm2_2026,
-  title   = {VoxCPM2: Tokenizer-Free TTS for Multilingual Speech Generation, Creative Voice Design, and True-to-Life Cloning},
-  author  = {VoxCPM Team},
-  journal = {GitHub},
+@article{zhou2026voxcpm2,
+  title   = {VoxCPM2 Technical Report},
+  author  = {Zhou, Yixuan  and Zeng, Guoyang and Liu, Xin and Li, Xiang and Yu, Renjie and Gui, Jiancheng and Wu, Jiaheng and Wang, Ziyang and Shen, Xudong and Ye, Runchuan  and Zhang, Zhisheng and Zhou, Jiuyang and Bai, Bingsong and Sun, Weiyue and Deng, Mengyuan and Shi, Qundong and Wu, Zhiyong and Liu, Zhiyuan},
+  journal = {arXiv preprint arXiv:2606.06928},
   year    = {2026},
 }
 
