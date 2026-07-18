@@ -1,0 +1,40 @@
+{
+  "identity": "tsuki-voice-atelier-v1",
+  "grid": 4,
+  "scale": 1,
+  "scaleOrigin": "50% 97.135%",
+  "settle": 0,
+  "startDelay": 900,
+  "rest": {
+    "min": 24000,
+    "max": 34000
+  },
+  "actionCooldown": 7000,
+  "motion": {
+    "float": 0.8,
+    "sway": 0.12,
+    "breath": 1.004,
+    "duration": 6600,
+    "unified": true
+  },
+  "actions": {
+    "listen": {
+      "label": "Listen & notice",
+      "sheet": "tsuki-voicegen-listen-notice-v1-4x4.png",
+      "mode": "loop",
+      "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0],
+      "durations": [1100, 650, 720, 850, 620, 720, 760, 720, 820, 980, 720, 780, 650, 840, 680, 1350],
+      "fades": [0, 4, 8, 12, 15],
+      "phases": ["ready", "open", "signal", "listen", "notice", "compare", "trace", "explain", "delight", "breathe", "confirm", "close", "settle", "reflect", "offer", "ready"]
+    },
+    "approve": {
+      "label": "Shape & approve",
+      "sheet": "tsuki-voicegen-shape-approve-v1-4x4.png",
+      "mode": "once",
+      "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "durations": [1050, 650, 620, 760, 720, 760, 880, 700, 720, 820, 880, 900, 850, 820, 920, 1450],
+      "fades": [0, 4, 8, 12, 15],
+      "phases": ["ready", "open", "idea", "shape", "consider", "refine", "preview", "listen", "present", "delight", "approve", "affirm", "result", "cherish", "complete", "ready"]
+    }
+  }
+}

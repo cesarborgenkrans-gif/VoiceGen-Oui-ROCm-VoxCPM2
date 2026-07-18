@@ -1,0 +1,346 @@
+{
+  "input": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_work\\tsuki-voicegen-shape-approve-v1-transparent.png",
+  "output": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_work\\tsuki-voicegen-shape-approve-v1-recovered.png",
+  "method": "global connected-component assignment plus translation only",
+  "discarded_small_components": 1,
+  "gutter": 18,
+  "frames": [
+    {
+      "cell": 0,
+      "label": 1,
+      "area": 42815,
+      "source_bbox": [
+        106,
+        72,
+        303,
+        393
+      ],
+      "translation": [
+        0,
+        -27
+      ],
+      "margins_ltrb": [
+        106,
+        45,
+        81,
+        18
+      ]
+    },
+    {
+      "cell": 1,
+      "label": 3,
+      "area": 44672,
+      "source_bbox": [
+        476,
+        76,
+        689,
+        393
+      ],
+      "translation": [
+        0,
+        -27
+      ],
+      "margins_ltrb": [
+        92,
+        49,
+        79,
+        18
+      ]
+    },
+    {
+      "cell": 2,
+      "label": 2,
+      "area": 46718,
+      "source_bbox": [
+        836,
+        73,
+        1053,
+        393
+      ],
+      "translation": [
+        0,
+        -27
+      ],
+      "margins_ltrb": [
+        68,
+        46,
+        99,
+        18
+      ]
+    },
+    {
+      "cell": 3,
+      "label": 4,
+      "area": 45709,
+      "source_bbox": [
+        1216,
+        78,
+        1436,
+        396
+      ],
+      "translation": [
+        0,
+        -30
+      ],
+      "margins_ltrb": [
+        64,
+        48,
+        100,
+        18
+      ]
+    },
+    {
+      "cell": 4,
+      "label": 5,
+      "area": 45038,
+      "source_bbox": [
+        102,
+        438,
+        314,
+        760
+      ],
+      "translation": [
+        0,
+        -10
+      ],
+      "margins_ltrb": [
+        102,
+        44,
+        70,
+        18
+      ]
+    },
+    {
+      "cell": 5,
+      "label": 6,
+      "area": 44794,
+      "source_bbox": [
+        474,
+        441,
+        691,
+        761
+      ],
+      "translation": [
+        0,
+        -11
+      ],
+      "margins_ltrb": [
+        90,
+        46,
+        77,
+        18
+      ]
+    },
+    {
+      "cell": 6,
+      "label": 8,
+      "area": 45300,
+      "source_bbox": [
+        840,
+        447,
+        1056,
+        762
+      ],
+      "translation": [
+        0,
+        -12
+      ],
+      "margins_ltrb": [
+        72,
+        51,
+        96,
+        18
+      ]
+    },
+    {
+      "cell": 7,
+      "label": 7,
+      "area": 46528,
+      "source_bbox": [
+        1210,
+        441,
+        1425,
+        763
+      ],
+      "translation": [
+        0,
+        -13
+      ],
+      "margins_ltrb": [
+        58,
+        44,
+        111,
+        18
+      ]
+    },
+    {
+      "cell": 8,
+      "label": 10,
+      "area": 45235,
+      "source_bbox": [
+        107,
+        806,
+        324,
+        1123
+      ],
+      "translation": [
+        0,
+        0
+      ],
+      "margins_ltrb": [
+        107,
+        38,
+        60,
+        29
+      ]
+    },
+    {
+      "cell": 9,
+      "label": 11,
+      "area": 45819,
+      "source_bbox": [
+        472,
+        806,
+        686,
+        1125
+      ],
+      "translation": [
+        0,
+        0
+      ],
+      "margins_ltrb": [
+        88,
+        38,
+        82,
+        27
+      ]
+    },
+    {
+      "cell": 10,
+      "label": 12,
+      "area": 42095,
+      "source_bbox": [
+        842,
+        808,
+        1034,
+        1127
+      ],
+      "translation": [
+        0,
+        0
+      ],
+      "margins_ltrb": [
+        74,
+        40,
+        118,
+        25
+      ]
+    },
+    {
+      "cell": 11,
+      "label": 13,
+      "area": 45341,
+      "source_bbox": [
+        1219,
+        812,
+        1437,
+        1129
+      ],
+      "translation": [
+        0,
+        0
+      ],
+      "margins_ltrb": [
+        67,
+        44,
+        99,
+        23
+      ]
+    },
+    {
+      "cell": 12,
+      "label": 15,
+      "area": 45653,
+      "source_bbox": [
+        103,
+        1168,
+        310,
+        1486
+      ],
+      "translation": [
+        0,
+        2
+      ],
+      "margins_ltrb": [
+        103,
+        18,
+        74,
+        48
+      ]
+    },
+    {
+      "cell": 13,
+      "label": 16,
+      "area": 41333,
+      "source_bbox": [
+        486,
+        1170,
+        673,
+        1483
+      ],
+      "translation": [
+        0,
+        0
+      ],
+      "margins_ltrb": [
+        102,
+        18,
+        95,
+        53
+      ]
+    },
+    {
+      "cell": 14,
+      "label": 17,
+      "area": 40273,
+      "source_bbox": [
+        848,
+        1175,
+        1039,
+        1484
+      ],
+      "translation": [
+        0,
+        0
+      ],
+      "margins_ltrb": [
+        80,
+        23,
+        113,
+        52
+      ]
+    },
+    {
+      "cell": 15,
+      "label": 14,
+      "area": 40405,
+      "source_bbox": [
+        1226,
+        1167,
+        1410,
+        1485
+      ],
+      "translation": [
+        0,
+        3
+      ],
+      "margins_ltrb": [
+        74,
+        18,
+        126,
+        48
+      ]
+    }
+  ],
+  "verified": true
+}
