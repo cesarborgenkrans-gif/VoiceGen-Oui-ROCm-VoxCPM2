@@ -2,9 +2,37 @@
 
 **ROCm-powered VoxCPM2 voice generation for Windows users who want to use their AMD GPU instead of falling back to CPU.**
 
-**It supports 30 voice-generation languages!**
+**It supports 39 voice-generation languages!**
 
-![VoiceGen Oui! GUI demo: type a voice design, then generate audio](docs/assets/voicegen-oui-rocm-voxcpm2-gui-demo.gif)
+![VoiceGen Oui! functional atelier showing Persona selection, script and voice design, Radeon telemetry, Latest Take, Local LLM Feedback, and output history](docs/assets/voicegen-oui-functional-atelier-ui.png)
+
+## AMD AI DevMaster Hackathon
+
+**Track 1: Multimodal AI — creator-focused local speech generation on AMD Radeon.**
+
+VoiceGen Oui! turns written scripts and natural-language voice direction into local audio through VoxCPM2. It gives Windows creators a complete visual workflow for designing voices, combining Persona and delivery layers, comparing seeded takes, inspecting WAV metadata, and requesting script-aware feedback from an optional local LLM.
+
+```mermaid
+flowchart LR
+    UI["Windows browser UI"] -->|generation request| API["VoiceGen backend · WSL2"]
+    API --> MODEL["VoxCPM2 · PyTorch"]
+    MODEL --> ROCM["ROCm 7.2 · ROCDXG"]
+    ROCM --> GPU["AMD Radeon GPU"]
+    API --> OUT["Local WAV + metadata"]
+    UI -. optional review .-> BRIDGE["Windows LLM bridge · port 3115"]
+    BRIDGE --> LM["Local LM Studio model"]
+```
+
+| AMD implementation evidence | Current reference |
+| --- | --- |
+| GPU | AMD Radeon RX 7900 XTX (`gfx1100`) |
+| Runtime path | Windows 11 → WSL2 Ubuntu 22.04 → ROCm 7.2 / ROCDXG → PyTorch ROCm |
+| Reference quality setting | 8 inference timesteps |
+| Observed reference speed | 8.24–10.03 iterations/second |
+| Voice-language menu | 39 VoxCPM2 generation languages and dialects |
+| Privacy | Models, prompts, WAV files, metadata, personas, and optional LLM feedback stay local |
+
+The hackathon value is the full AMD-native product path rather than a model demo alone: approachable installation, reproducible local generation, a polished creator interface, seed-controlled comparison, voice-design presets, consent-gated cloning tools, WAV inspection, and visible GPU telemetry. See the [AMD AI DevMaster Hackathon event](https://luma.com/amd-4dhi).
 
 ## Listen
 
@@ -25,9 +53,9 @@ Built by **Cesar Borgenkrans** / [SparkleSnap](https://sparklesnap.dev/). The sa
 
 ## What It Unlocks
 
-<img src="docs/assets/voicegen-oui-what-it-unlocks.webp" alt="VoiceGen Oui! brings local voice generation to Windows and AMD with 30 languages, ready-made personas, custom persona creation, ROCm, and WSL2" width="860">
+<img src="docs/assets/voicegen-oui-what-it-unlocks.webp" alt="VoiceGen Oui! brings local voice generation to Windows and AMD with 39 languages, ready-made personas, custom persona creation, ROCm, and WSL2" width="860">
 
-Give your AMD GPU a welcoming local voice studio. Pick a ready-made persona, create your own in Persona Lab, switch between 30 languages, compare takes, and keep every generation on your machine. VoiceGen Oui! wraps the Windows-to-WSL2 ROCm path in a creative GUI that makes advanced voice generation feel easy to approach.
+Give your AMD GPU a welcoming local voice studio. Pick a ready-made persona, create your own in Persona Lab, switch between 39 languages and dialects, compare takes, and keep every generation on your machine. VoiceGen Oui! wraps the Windows-to-WSL2 ROCm path in a creative GUI that makes advanced voice generation feel easy to approach.
 
 ## Setup
 
