@@ -271,10 +271,58 @@ def post_json(url, payload, timeout=45):
         raw = response.read().decode("utf-8")
     return json.loads(raw)
 
+def get_json(url, timeout=15):
+    req = urlrequest.Request(url, headers={"Accept": "application/json"}, method="GET")
+    with urlrequest.urlopen(req, timeout=timeout) as response:
+        raw = response.read().decode("utf-8")
+    return json.loads(raw)
+
+def llm_api_url(endpoint, provider, operation):
+    endpoint = (endpoint or "").strip().rstrip("/")
+    if not endpoint:
+        raise ValueError("local LLM endpoint is required")
+    if not endpoint.startswith(("http://", "https://")):
+        raise ValueError("local LLM endpoint must start with http:// or https://")
+
+    if provider == "ollama":
+        suffix = "/api/tags" if operation == "models" else "/api/chat"
+        if endpoint.endswith(suffix):
+            return endpoint
+        if endpoint.endswith("/api"):
+            return f"{endpoint}{suffix[len('/api') :]}"
+        return f"{endpoint}{suffix}"
+
+    suffix = "/v1/models" if operation == "models" else "/v1/chat/completions"
+    if endpoint.endswith(suffix):
+        return endpoint
+    if endpoint.endswith("/v1"):
+        return f"{endpoint}{suffix[len('/v1') :]}"
+    return f"{endpoint}{suffix}"
+
+def discover_llm_models(provider, endpoint):
+    provider = (provider or "lmstudio").strip()
+    response = get_json(llm_api_url(endpoint, provider, "models"))
+    if provider == "ollama":
+        models = response.get("models") if isinstance(response, dict) else []
+        names = [str(item.get("name") or item.get("model") or "").strip() for item in (models or []) if isinstance(item, dict)]
+    else:
+        models = response.get("data") if isinstance(response, dict) else []
+        names = [str(item.get("id") or "").strip() for item in (models or []) if isinstance(item, dict)]
+    return [name for name in names if name]
+
+def resolve_llm_model(provider, endpoint, requested_model):
+    requested_model = (requested_model or "").strip()
+    if requested_model:
+        return requested_model
+    models = discover_llm_models(provider, endpoint)
+    if not models:
+        raise ValueError("no loaded local LLM model was found; load a model or enter its exact model ID in Options")
+    return models[0]
+
 def local_llm_feedback(payload):
     provider = (payload.get("provider") or "lmstudio").strip()
     endpoint = (payload.get("endpoint") or "").strip().rstrip("/")
-    model = (payload.get("model") or "local-model").strip()
+    model = resolve_llm_model(provider, endpoint, payload.get("model"))
     if not endpoint:
         raise ValueError("local LLM endpoint is required")
 
@@ -284,7 +332,7 @@ def local_llm_feedback(payload):
     ]
     if provider == "ollama":
         response = post_json(
-            f"{endpoint}/api/chat",
+            llm_api_url(endpoint, provider, "chat"),
             {
                 "model": model,
                 "messages": messages,
@@ -298,7 +346,7 @@ def local_llm_feedback(payload):
         text = response.get("message", {}).get("content", "")
     else:
         response = post_json(
-            f"{endpoint}/v1/chat/completions",
+            llm_api_url(endpoint, provider, "chat"),
             {
                 "model": model,
                 "messages": messages,
@@ -308,7 +356,7 @@ def local_llm_feedback(payload):
         )
         choices = response.get("choices") or []
         text = choices[0].get("message", {}).get("content", "") if choices else ""
-    return trim_sentences(text, 2)
+    return trim_sentences(text, 2), model
 
 class Handler(BaseHTTPRequestHandler):
     def allowed_origin(self):
@@ -366,7 +414,7 @@ class Handler(BaseHTTPRequestHandler):
         path = unquote(urlparse(self.path).path)
         if path in ("/", "/index.html"):
             return self.serve_file("index.html")
-        if path.startswith("/_frontend/") or path.startswith("/css/") or path.startswith("/js/") or path.startswith("/assets/"):
+        if path.startswith("/_frontend/") or path.startswith("/css/") or path.startswith("/js/") or path.startswith("/assets/") or path.startswith("/design-mockups/"):
             return self.serve_file(path.lstrip("/"))
         if path == "/api/health":
             loaded = ENGINE is not None
@@ -447,14 +495,34 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/llm_feedback":
                 try:
                     payload = read_body(self)
-                    text = local_llm_feedback(payload)
+                    text, resolved_model = local_llm_feedback(payload)
                     if not text:
                         raise RuntimeError("local LLM returned an empty reply")
                     return self.send_json({
                         "status": "ok",
                         "persona": "Tsuki Hoshi",
                         "question": "How can I improve this voice?",
+                        "model": resolved_model,
                         "reply": text,
+                    })
+                except HTTPError as exc:
+                    return self.send_error_json(exc.code, f"Local LLM HTTPError: {exc.reason}")
+                except URLError as exc:
+                    return self.send_error_json(502, f"Local LLM connection failed: {exc.reason}")
+                except Exception as exc:
+                    return self.send_error_json(500, f"{type(exc).__name__}: {exc}")
+            if path == "/api/llm_models":
+                try:
+                    payload = read_body(self)
+                    provider = (payload.get("provider") or "lmstudio").strip()
+                    endpoint = (payload.get("endpoint") or "").strip()
+                    models = discover_llm_models(provider, endpoint)
+                    return self.send_json({
+                        "status": "ok",
+                        "provider": provider,
+                        "endpoint": endpoint,
+                        "models": models,
+                        "recommended_model": models[0] if models else "",
                     })
                 except HTTPError as exc:
                     return self.send_error_json(exc.code, f"Local LLM HTTPError: {exc.reason}")
@@ -622,6 +690,8 @@ class Handler(BaseHTTPRequestHandler):
                 "audio/wav",
                 extra_headers=response_headers,
             )
+        except ValueError as exc:
+            self.send_error_json(400, f"ValueError: {exc}")
         except Exception as exc:
             self.send_error_json(500, f"{type(exc).__name__}: {exc}")
         finally:

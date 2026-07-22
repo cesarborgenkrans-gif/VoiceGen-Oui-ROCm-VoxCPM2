@@ -1,0 +1,413 @@
+[
+  {
+    "file": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_work\\tsuki-voicegen-listen-notice-v1-transparent.png",
+    "size": [
+      1536,
+      1536
+    ],
+    "source_mode": "RGBA",
+    "sha256": "025fec4aa979c6dff805204d625d17345bd72534a039e89685834326a69cd0fc",
+    "all_16_cells_nonempty": true,
+    "minimum_gutter_ok": false,
+    "x_centroid_spread": 9.75,
+    "x_centroid_gate_ok": false,
+    "corner_alpha": [
+      0,
+      0,
+      9,
+      0
+    ],
+    "crossing_components": [],
+    "strict_green_residue_pixels": 149,
+    "cells": [
+      {
+        "index": 0,
+        "nonempty": true,
+        "margins_ltrb": [
+          97,
+          75,
+          95,
+          1
+        ]
+      },
+      {
+        "index": 1,
+        "nonempty": true,
+        "margins_ltrb": [
+          98,
+          77,
+          67,
+          2
+        ]
+      },
+      {
+        "index": 2,
+        "nonempty": true,
+        "margins_ltrb": [
+          99,
+          80,
+          71,
+          1
+        ]
+      },
+      {
+        "index": 3,
+        "nonempty": true,
+        "margins_ltrb": [
+          101,
+          79,
+          65,
+          1
+        ]
+      },
+      {
+        "index": 4,
+        "nonempty": true,
+        "margins_ltrb": [
+          98,
+          82,
+          71,
+          2
+        ]
+      },
+      {
+        "index": 5,
+        "nonempty": true,
+        "margins_ltrb": [
+          101,
+          82,
+          73,
+          2
+        ]
+      },
+      {
+        "index": 6,
+        "nonempty": true,
+        "margins_ltrb": [
+          100,
+          82,
+          66,
+          2
+        ]
+      },
+      {
+        "index": 7,
+        "nonempty": true,
+        "margins_ltrb": [
+          96,
+          81,
+          72,
+          2
+        ]
+      },
+      {
+        "index": 8,
+        "nonempty": true,
+        "margins_ltrb": [
+          96,
+          79,
+          82,
+          2
+        ]
+      },
+      {
+        "index": 9,
+        "nonempty": true,
+        "margins_ltrb": [
+          98,
+          79,
+          79,
+          2
+        ]
+      },
+      {
+        "index": 10,
+        "nonempty": true,
+        "margins_ltrb": [
+          99,
+          81,
+          72,
+          2
+        ]
+      },
+      {
+        "index": 11,
+        "nonempty": true,
+        "margins_ltrb": [
+          98,
+          82,
+          99,
+          2
+        ]
+      },
+      {
+        "index": 12,
+        "nonempty": true,
+        "margins_ltrb": [
+          99,
+          77,
+          99,
+          4
+        ]
+      },
+      {
+        "index": 13,
+        "nonempty": true,
+        "margins_ltrb": [
+          103,
+          77,
+          94,
+          0
+        ]
+      },
+      {
+        "index": 14,
+        "nonempty": true,
+        "margins_ltrb": [
+          100,
+          78,
+          98,
+          0
+        ]
+      },
+      {
+        "index": 15,
+        "nonempty": true,
+        "margins_ltrb": [
+          97,
+          78,
+          100,
+          0
+        ]
+      }
+    ],
+    "checker_preview": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_qa\\pre-registration-checkers\\tsuki-voicegen-listen-notice-v1-transparent-checker.png",
+    "passes_structure_gate": false
+  },
+  {
+    "file": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_work\\tsuki-voicegen-shape-approve-v1-transparent.png",
+    "size": [
+      1536,
+      1536
+    ],
+    "source_mode": "RGBA",
+    "sha256": "5918c55a5dae9c0a9ddc57f366ea7e23688f97bd377ae56d97f2bcd2ff784655",
+    "all_16_cells_nonempty": true,
+    "minimum_gutter_ok": false,
+    "x_centroid_spread": 47.75,
+    "x_centroid_gate_ok": false,
+    "corner_alpha": [
+      0,
+      0,
+      9,
+      0
+    ],
+    "crossing_components": [
+      {
+        "label": 1,
+        "area": 42815,
+        "bbox": [
+          106,
+          72,
+          303,
+          393
+        ]
+      },
+      {
+        "label": 2,
+        "area": 46718,
+        "bbox": [
+          836,
+          73,
+          1053,
+          393
+        ]
+      },
+      {
+        "label": 3,
+        "area": 44672,
+        "bbox": [
+          476,
+          76,
+          689,
+          393
+        ]
+      },
+      {
+        "label": 4,
+        "area": 45709,
+        "bbox": [
+          1216,
+          78,
+          1436,
+          396
+        ]
+      }
+    ],
+    "strict_green_residue_pixels": 169,
+    "cells": [
+      {
+        "index": 0,
+        "nonempty": true,
+        "margins_ltrb": [
+          106,
+          72,
+          81,
+          0
+        ]
+      },
+      {
+        "index": 1,
+        "nonempty": true,
+        "margins_ltrb": [
+          92,
+          76,
+          79,
+          0
+        ]
+      },
+      {
+        "index": 2,
+        "nonempty": true,
+        "margins_ltrb": [
+          68,
+          73,
+          99,
+          0
+        ]
+      },
+      {
+        "index": 3,
+        "nonempty": true,
+        "margins_ltrb": [
+          64,
+          78,
+          100,
+          0
+        ]
+      },
+      {
+        "index": 4,
+        "nonempty": true,
+        "margins_ltrb": [
+          102,
+          0,
+          70,
+          8
+        ]
+      },
+      {
+        "index": 5,
+        "nonempty": true,
+        "margins_ltrb": [
+          90,
+          0,
+          77,
+          7
+        ]
+      },
+      {
+        "index": 6,
+        "nonempty": true,
+        "margins_ltrb": [
+          72,
+          0,
+          96,
+          6
+        ]
+      },
+      {
+        "index": 7,
+        "nonempty": true,
+        "margins_ltrb": [
+          58,
+          0,
+          111,
+          5
+        ]
+      },
+      {
+        "index": 8,
+        "nonempty": true,
+        "margins_ltrb": [
+          107,
+          38,
+          60,
+          29
+        ]
+      },
+      {
+        "index": 9,
+        "nonempty": true,
+        "margins_ltrb": [
+          88,
+          38,
+          82,
+          27
+        ]
+      },
+      {
+        "index": 10,
+        "nonempty": true,
+        "margins_ltrb": [
+          74,
+          40,
+          118,
+          25
+        ]
+      },
+      {
+        "index": 11,
+        "nonempty": true,
+        "margins_ltrb": [
+          67,
+          44,
+          99,
+          23
+        ]
+      },
+      {
+        "index": 12,
+        "nonempty": true,
+        "margins_ltrb": [
+          103,
+          16,
+          74,
+          50
+        ]
+      },
+      {
+        "index": 13,
+        "nonempty": true,
+        "margins_ltrb": [
+          102,
+          18,
+          95,
+          53
+        ]
+      },
+      {
+        "index": 14,
+        "nonempty": true,
+        "margins_ltrb": [
+          80,
+          23,
+          113,
+          52
+        ]
+      },
+      {
+        "index": 15,
+        "nonempty": true,
+        "margins_ltrb": [
+          74,
+          15,
+          126,
+          51
+        ]
+      }
+    ],
+    "checker_preview": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_qa\\pre-registration-checkers\\tsuki-voicegen-shape-approve-v1-transparent-checker.png",
+    "passes_structure_gate": false
+  }
+]

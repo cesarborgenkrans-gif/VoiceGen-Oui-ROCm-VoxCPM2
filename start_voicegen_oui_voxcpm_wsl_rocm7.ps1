@@ -8,6 +8,9 @@ Write-Host "  Starting VoiceGen Oui! (ROCm / WSL2)                     " -Foregr
 Write-Host "============================================================" -ForegroundColor Cyan
 
 $ErrorActionPreference = "Stop"
+$script:LlmBridgeProcess = $null
+$script:LlmBridgeServerPid = 0
+$script:LlmBridgePidPath = $null
 
 function Quote-Bash([string]$Value) {
     return "'" + $Value.Replace("'", "'""'""'") + "'"
@@ -82,6 +85,76 @@ function Test-TcpPort([string]$HostName, [int]$Port, [int]$TimeoutMs = 700) {
     }
 }
 
+function Get-LlmBridgeHealth([string]$HealthUrl) {
+    try {
+        return Invoke-RestMethod -Uri $HealthUrl -TimeoutSec 2 -ErrorAction Stop
+    } catch {
+        return $null
+    }
+}
+
+function Stop-StartedLlmBridge {
+    if ($script:LlmBridgeServerPid -gt 0) {
+        Stop-Process -Id $script:LlmBridgeServerPid -Force -ErrorAction SilentlyContinue
+    }
+    if ($script:LlmBridgeProcess -and -not $script:LlmBridgeProcess.HasExited) {
+        if ($script:LlmBridgeProcess.Id -ne $script:LlmBridgeServerPid) {
+            Stop-Process -Id $script:LlmBridgeProcess.Id -Force -ErrorAction SilentlyContinue
+        }
+        $script:LlmBridgeProcess.WaitForExit(3000) | Out-Null
+    }
+    if ($script:LlmBridgePidPath -and (Test-Path -LiteralPath $script:LlmBridgePidPath)) {
+        Remove-Item -LiteralPath $script:LlmBridgePidPath -Force -ErrorAction SilentlyContinue
+    }
+    $script:LlmBridgeProcess = $null
+    $script:LlmBridgeServerPid = 0
+}
+
+function Start-LlmBridge(
+    [string]$Python,
+    [string]$ServerPath,
+    [string]$HealthUrl,
+    [string]$PidPath,
+    [string]$StdoutPath,
+    [string]$StderrPath
+) {
+    $ExpectedPath = [System.IO.Path]::GetFullPath($ServerPath)
+    $ExistingHealth = Get-LlmBridgeHealth $HealthUrl
+    if ($ExistingHealth) {
+        $ExistingPath = [string]$ExistingHealth.bridge_path
+        if ($ExistingHealth.status -ne "ok" -or $ExistingHealth.service -ne "voicegen-llm-bridge" -or -not $ExistingPath -or -not $ExistingPath.Equals($ExpectedPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Port 3115 is serving a different application or VoiceGen checkout. Stop that service before starting VoiceGen."
+        }
+        Write-Host "Windows LLM bridge is already running on port 3115." -ForegroundColor Green
+        return $null
+    }
+    if (Test-TcpPort "127.0.0.1" 3115) {
+        throw "Port 3115 is already in use, but it is not responding as the VoiceGen Windows LLM bridge."
+    }
+
+    $env:VOICEGEN_OUI_LLM_HOST = "127.0.0.1"
+    $env:VOICEGEN_OUI_LLM_PORT = "3115"
+    $QuotedServerPath = '"' + $ExpectedPath + '"'
+    $Process = Start-Process -FilePath $Python -ArgumentList $QuotedServerPath -WindowStyle Hidden -RedirectStandardOutput $StdoutPath -RedirectStandardError $StderrPath -PassThru
+    for ($Attempt = 0; $Attempt -lt 40; $Attempt++) {
+        if ($Process.HasExited) {
+            $Failure = if (Test-Path -LiteralPath $StderrPath) { (Get-Content -LiteralPath $StderrPath -Tail 12) -join " " } else { "No error log was written." }
+            throw "Windows LLM bridge exited during startup. $Failure"
+        }
+        $Health = Get-LlmBridgeHealth $HealthUrl
+        $HealthPath = if ($Health) { [string]$Health.bridge_path } else { "" }
+        if ($Health -and $Health.status -eq "ok" -and $Health.service -eq "voicegen-llm-bridge" -and $HealthPath.Equals($ExpectedPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $script:LlmBridgeServerPid = [int]$Health.pid
+            Set-Content -LiteralPath $PidPath -Value $script:LlmBridgeServerPid -Encoding Ascii
+            Write-Host "Windows LLM bridge ready at http://127.0.0.1:3115" -ForegroundColor Green
+            return $Process
+        }
+        Start-Sleep -Milliseconds 250
+    }
+    Stop-Process -Id $Process.Id -Force -ErrorAction SilentlyContinue
+    throw "Windows LLM bridge did not become ready on port 3115."
+}
+
 function Wait-ForLauncherClose {
     if (-not $NoPause) {
         Read-Host "VoiceGen is stopped. Press Enter to close this window"
@@ -89,6 +162,7 @@ function Wait-ForLauncherClose {
 }
 
 trap {
+    Stop-StartedLlmBridge
     Write-Host "VoiceGen launcher stopped with an error: $($_.Exception.Message)" -ForegroundColor Red
     Wait-ForLauncherClose
     exit 1
@@ -125,6 +199,18 @@ $PidPathWindows = Join-Path $DataRoot "voicegen-server.pid"
 $WslPidPath = Convert-ToWslPath $PidPathWindows
 $VoiceGenUrl = "http://localhost:3113/"
 $HealthUrl = "http://127.0.0.1:3113/api/health"
+$LlmBridgeHealthUrl = "http://127.0.0.1:3115/api/health"
+$LlmBridgeServer = Join-Path $AppRoot "_backend\llm_bridge_server.py"
+$LlmBridgePython = if ($env:VOICEGEN_OUI_LLM_PYTHON) { $env:VOICEGEN_OUI_LLM_PYTHON } else { "python" }
+$script:LlmBridgePidPath = Join-Path $DataRoot "voicegen-llm-bridge.pid"
+$LogsRoot = Join-Path $DataRoot "logs"
+$script:LlmBridgeProcess = Start-LlmBridge `
+    -Python $LlmBridgePython `
+    -ServerPath $LlmBridgeServer `
+    -HealthUrl $LlmBridgeHealthUrl `
+    -PidPath $script:LlmBridgePidPath `
+    -StdoutPath (Join-Path $LogsRoot "llm-bridge.stdout.log") `
+    -StderrPath (Join-Path $LogsRoot "llm-bridge.stderr.log")
 
 $ExistingHealth = Get-VoiceGenHealth $HealthUrl
 if ($ExistingHealth) {
@@ -182,6 +268,7 @@ Write-Host "Windows data root: $DataRoot" -ForegroundColor DarkCyan
 Write-Host "WSL data root: $WslDataRoot" -ForegroundColor DarkCyan
 Write-Host "WSL app root: $WslAppRoot" -ForegroundColor DarkCyan
 Write-Host "WSL venv: $WslVenv" -ForegroundColor DarkCyan
+Write-Host "Windows LLM bridge: http://127.0.0.1:3115" -ForegroundColor DarkCyan
 
 $BrowserJob = $null
 if (-not $NoBrowser) {
@@ -208,6 +295,7 @@ try {
         Stop-Job $BrowserJob -ErrorAction SilentlyContinue
         Remove-Job $BrowserJob -Force -ErrorAction SilentlyContinue
     }
+    Stop-StartedLlmBridge
 }
 
 Write-Host "Server process terminated." -ForegroundColor Red

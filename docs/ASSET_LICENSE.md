@@ -10,7 +10,7 @@ Unless a specific file says otherwise, the following assets are separate from th
 - Logo, favicon, and project branding images.
 - SparkleSnap-branded marks or watermarks.
 - README/demo media, including animated GIFs, screenshots, and reference audio samples.
-- Image files under `app/_frontend/assets/img/`.
+- Image files under `app/_frontend/assets/`.
 - Image and media files under `docs/assets/`.
 
 All bundled visual assets were created or commissioned by Cesar Borgenkrans, who holds their copyright in full. No third-party visual assets are bundled with this repository.

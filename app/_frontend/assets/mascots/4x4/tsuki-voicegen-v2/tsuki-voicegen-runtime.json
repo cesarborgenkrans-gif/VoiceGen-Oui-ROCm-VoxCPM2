@@ -1,0 +1,116 @@
+{
+  "version": 2,
+  "character": "Tsuki",
+  "project": "VoiceGen Oui!",
+  "frameIndexing": "zero-based row-major",
+  "atlas": {
+    "grid": 4,
+    "sheetSize": [1536, 1536],
+    "frameSize": [384, 384],
+    "backgroundSize": "400% 400%",
+    "backgroundPositionsPercent": [0, 33.333333, 66.666667, 100],
+    "anchor": "grounded center",
+    "scaleOrigin": "50% 97.135%"
+  },
+  "actions": {
+    "idle": {
+      "sheet": "tsuki-idle-breathe-v1-4x4.png",
+      "trigger": "default mascot state",
+      "mode": "loop",
+      "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "durationsMs": [360, 150, 150, 160, 170, 180, 190, 190, 210, 220, 210, 190, 180, 170, 160, 300],
+      "reducedMotionFrame": 0
+    },
+    "hoverThink": {
+      "sheet": "tsuki-hover-think-v1-4x4.png",
+      "trigger": "pointer or keyboard focus on an actionable control",
+      "mode": "loop while active; finish through frame 15 on leave",
+      "activate": [0, 1, 2, 3, 4, 5, 6],
+      "ponderLoop": [6, 7, 8, 9, 10, 9, 8, 7],
+      "exit": [11, 12, 13, 14, 15],
+      "durationsMs": {
+        "activate": [180, 100, 100, 110, 110, 120, 150],
+        "ponderLoop": [170, 210, 260, 260, 240, 260, 210, 180],
+        "exit": [120, 110, 100, 100, 220]
+      },
+      "reducedMotionFrame": 8
+    },
+    "scriptRead": {
+      "sheet": "tsuki-script-read-v1-4x4.png",
+      "trigger": "Spoken Script receives text-entry focus",
+      "mode": "activate, loop while typing, exit on blur",
+      "activate": [0, 1, 2, 3],
+      "typingLoop": [3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4],
+      "exit": [11, 12, 13, 14, 15],
+      "durationsMs": {
+        "activate": [150, 120, 130, 170],
+        "typingLoop": [180, 150, 150, 170, 160, 190, 190, 170, 180, 180, 160, 170, 150, 160],
+        "exit": [140, 130, 130, 150, 260]
+      },
+      "reducedMotionFrame": 5
+    },
+    "voiceConduct": {
+      "sheet": "tsuki-voice-conduct-v1-4x4.png",
+      "trigger": "voice generation starts",
+      "mode": "activate, loop while processing, settle when generation finishes",
+      "activate": [0, 1, 2, 3, 4, 5],
+      "processingLoop": [5, 6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6],
+      "settle": [12, 13, 14, 15],
+      "durationsMs": {
+        "activate": [160, 120, 120, 130, 140, 160],
+        "processingLoop": [150, 150, 150, 150, 170, 150, 190, 150, 170, 150, 150, 150],
+        "settle": [140, 150, 170, 260]
+      },
+      "vfxContract": "waveform, glow, stars, and particles are separate sibling layers and never part of the sprite atlas",
+      "reducedMotionFrame": 7
+    },
+    "playbackListen": {
+      "sheet": "tsuki-playback-listen-v1-4x4.png",
+      "trigger": "generated audio starts playback",
+      "mode": "activate, loop while audio plays, settle on pause or end",
+      "activate": [0, 1, 2, 3],
+      "playbackLoop": [3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4],
+      "settle": [11, 12, 13, 14, 15],
+      "durationsMs": {
+        "activate": [170, 120, 130, 150],
+        "playbackLoop": [170, 160, 160, 170, 170, 190, 200, 180, 190, 180, 170, 170, 160, 160],
+        "settle": [150, 140, 140, 160, 280]
+      },
+      "reducedMotionFrame": 7
+    },
+    "voiceCompare": {
+      "sheet": "tsuki-voice-compare-v1-4x4.png",
+      "trigger": "the user opens or changes the voice comparison selector",
+      "mode": "activate, alternate the open-palmed left and right evaluation while active, settle on leave",
+      "activate": [0, 1, 2, 3],
+      "comparisonLoop": [4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5],
+      "settle": [12, 13, 14, 15],
+      "durationsMs": {
+        "activate": [170, 120, 130, 150],
+        "comparisonLoop": [170, 180, 190, 170, 180, 190, 210, 190, 180, 170, 180, 190],
+        "settle": [150, 140, 160, 280]
+      },
+      "reducedMotionFrame": 8
+    },
+    "voiceReadyPresent": {
+      "sheet": "tsuki-voice-ready-present-v1-4x4.png",
+      "trigger": "voice generation completes successfully and finished audio is ready",
+      "mode": "play once, with an optional warm presentation hold before the bow and settle",
+      "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "durationsMs": [180, 120, 130, 150, 150, 160, 170, 180, 190, 210, 180, 190, 150, 140, 160, 300],
+      "readyHold": [6, 7, 8, 9, 8, 7],
+      "readyHoldDurationsMs": [170, 180, 200, 220, 200, 180],
+      "reducedMotionFrame": 8
+    },
+    "voiceRetry": {
+      "sheet": "tsuki-voice-retry-v1-4x4.png",
+      "trigger": "a recoverable generation error invites the user to try again",
+      "mode": "play once, holding the reassurance beat briefly before the confidence cue and settle",
+      "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "durationsMs": [180, 130, 140, 160, 170, 180, 200, 220, 220, 190, 170, 180, 150, 140, 160, 300],
+      "reassuranceHold": [5, 6, 7, 8, 9, 8, 7, 6],
+      "reassuranceHoldDurationsMs": [180, 190, 210, 240, 220, 210, 190, 180],
+      "reducedMotionFrame": 8
+    }
+  }
+}

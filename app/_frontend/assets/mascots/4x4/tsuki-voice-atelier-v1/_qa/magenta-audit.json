@@ -1,0 +1,46 @@
+[
+  {
+    "file": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\tsuki-voicegen-listen-notice-v1-4x4.png",
+    "sha256": "1e696f4401470843dcc3e04b5e2f99cb60415263b94273dc8bfc5eb5ab29626c",
+    "size": [
+      1536,
+      1536
+    ],
+    "mode": "RGBA",
+    "transparent_pixels": 1709519,
+    "partial_alpha_pixels": 43634,
+    "alpha_value_count": 232,
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "key_like_visible_pixels": 0,
+    "key_like_opaque_pixels": 0,
+    "saturated_magenta_edge_pixels": 0,
+    "passes_magenta_gate": true
+  },
+  {
+    "file": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\tsuki-voicegen-shape-approve-v1-4x4.png",
+    "sha256": "f99f460a35b474b6f9f09727198cc23bac6f95aecbf720658d1ab192a96496e2",
+    "size": [
+      1536,
+      1536
+    ],
+    "mode": "RGBA",
+    "transparent_pixels": 1648702,
+    "partial_alpha_pixels": 41776,
+    "alpha_value_count": 232,
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "key_like_visible_pixels": 0,
+    "key_like_opaque_pixels": 0,
+    "saturated_magenta_edge_pixels": 0,
+    "passes_magenta_gate": true
+  }
+]

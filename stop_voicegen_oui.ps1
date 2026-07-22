@@ -32,6 +32,45 @@ function Test-VoiceGenHealth {
     }
 }
 
+function Stop-LlmBridge([string]$ServerPath, [string]$PidPath) {
+    $Health = $null
+    try {
+        $Health = Invoke-RestMethod -Uri "http://127.0.0.1:3115/api/health" -TimeoutSec 2 -ErrorAction Stop
+    } catch {
+    }
+
+    if ($Health -and ($Health.service -ne "voicegen-llm-bridge" -or -not ([string]$Health.bridge_path).Equals([System.IO.Path]::GetFullPath($ServerPath), [System.StringComparison]::OrdinalIgnoreCase))) {
+        Write-Host "Port 3115 belongs to a different application or VoiceGen checkout; it was not stopped." -ForegroundColor Yellow
+        return
+    }
+
+    $BridgePid = 0
+    if ($Health -and $Health.pid) {
+        $BridgePid = [int]$Health.pid
+    } elseif (Test-Path -LiteralPath $PidPath) {
+        $SavedPid = (Get-Content -LiteralPath $PidPath -Raw).Trim()
+        if ($SavedPid -match '^\d+$') {
+            $BridgePid = [int]$SavedPid
+        }
+    }
+    if ($BridgePid -le 0) {
+        Write-Host "Windows LLM bridge is not running on port 3115." -ForegroundColor Yellow
+        Remove-Item -LiteralPath $PidPath -Force -ErrorAction SilentlyContinue
+        return
+    }
+
+    $ProcessInfo = Get-CimInstance Win32_Process -Filter "ProcessId = $BridgePid" -ErrorAction SilentlyContinue
+    $ExpectedName = [System.IO.Path]::GetFileName($ServerPath)
+    if (-not $ProcessInfo -or -not ([string]$ProcessInfo.CommandLine).Contains($ExpectedName)) {
+        Write-Host "Saved LLM bridge PID $BridgePid could not be verified; it was not stopped." -ForegroundColor Yellow
+        return
+    }
+    Write-Host "Stopping Windows LLM bridge PID $BridgePid..."
+    Stop-Process -Id $BridgePid -Force -ErrorAction Stop
+    Remove-Item -LiteralPath $PidPath -Force -ErrorAction SilentlyContinue
+    Write-Host "Windows LLM bridge stopped."
+}
+
 $SourceRootWindows = Split-Path -Parent $PSCommandPath
 $AppRootWindows = if ($env:VOICEGEN_OUI_APP_ROOT) { $env:VOICEGEN_OUI_APP_ROOT } else { Join-Path $SourceRootWindows "app" }
 $DataRoot = if ($env:VOICEGEN_OUI_DATA_ROOT) { $env:VOICEGEN_OUI_DATA_ROOT } else { Join-Path $env:LOCALAPPDATA "VoiceGenOui" }
@@ -41,6 +80,8 @@ $WslAppRoot = Convert-ToWslPath $AppRootWindows
 $WslPidPath = Convert-ToWslPath (Join-Path $DataRoot "voicegen-server.pid")
 $QuotedAppRoot = Quote-Bash $WslAppRoot
 $QuotedPidPath = Quote-Bash $WslPidPath
+$LlmBridgeServer = Join-Path $AppRootWindows "_backend\llm_bridge_server.py"
+$LlmBridgePidPath = Join-Path $DataRoot "voicegen-llm-bridge.pid"
 
 if (-not (Test-VoiceGenHealth)) {
     Write-Host "VoiceGen is not responding on port 3113." -ForegroundColor Yellow
@@ -96,9 +137,13 @@ echo VoiceGen server stopped.
 "@
 $BashCommand = $BashCommand -replace "`r`n", "`n"
 
-& wsl -d $WslDistro -u $WslUser -e bash -lc $BashCommand
-if ($LASTEXITCODE -ne 0) {
-    throw "The WSL stop command failed with exit code $LASTEXITCODE."
+try {
+    & wsl -d $WslDistro -u $WslUser -e bash -lc $BashCommand
+    if ($LASTEXITCODE -ne 0) {
+        throw "The WSL stop command failed with exit code $LASTEXITCODE."
+    }
+} finally {
+    Stop-LlmBridge -ServerPath $LlmBridgeServer -PidPath $LlmBridgePidPath
 }
 
 if (-not $NoPause) {

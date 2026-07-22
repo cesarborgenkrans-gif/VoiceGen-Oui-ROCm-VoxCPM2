@@ -270,18 +270,48 @@ async function requestVoiceFeedback(filename) {
       body: JSON.stringify({
         provider: options.provider,
         endpoint: options.endpoint,
-        model: options.model || 'local-model',
+        model: options.model || '',
         context_tokens: options.context_tokens || 4096,
         record: buildFeedbackRecord(record)
       })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || `Feedback HTTP ${res.status}`);
+    if (!options.model && data.model) {
+      writeLlmOptions({ ...options, model: data.model });
+    }
     addTsukiDialogue(record, data.reply);
     setHint('Tsuki Hoshi feedback received.', 'ok');
   } catch (err) {
     setTsukiDialogue(`I could not reach the local LLM: ${err.message}`);
     setHint(`Local LLM feedback failed: ${err.message}`, 'error');
+  }
+}
+
+async function testLlmConnection() {
+  const provider = $('#llm-provider-input')?.value || 'lmstudio';
+  const endpoint = $('#llm-endpoint-input')?.value.trim() || '';
+  const result = $('#llm-test-status');
+  if (!endpoint) {
+    if (result) result.textContent = 'Enter an endpoint first.';
+    return;
+  }
+  if (result) result.textContent = 'Checking the local server…';
+  try {
+    const res = await fetch(apiPath('/api/llm_models'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider, endpoint })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Connection HTTP ${res.status}`);
+    const models = Array.isArray(data.models) ? data.models : [];
+    if (!models.length) throw new Error('The server responded, but no loaded models were found.');
+    const modelInput = $('#llm-model-input');
+    if (modelInput && !modelInput.value.trim()) modelInput.value = data.recommended_model || models[0];
+    if (result) result.textContent = `Connected · ${models.length} model${models.length === 1 ? '' : 's'} found · ${data.recommended_model || models[0]}`;
+  } catch (error) {
+    if (result) result.textContent = `Connection failed: ${error.message}`;
   }
 }
 
@@ -1743,6 +1773,7 @@ $('#btn-options')?.addEventListener('click', () => {
   openModal('options-modal');
 });
 $('#btn-save-options')?.addEventListener('click', saveOptionsFromModal);
+$('#btn-test-llm')?.addEventListener('click', testLlmConnection);
 $('#llm-enabled-input')?.addEventListener('change', syncLlmOptionsVisibility);
 $('#btn-author-info')?.addEventListener('click', () => openModal('author-modal'));
 $('#voice-language-button')?.addEventListener('click', () => {

@@ -1,0 +1,137 @@
+[
+  {
+    "input": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\_work\\tsuki-voicegen-listen-notice-v1-4x4.png",
+    "output": "D:\\ai-codexa\\03_LIVE\\github\\VoiceGen-Oui-ROCm-VoxCPM2\\app\\_frontend\\assets\\mascots\\4x4\\tsuki-voice-atelier-v1\\tsuki-voicegen-listen-notice-v1-4x4.png",
+    "output_sha256": "1e696f4401470843dcc3e04b5e2f99cb60415263b94273dc8bfc5eb5ab29626c",
+    "grounding": {
+      "mode": "tolerance",
+      "ground_frames": null,
+      "ground_tol": 200,
+      "pad": 28
+    },
+    "before": {
+      "centroid_x_spread": 9.8,
+      "bottom_spread": 0
+    },
+    "after": {
+      "centroid_x_spread": 1.0,
+      "grounded_bottom_spread": 0
+    },
+    "airborne_frames": [],
+    "clamped_frames": [],
+    "shifts": [
+      {
+        "row": 0,
+        "col": 0,
+        "dx": -9,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 0,
+        "col": 1,
+        "dx": -15,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 0,
+        "col": 2,
+        "dx": -14,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 0,
+        "col": 3,
+        "dx": -11,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 1,
+        "col": 0,
+        "dx": -11,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 1,
+        "col": 1,
+        "dx": -16,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 1,
+        "col": 2,
+        "dx": -14,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 1,
+        "col": 3,
+        "dx": -9,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 2,
+        "col": 0,
+        "dx": -11,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 2,
+        "col": 1,
+        "dx": -13,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 2,
+        "col": 2,
+        "dx": -13,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 2,
+        "col": 3,
+        "dx": -6,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 3,
+        "col": 0,
+        "dx": -7,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 3,
+        "col": 1,
+        "dx": -9,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 3,
+        "col": 2,
+        "dx": -7,
+        "dy": -9,
+        "grounded": true
+      },
+      {
+        "row": 3,
+        "col": 3,
+        "dx": -7,
+        "dy": -9,
+        "grounded": true
+      }
+    ]
+  }
+]
