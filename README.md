@@ -6,9 +6,7 @@
 
 ![VoiceGen Oui! functional atelier showing Persona selection, script and voice design, Radeon telemetry, Latest Take, Local LLM Feedback, and output history](docs/assets/voicegen-oui-functional-atelier-ui.png)
 
-## AMD AI DevMaster Hackathon
-
-**Track 1: Multimodal AI — creator-focused local speech generation on AMD Radeon.**
+## AMD Radeon + ROCm Architecture
 
 VoiceGen Oui! turns written scripts and natural-language voice direction into local audio through VoxCPM2. It gives Windows creators a complete visual workflow for designing voices, combining Persona and delivery layers, comparing seeded takes, inspecting WAV metadata, and requesting script-aware feedback from an optional local LLM.
 
@@ -32,7 +30,7 @@ flowchart LR
 | Voice-language menu | 39 VoxCPM2 generation languages and dialects |
 | Privacy | Models, prompts, WAV files, metadata, personas, and optional LLM feedback stay local |
 
-The hackathon value is the full AMD-native product path rather than a model demo alone: approachable installation, reproducible local generation, a polished creator interface, seed-controlled comparison, voice-design presets, consent-gated cloning tools, WAV inspection, and visible GPU telemetry. See the [AMD AI DevMaster Hackathon event](https://luma.com/amd-4dhi).
+VoiceGen Oui! provides a complete AMD-native product path rather than a model demo alone: approachable installation, reproducible local generation, a polished creator interface, seed-controlled comparison, voice-design presets, consent-gated cloning tools, WAV inspection, and visible GPU telemetry.
 
 ## Listen
 
