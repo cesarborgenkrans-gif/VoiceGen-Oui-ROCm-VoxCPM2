@@ -30,7 +30,7 @@ AMD ROCm(tm) and related marks are trademarks of Advanced Micro Devices, Inc.
 
 ## Web Fonts
 
-The GUI requests the Outfit and JetBrains Mono typefaces from Google Fonts at runtime. Font files are not bundled in this repository. Both typefaces are distributed under the SIL Open Font License 1.1 and retain their respective authors' copyrights.
+The GUI requests DM Sans, IBM Plex Mono, Shippori Mincho, Outfit, and JetBrains Mono from Google Fonts at runtime. Font files are not bundled in this repository. These typefaces are distributed under the SIL Open Font License 1.1 and retain their respective authors' copyrights.
 
 ## Voice Cloning Safety
 

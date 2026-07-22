@@ -44,6 +44,7 @@ outputs/*
 
 # Recycled design experiments and machine-local shortcuts
 _app_recycle/
+app/design-mockups/
 *.lnk
 
 # Local-only docs and user-authored runtime data
