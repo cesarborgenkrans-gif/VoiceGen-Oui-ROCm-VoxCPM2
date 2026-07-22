@@ -4,7 +4,35 @@
 
 **It supports 39 voice-generation languages!**
 
-![VoiceGen Oui! functional atelier showing Persona selection, script and voice design, Radeon telemetry, Latest Take, Local LLM Feedback, and output history](docs/assets/voicegen-oui-functional-atelier-ui.png)
+<table>
+  <tr>
+    <td width="62%" valign="top">
+      <img src="docs/assets/voicegen-oui-functional-atelier-ui.png" alt="VoiceGen Oui! functional atelier showing Persona selection, script and voice design, Radeon telemetry, Latest Take, Local LLM Feedback, and output history" width="100%">
+    </td>
+    <td width="38%" valign="top">
+      <h2>Listen</h2>
+      <p>Download voice samples:</p>
+      <p><strong>Tsuki Hoshi</strong><br>
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4">Sample 1</a> ·
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.mp4">Sample 2</a> ·
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.mp4">Sample 3</a>
+      </p>
+      <p><strong>Dark Priestess</strong><br>
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.mp4">Sample 1</a> ·
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.mp4">Sample 2</a> ·
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.mp4">Sample 3</a>
+      </p>
+      <p><strong>Default (Japanese)</strong><br>
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-01.mp4">Sample 1</a> ·
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-02.mp4">Sample 2</a>
+      </p>
+      <p><strong>Dark Priestess (Japanese)</strong><br>
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-01.mp4">Sample 1</a> ·
+        <a href="https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-02.mp4">Sample 2</a>
+      </p>
+    </td>
+  </tr>
+</table>
 
 ## AMD Radeon + ROCm Architecture
 
@@ -31,15 +59,6 @@ flowchart LR
 | Privacy | Models, prompts, WAV files, metadata, personas, and optional LLM feedback stay local |
 
 VoiceGen Oui! provides a complete AMD-native product path rather than a model demo alone: approachable installation, reproducible local generation, a polished creator interface, seed-controlled comparison, voice-design presets, consent-gated cloning tools, WAV inspection, and visible GPU telemetry.
-
-## Listen
-
-| Persona preset | Download MP4 samples |
-| --- | --- |
-| Tsuki Hoshi | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/sparklesnap-tsuki-hoshi-high-quality.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-02.mp4) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-reference-sample-03.mp4) |
-| Dark Priestess | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-02.mp4) · [Sample 3](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-reference-sample-03.mp4) |
-| Default (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-default-japanese-sample-02.mp4) |
-| Dark Priestess (Jpn) | [Sample 1](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-01.mp4) · [Sample 2](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/raw/refs/heads/main/docs/assets/voicegen-oui-dark-priestess-japanese-sample-02.mp4) |
 
 VoiceGen Oui! is the practical ROCm layer around VoxCPM2: a friendly local GUI and Windows-to-WSL2 bridge that helps AMD GPU users start generating voices locally instead of falling back to CPU.
 
