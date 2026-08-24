@@ -1,6 +1,7 @@
 import json
 import mimetypes
 import os
+import subprocess
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -171,6 +172,19 @@ def list_output_records():
         reverse=True,
     )
     return [output_record_from_file(path, metadata) for path in files]
+
+def resolve_output(filename):
+    filename = str(filename or "").strip()
+    if not filename or Path(filename).name != filename or not filename.lower().endswith(".wav"):
+        raise ValueError("valid output filename is required")
+    target = (OUTPUTS_DIR / filename).resolve()
+    try:
+        target.relative_to(OUTPUTS_DIR.resolve())
+    except ValueError as exc:
+        raise ValueError("invalid output filename") from exc
+    if not target.is_file():
+        raise FileNotFoundError(filename)
+    return target
 
 def write_output_metadata(filename, updates):
     if not filename or Path(filename).name != filename or not filename.endswith(".wav"):
@@ -492,6 +506,20 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({"status": "ok", **result})
                 except Exception as exc:
                     return self.send_error_json(500, f"{type(exc).__name__}: {exc}")
+            if path == "/api/outputs/reveal":
+                try:
+                    payload = read_body(self)
+                    target = resolve_output(payload.get("filename"))
+                    subprocess.Popen(
+                        ["explorer.exe", f"/select,{target}"],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                    return self.send_json({"status": "ok", "filename": target.name})
+                except FileNotFoundError as exc:
+                    return self.send_error_json(404, str(exc))
+                except Exception as exc:
+                    return self.send_error_json(400, str(exc))
             if path == "/api/llm_feedback":
                 try:
                     payload = read_body(self)

@@ -516,12 +516,13 @@
     .history-item span { display: block; margin-top: 3px; color: var(--ink-soft); font: 500 7px/1 var(--utility); }
     .history-copy { min-width: 0; }
     .history-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 5px; }
-    .history-actions button { min-height: 30px; border: 1px solid var(--line); border-radius: 8px; padding: 0 8px; color: var(--teal-deep); background: rgba(255,255,255,.68); font: 600 7px/1 var(--utility); }
+    .history-actions button, .history-actions a { display: inline-flex; min-height: 30px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 0 8px; color: var(--teal-deep); background: rgba(255,255,255,.68); font: 600 7px/1 var(--utility); text-decoration: none; }
     .history-item.is-playing .history-actions button[data-action="play"] { border-color: var(--teal-deep); color: white; background: var(--teal-deep); }
     .history-actions button[data-action="feedback"] { display: inline-flex; align-items: center; gap: 5px; }
     .history-list.is-feedback-busy .history-actions button[data-action="feedback"] { opacity: .42; cursor: wait; filter: saturate(.55); }
     .history-actions button[data-action="feedback"].is-processing::before { content: ""; width: 8px; height: 8px; flex: 0 0 auto; border: 1px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: feedbackTurn 1.1s linear infinite; }
     .history-actions button:disabled { pointer-events: none; }
+    .history-show-more { margin-top: 9px; }
     .empty-history { grid-column: 1 / -1; padding: 10px; color: var(--ink-soft); font-size: 10px; }
     .app-footer { display: flex; justify-content: space-between; gap: 14px; padding: 3px 2px 0; color: var(--ink-soft); font: 500 7px/1.2 var(--utility); }
 
@@ -939,6 +940,7 @@
           <div class="history-panel">
             <div class="history-head"><span class="history-title">Queue / History</span><button class="small-button" id="btn-refresh-history" type="button">Refresh</button></div>
             <div class="history-list" id="history-list"><div class="empty-history">Connect to the VoiceGen Oui! backend to load generated clips.</div></div>
+            <button class="small-button history-show-more" id="show-more-history" type="button" hidden>Show more</button>
           </div>
         </section>
 
@@ -1336,8 +1338,10 @@
       const audioPlayer = $('#audio-player');
       const downloadLink = $('#download-link');
       const historyList = $('#history-list');
+      const showMoreHistory = $('#show-more-history');
       let objectUrl = null;
       let outputs = [];
+      let visibleHistoryCount = 8;
       let currentRecord = null;
       let presetLibrary = null;
       let dialogueHistory = [];
@@ -1853,11 +1857,13 @@
 
       function renderHistory() {
         historyList.innerHTML = '';
-        if (!outputs.length) {
+        const visible = outputs.slice(0, visibleHistoryCount);
+        if (!visible.length) {
           historyList.innerHTML = '<div class="empty-history">No generated clips yet.</div>';
+          showMoreHistory.hidden = true;
           return;
         }
-        outputs.slice(0, 8).forEach((record, index) => {
+        visible.forEach((record, index) => {
           const item = document.createElement('article');
           item.className = 'history-item';
           item.dataset.filename = record.filename;
@@ -1873,18 +1879,37 @@
           copy.append(title, meta);
           const actions = document.createElement('div');
           actions.className = 'history-actions';
-          [['play','Play'],['metadata','Metadata'],['feedback','Get Feedback']].forEach(([action,label]) => {
+          [['play','Play'],['metadata','Metadata'],['feedback','Get Feedback'],['reveal','Show in folder']].forEach(([action,label]) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.dataset.action = action;
             button.textContent = label;
             actions.appendChild(button);
           });
+          const download = document.createElement('a');
+          download.textContent = 'Download';
+          download.href = apiPath(record.url || `/outputs/${encodeURIComponent(record.filename)}`);
+          download.download = record.filename || 'voicegen-oui-output.wav';
+          actions.appendChild(download);
           item.append(mark, copy, actions);
           historyList.appendChild(item);
         });
+        showMoreHistory.hidden = visibleHistoryCount >= outputs.length;
         syncHistoryPlaybackState();
         setFeedbackBusy(feedbackRequestInFlight, feedbackRequestFilename);
+      }
+
+      async function revealOutput(record) {
+        try {
+          const response = await fetch(apiPath('/api/outputs/reveal'), {
+            method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({filename: record.filename})
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || `Reveal HTTP ${response.status}`);
+          setStatus('Folder opened', `${data.filename || record.filename} selected in Explorer.`, 'The local output folder is open.');
+        } catch (error) {
+          setStatus('Could not open folder', error.message, 'Check that the local VoiceGen Oui! backend is running on Windows.');
+        }
       }
 
       async function loadHistory({selectLatest = false} = {}) {
@@ -2470,9 +2495,12 @@
           showMetadata(record);
         } else if (button.dataset.action === 'feedback') {
           requestVoiceFeedback(record);
+        } else if (button.dataset.action === 'reveal') {
+          revealOutput(record);
         }
       });
       $('#btn-refresh-history').addEventListener('click', () => loadHistory());
+      showMoreHistory.addEventListener('click', () => { visibleHistoryCount += 8; renderHistory(); });
       $('#view-current-metadata').addEventListener('click', () => showMetadata(currentRecord));
       $('#btn-analyze-audio').addEventListener('click', () => {
         analyzedAudioRecord = null;
