@@ -2,6 +2,7 @@ import ipaddress
 import json
 import os
 import re
+import subprocess
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -21,6 +22,16 @@ ALLOWED_ORIGINS = {
     "http://127.0.0.1:3113",
     "http://[::1]:3113",
 }
+DATA_ROOT = Path(
+    os.environ.get("VOICEGEN_OUI_DATA_ROOT")
+    or os.environ.get("WAIFUVOICE_DATA_ROOT")
+    or str(Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "VoiceGenOui")
+).expanduser().resolve()
+OUTPUTS_DIR = Path(
+    os.environ.get("VOICEGEN_OUI_OUTPUTS_DIR")
+    or os.environ.get("WAIFUVOICE_OUTPUTS_DIR")
+    or str(DATA_ROOT / "outputs")
+).expanduser().resolve()
 
 TSUKI_FEEDBACK_SYSTEM_PROMPT = (
     "You are Tsuki Hoshi, a concise AI assistant inside VoiceGen Oui!. "
@@ -53,6 +64,30 @@ def read_body(handler):
     if not isinstance(payload, dict):
         raise ValueError("JSON request body must be an object")
     return payload
+
+
+def resolve_output(filename):
+    filename = str(filename or "").strip()
+    if not filename or Path(filename).name != filename or not filename.lower().endswith(".wav"):
+        raise ValueError("valid output filename is required")
+    target = (OUTPUTS_DIR / filename).resolve()
+    try:
+        target.relative_to(OUTPUTS_DIR)
+    except ValueError as exc:
+        raise ValueError("invalid output filename") from exc
+    if not target.is_file():
+        raise FileNotFoundError(filename)
+    return target
+
+
+def reveal_output(filename):
+    target = resolve_output(filename)
+    subprocess.Popen(
+        ["explorer.exe", f"/select,{target}"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return target
 
 
 def normalize_provider(provider):
@@ -295,10 +330,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = unquote(urlparse(self.path).path)
-        if path not in ("/api/llm_models", "/api/llm_feedback"):
+        if path not in ("/api/llm_models", "/api/llm_feedback", "/api/outputs/reveal"):
             return self.send_error_json(404, "Not found", "bridge_route_not_found")
         try:
             payload = read_body(self)
+            if path == "/api/outputs/reveal":
+                target = reveal_output(payload.get("filename"))
+                return self.send_json({"status": "ok", "filename": target.name})
             if path == "/api/llm_models":
                 provider = normalize_provider(payload.get("provider"))
                 endpoint = validate_loopback_endpoint(payload.get("endpoint"))

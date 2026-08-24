@@ -176,6 +176,7 @@ $AppRootWindows = Join-Path $SourceRootWindows "app"
 
 $DataRoot = if ($env:VOICEGEN_OUI_DATA_ROOT) { $env:VOICEGEN_OUI_DATA_ROOT } else { Join-Path $env:LOCALAPPDATA "VoiceGenOui" }
 $AppRoot = if ($env:VOICEGEN_OUI_APP_ROOT) { $env:VOICEGEN_OUI_APP_ROOT } else { $AppRootWindows }
+$env:VOICEGEN_OUI_DATA_ROOT = $DataRoot
 $LegacyPersonasRoot = Join-Path $DataRoot "personas"
 $UserPersonasRoot = Join-Path $DataRoot "user-personas"
 if (Test-Path $LegacyPersonasRoot) {

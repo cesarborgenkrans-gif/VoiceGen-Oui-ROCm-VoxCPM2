@@ -1901,7 +1901,7 @@
 
       async function revealOutput(record) {
         try {
-          const response = await fetch(apiPath('/api/outputs/reveal'), {
+          const response = await llmFetch('/api/outputs/reveal', {
             method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({filename: record.filename})
           });
           const data = await response.json();
