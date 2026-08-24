@@ -567,7 +567,7 @@ class Handler(BaseHTTPRequestHandler):
 
             if not text:
                 raise ValueError("text is required")
-            if mode in ("zero-shot", "continuation") and not consent_ack:
+            if mode in ("zero-shot", "zero-shot-directed", "continuation") and not consent_ack:
                 raise ValueError("consent acknowledgement is required for uploaded voice modes")
 
             if ref_audio_base64:
