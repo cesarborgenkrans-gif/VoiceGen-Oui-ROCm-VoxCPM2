@@ -391,17 +391,24 @@
     }
     textarea:focus { border-color: rgba(38,124,116,.55); background: white; box-shadow: 0 0 0 4px rgba(38,124,116,.07); }
     #text-input { font: 500 17px/1.6 var(--display); }
-    #voice-input { min-height: 116px; color: var(--lilac-deep); background: rgba(236,232,245,.58); font-size: 13px; }
-    body.prompt-text-large #text-input, body.prompt-text-large #voice-input { font-size: 1.5em; }
+    #voice-input, #direction-input { min-height: 116px; font-size: 13px; }
+    #voice-input { color: var(--persona-blue-deep); background: rgba(226,237,247,.62); }
+    #direction-input { color: var(--lilac-deep); background: rgba(236,232,245,.58); }
+    body.prompt-text-large #text-input, body.prompt-text-large #voice-input, body.prompt-text-large #direction-input { font-size: 1.5em; }
     .script-synthesis-row { display: flex; align-items: center; justify-content: flex-end; gap: 9px; flex-wrap: wrap; margin-top: 10px; }
-    .script-synthesis-row .quiet-button { margin-right: auto; }
+    .voice-mode-group { display: grid; grid-template-columns: minmax(190px, .34fr) minmax(0, 1fr); align-items: end; gap: 12px; padding: 12px 13px; border: 1px solid rgba(38,124,116,.18); border-radius: 12px 12px 12px 5px; background: rgba(237,246,243,.64); }
+    .voice-mode-group .field-head { display: block; margin: 0; }
+    .voice-mode-group .field-head label { display: block; margin-bottom: 4px; }
+    .voice-mode-select { width: 100%; min-height: 42px; border: 1px solid rgba(38,124,116,.28); border-radius: 9px; padding: 0 11px; color: var(--teal-deep); background: rgba(255,255,255,.76); font: 600 10px/1 var(--body); }
+    .mode-panel { padding: 13px; border-radius: 12px 12px 12px 5px; }
+    .mode-panel-design { border: 1px solid rgba(63,111,159,.24); background: linear-gradient(135deg, rgba(226,237,247,.9), rgba(237,246,243,.72)); }
+    .mode-panel-design .field-head label { color: var(--persona-blue-deep); }
+    .mode-panel-design .field-hint { color: var(--persona-blue-deep); }
+    .mode-panel-direction { border: 1px solid rgba(140,124,173,.24); background: var(--lilac-pale); }
+    .mode-panel-direction .field-head label, .mode-panel-direction .field-hint { color: var(--lilac-deep); }
 
     .upload-tools-panel { padding: 13px; border: 1px solid rgba(140,124,173,.2); border-radius: 12px 12px 12px 5px; background: var(--lilac-pale); }
     .upload-tools-note { margin: 0 0 10px; color: var(--lilac-deep); font: 500 9px/1.55 var(--utility); }
-    .mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-    .mode-button { padding: 8px 10px; border: 1px solid rgba(140,124,173,.25); border-radius: 9px; background: rgba(255,255,255,.55); color: var(--lilac-deep); font: 600 9px/1 var(--utility); cursor: pointer; }
-    .mode-button[aria-pressed="true"] { border-color: var(--teal); background: var(--mint-pale); color: var(--teal-deep); }
-    .upload-pane[hidden] { display: none; }
     .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .upload-grid label { color: var(--lilac-deep); font-size: 10px; }
     .upload-grid input, .upload-grid textarea { width: 100%; margin-top: 6px; font-size: 9px; }
@@ -732,6 +739,7 @@
       .language-control { min-width: 0; }
       .chat-feed { overflow: visible; padding: 14px; }
       .upload-grid { grid-template-columns: 1fr; }
+      .voice-mode-group { grid-template-columns: 1fr; }
       .action-hint { width: 100%; margin-left: 0; }
       .generate-button { width: 100%; }
       .latest-body { grid-template-columns: 1fr !important; }
@@ -861,34 +869,46 @@
         <section class="input-group" aria-labelledby="script-label">
           <div class="field-head"><label id="script-label" for="text-input">Spoken Script</label><span class="field-hint" id="character-count">107 characters</span></div>
           <textarea id="text-input" rows="6">Start with one clean sentence, keep the seed fixed, and compare each take before changing the voice design.</textarea>
-          <div class="script-synthesis-row"><button class="quiet-button" id="btn-upload-tools" type="button" aria-expanded="false" hidden>Clone / Continue</button><label class="autoplay-label"><input type="checkbox" id="autoplay-input" checked> Auto Play</label><button class="generate-button" id="generate-btn" type="button"><span>Synthesize Audio</span></button></div>
+          <div class="script-synthesis-row"><label class="autoplay-label"><input type="checkbox" id="autoplay-input" checked> Auto Play</label><button class="generate-button" id="generate-btn" type="button"><span>Synthesize Audio</span></button></div>
         </section>
 
-        <section class="input-group" aria-labelledby="voice-label">
+        <section class="voice-mode-group" aria-labelledby="voice-mode-label">
+          <div class="field-head"><label id="voice-mode-label" for="voice-mode">Voice mode</label><span class="field-hint" id="voice-mode-hint">Create a voice without reference audio.</span></div>
+          <select class="voice-mode-select" id="voice-mode">
+            <option value="voice-design" selected>Voice Design</option>
+            <option value="zero-shot">Clone</option>
+            <option value="zero-shot-directed">Clone + Direction</option>
+            <option value="continuation">Continuation</option>
+          </select>
+        </section>
+
+        <section class="input-group mode-panel mode-panel-design" id="voice-design-panel" aria-labelledby="voice-label">
           <div class="field-head"><label id="voice-label" for="voice-input">Voice Design Instruction</label><span class="field-hint">One change at a time</span></div>
           <textarea id="voice-input" rows="6">A warm, articulate narrator with rounded vowels, relaxed pacing, and intimate clarity. Keep the delivery natural, grounded, and easy to compare between takes.</textarea>
         </section>
 
-        <section class="upload-tools-panel" id="upload-tools-panel" aria-label="Uploaded voice tools" hidden>
-          <p class="upload-tools-note">Uploaded voice modes are tucked away until needed. Use them only with approved audio.</p>
-          <div class="mode-toggle" aria-label="Uploaded voice mode">
-            <button class="mode-button" id="btn-mode-clone" type="button" data-upload-mode="zero-shot" aria-pressed="true">Zero-Shot Clone</button>
-            <button class="mode-button" id="btn-mode-continuation" type="button" data-upload-mode="continuation" aria-pressed="false">Continuation</button>
+        <section class="input-group mode-panel mode-panel-direction" id="direction-panel" aria-labelledby="direction-label" hidden>
+          <div class="field-head"><label id="direction-label" for="direction-input">Voice Direction</label><span class="field-hint">Shapes the approved clone.</span></div>
+          <textarea id="direction-input" rows="4" placeholder="Warm, cheerful, and conversational."></textarea>
+        </section>
+
+        <section class="upload-tools-panel" id="clone-panel" aria-label="Clone reference audio" hidden>
+          <p class="upload-tools-note">Clone uses approved reference audio. Clone + Direction also applies the purple direction above.</p>
+          <div class="upload-grid">
+            <div><label for="ref-audio-input">Approved reference audio</label><span class="upload-file-row"><input id="ref-audio-input" type="file" accept="audio/*"><button class="upload-clear" id="btn-clear-ref-audio" type="button">Clear</button></span></div>
           </div>
-          <div class="upload-pane" id="upload-pane-clone" data-upload-pane="zero-shot">
-            <div class="upload-grid">
-              <div><label for="ref-audio-input">Approved reference audio</label><span class="upload-file-row"><input id="ref-audio-input" type="file" accept="audio/*"><button class="upload-clear" id="btn-clear-ref-audio" type="button">Clear</button></span></div>
-            </div>
+        </section>
+
+        <section class="upload-tools-panel" id="continuation-panel" aria-label="Continuation prompt audio" hidden>
+          <p class="upload-tools-note">Continuation continues the supplied performance from approved prompt audio and its exact transcription.</p>
+          <div class="upload-grid">
+            <div><label for="prompt-audio-input">Approved prompt audio</label><span class="upload-file-row"><input id="prompt-audio-input" type="file" accept="audio/*"><button class="upload-clear" id="btn-clear-prompt-audio" type="button">Clear</button></span></div>
+            <label>Exact prompt transcription<textarea id="prompt-text-input" rows="2" placeholder="What the approved clip says"></textarea></label>
           </div>
-          <div class="upload-pane" id="upload-pane-continuation" data-upload-pane="continuation" hidden>
-            <div class="upload-grid">
-              <div><label for="prompt-audio-input">Approved prompt audio</label><span class="upload-file-row"><input id="prompt-audio-input" type="file" accept="audio/*"><button class="upload-clear" id="btn-clear-prompt-audio" type="button">Clear</button></span></div>
-              <label>Exact prompt transcription<textarea id="prompt-text-input" rows="2" placeholder="What the approved clip says"></textarea></label>
-            </div>
-          </div>
-          <div class="consent-panel">
-            <label><input type="checkbox" id="consent-input"><span>I have permission to use the uploaded voice material and understand this generation may imitate the supplied speaker or performance.</span></label>
-          </div>
+        </section>
+
+        <section class="consent-panel" id="consent-panel" hidden>
+          <label><input type="checkbox" id="consent-input"><span>I have permission to use the uploaded voice material and understand this generation may imitate the supplied speaker or performance.</span></label>
         </section>
 
         <div class="action-row">
@@ -952,7 +972,6 @@
     <div class="modal-card">
       <div class="modal-head"><h2 id="options-modal-title">Options</h2><button class="modal-close" type="button" data-close-modal="options-modal">Close</button></div>
       <div class="options-grid">
-        <label><span><input type="checkbox" id="clone-tools-enabled-input"> Enable Clone / Continue</span></label>
         <label><span><input type="checkbox" id="llm-enabled-input"> Enable Local LLM Feedback</span></label>
         <div class="llm-options-fields" id="llm-options-fields" hidden>
           <label>Provider<select id="llm-provider-input"><option value="lmstudio">LM Studio OpenAI-compatible</option><option value="ollama">Ollama Chat API</option><option value="openai-compatible">Other OpenAI-compatible Local Server</option></select></label>
@@ -1110,7 +1129,6 @@
         family: 'Official VoxCPM2 language'
       }));
       const LLM_OPTIONS_KEY = 'voicegen_oui.llmOptions.v1';
-      const CLONE_TOOLS_KEY = 'voicegen_oui.cloneToolsEnabled.v1';
       const LARGE_PROMPT_TEXT_KEY = 'voicegen_oui.largePromptText.v1';
       const TSUKI_DIALOGUE_KEY = 'voicegen_oui.tsukiDialogue.v1';
       const VRAM_OPTIONS_KEY = 'voicegen_oui.vramOptions.v1';
@@ -1151,7 +1169,7 @@
         analysis:['Generated audio inspector','Drop an original VoiceGen WAV to inspect its technical audio properties and match its filename to the local generation record for script, voice design, seed, parameters, and preset state.'],
         vram:['VRAM telemetry','Shows current GPU-memory use when the backend reports it. Warnings can pause generation before a likely overload.'],
         cooldown:['Cool Down GPU','Requests the backend to unload the model and clear cached GPU memory between sessions.'],
-        clone:['Clone / Continue','Zero-Shot Clone uses approved reference audio. Continuation uses approved prompt audio plus its exact transcription. Both require consent.'],
+        clone:['Voice modes','Voice Design creates a voice without a reference clip. Clone uses approved reference audio. Clone + Direction applies a delivery instruction to that clone. Continuation uses approved prompt audio plus its exact transcription. Uploaded voice modes require consent.'],
         credits:['Credits','VoiceGen Oui! by Cesar Borgenkrans. Local voice generation is powered by VoxCPM2. A quiet Made with care · sparklesnap.dev credit appears at the bottom of the Left Sidebar every 45 seconds and remains visible for 15 seconds.']
       };
       const apiPath = (path) => `${API_BASE}${path}`;
@@ -1310,6 +1328,8 @@
       const mascot = new StillMascot($('#tsuki-sprite'));
       const script = $('#text-input');
       const voice = $('#voice-input');
+      const direction = $('#direction-input');
+      const voiceMode = $('#voice-mode');
       const generate = $('#generate-btn');
       const output = $('#output-box');
       const play = $('#play-button');
@@ -1323,7 +1343,7 @@
       let dialogueHistory = [];
       let metadataRecord = null;
       let analyzedAudioRecord = null;
-      let uploadMode = 'zero-shot';
+      let uploadMode = voiceMode.value;
       let activePresetCategory = 'personas';
       let selectedPresetKeys = new Set();
       let customPersonas = [];
@@ -1348,6 +1368,50 @@
       function updateCount() {
         const count = script.value.length;
         $('#character-count').textContent = `${count} character${count === 1 ? '' : 's'}`;
+      }
+      const VOICE_MODE_COPY = {
+        'voice-design': {
+          hint: 'Create a voice without reference audio.',
+          guide: 'Voice Design is active. Describe the voice you want to create; no reference audio is used.',
+          action: 'Synthesize Audio'
+        },
+        'zero-shot': {
+          hint: 'Clone an approved reference voice.',
+          guide: 'Clone is active. Choose approved reference audio, then confirm permission before generating.',
+          action: 'Clone approved voice'
+        },
+        'zero-shot-directed': {
+          hint: 'Clone an approved voice and shape its delivery.',
+          guide: 'Clone + Direction is active. Add both approved reference audio and a delivery direction.',
+          action: 'Clone with direction'
+        },
+        'continuation': {
+          hint: 'Continue an approved performance from prompt audio.',
+          guide: 'Continuation is active. Add approved prompt audio and its exact transcription.',
+          action: 'Continue approved voice'
+        }
+      };
+      function isCloneMode(mode = uploadMode) { return mode === 'zero-shot' || mode === 'zero-shot-directed'; }
+      function voiceModeLabel(mode) {
+        return ({'voice-design':'Voice design','zero-shot':'Clone','zero-shot-directed':'Clone + Direction','continuation':'Continuation'})[mode] || 'Voice output';
+      }
+      function generationButtonLabel(mode = uploadMode, completed = false) {
+        return mode === 'voice-design' && completed ? 'Synthesize another take' : (VOICE_MODE_COPY[mode] || VOICE_MODE_COPY['voice-design']).action;
+      }
+      function updateVoiceMode(announce = false) {
+        uploadMode = voiceMode.value;
+        const isClone = isCloneMode();
+        $('#voice-design-panel').hidden = uploadMode !== 'voice-design';
+        $('#direction-panel').hidden = uploadMode !== 'zero-shot-directed';
+        $('#clone-panel').hidden = !isClone;
+        $('#continuation-panel').hidden = uploadMode !== 'continuation';
+        $('#consent-panel').hidden = uploadMode === 'voice-design';
+        $('#voice-mode-hint').textContent = (VOICE_MODE_COPY[uploadMode] || VOICE_MODE_COPY['voice-design']).hint;
+        generate.querySelector('span').textContent = generationButtonLabel();
+        if (announce) {
+          setGuide((VOICE_MODE_COPY[uploadMode] || VOICE_MODE_COPY['voice-design']).guide);
+          mascot.react('think');
+        }
       }
       function setStatus(status, log, hint) {
         $('#status-pill').textContent = status;
@@ -1727,7 +1791,7 @@
         currentRecord = record;
         $('#take-number').textContent = record.filename || 'Latest take';
         $('#take-meta').textContent = `${record.language || 'Unknown language'} · seed ${record.seed ?? -1}`;
-        $('#take-name').textContent = record.mode === 'voice-design' ? 'Voice design · local output' : `${record.mode || 'Voice output'} · local output`;
+        $('#take-name').textContent = `${voiceModeLabel(record.mode)} · local output`;
         if (setAudio) setAudioSource(apiPath(record.url || `/outputs/${record.filename}`), record.filename, record);
         syncHistoryPlaybackState();
       }
@@ -2064,7 +2128,6 @@
         $('#llm-endpoint-input').value = options.endpoint;
         $('#llm-model-input').value = options.model || '';
         $('#llm-options-fields').hidden = !options.enabled;
-        $('#clone-tools-enabled-input').checked = readJsonStorage(CLONE_TOOLS_KEY,false) === true;
         $('#large-prompt-text-input').checked = readJsonStorage(LARGE_PROMPT_TEXT_KEY,false) === true;
         const vramOptions = readVramOptions();
         $('#vram-warning-enabled-input').checked = vramOptions.warningsEnabled;
@@ -2080,14 +2143,6 @@
           context_tokens:readLlmOptions().context_tokens || 4096
         };
         writeLlmOptions(options);
-        const cloneEnabled = $('#clone-tools-enabled-input').checked;
-        localStorage.setItem(CLONE_TOOLS_KEY, JSON.stringify(cloneEnabled));
-        $('#btn-upload-tools').hidden = !cloneEnabled;
-        if (!cloneEnabled) {
-          $('#upload-tools-panel').hidden = true;
-          $('#btn-upload-tools').setAttribute('aria-expanded', 'false');
-          generate.querySelector('span').textContent = 'Synthesize Audio';
-        }
         const large = $('#large-prompt-text-input').checked;
         localStorage.setItem(LARGE_PROMPT_TEXT_KEY, JSON.stringify(large));
         document.body.classList.toggle('prompt-text-large', large);
@@ -2219,14 +2274,17 @@
           setStatus('Script needed', 'Generation paused: spoken script is empty.', 'Write a spoken line first.');
           return;
         }
-        const uploadToolsOpen = !$('#upload-tools-panel').hidden;
-        const mode = uploadToolsOpen ? uploadMode : 'voice-design';
+        const mode = uploadMode;
         const consentAck = $('#consent-input').checked;
         const refFile = $('#ref-audio-input').files[0] || null;
         const promptFile = $('#prompt-audio-input').files[0] || null;
         const promptText = $('#prompt-text-input').value.trim();
-        if (mode === 'zero-shot' && !refFile) {
-          setStatus('Reference needed', 'Zero-Shot Clone requires approved reference audio.', 'Choose a reference-audio file first.');
+        if (isCloneMode(mode) && !refFile) {
+          setStatus('Reference needed', `${voiceModeLabel(mode)} requires approved reference audio.`, 'Choose a reference-audio file first.');
+          return;
+        }
+        if (mode === 'zero-shot-directed' && !direction.value.trim()) {
+          setStatus('Voice direction needed', 'Clone + Direction needs a delivery instruction.', 'Describe the cloned delivery before generating.');
           return;
         }
         if (mode === 'continuation' && (!promptFile || !promptText)) {
@@ -2240,7 +2298,7 @@
         let refAudioBase64 = null;
         let promptAudioBase64 = null;
         try {
-          refAudioBase64 = mode === 'zero-shot' ? await fileToBase64(refFile) : null;
+          refAudioBase64 = isCloneMode(mode) ? await fileToBase64(refFile) : null;
           promptAudioBase64 = mode === 'continuation' ? await fileToBase64(promptFile) : null;
         } catch (error) {
           setStatus('File error', error.message, 'Choose the approved audio file again.');
@@ -2258,7 +2316,7 @@
           text: script.value.trim(),
           language: $('#voice-language-current').textContent || 'English',
           mode,
-          voice_design: mode === 'voice-design' ? voice.value.trim() : null,
+          voice_design: mode === 'voice-design' ? voice.value.trim() : (mode === 'zero-shot-directed' ? direction.value.trim() : null),
           ref_audio_base64: refAudioBase64,
           prompt_audio_base64: promptAudioBase64,
           prompt_text: mode === 'continuation' ? promptText : null,
@@ -2323,9 +2381,7 @@
           mascot.release('conduct');
         } finally {
           generate.disabled = false;
-          generate.querySelector('span').textContent = $('#upload-tools-panel').hidden
-            ? 'Synthesize another take'
-            : (uploadMode === 'zero-shot' ? 'Clone approved voice' : 'Continue approved voice');
+          generate.querySelector('span').textContent = generationButtonLabel(uploadMode, true);
           loadRuntimeStatus();
         }
       });
@@ -2349,21 +2405,7 @@
         const button = event.target.closest('[data-guide-term]');
         if (button) renderGuideTerms(button.dataset.guideTerm);
       });
-      $('#btn-upload-tools').addEventListener('click', (event) => {
-        const panel = $('#upload-tools-panel');
-        panel.hidden = !panel.hidden;
-        event.currentTarget.setAttribute('aria-expanded', String(!panel.hidden));
-        generate.querySelector('span').textContent = panel.hidden ? 'Synthesize Audio' : (uploadMode === 'zero-shot' ? 'Clone approved voice' : 'Continue approved voice');
-        setGuide(panel.hidden ? 'Voice Design mode is active.' : 'Uploaded voice mode is active. Confirm permission before generating.');
-        mascot.react('think');
-      });
-      $$('[data-upload-mode]').forEach((button) => button.addEventListener('click', () => {
-        uploadMode = button.dataset.uploadMode;
-        $$('[data-upload-mode]').forEach((choice) => choice.setAttribute('aria-pressed', String(choice === button)));
-        $$('[data-upload-pane]').forEach((pane) => { pane.hidden = pane.dataset.uploadPane !== uploadMode; });
-        generate.querySelector('span').textContent = uploadMode === 'zero-shot' ? 'Clone approved voice' : 'Continue approved voice';
-        setGuide(uploadMode === 'zero-shot' ? 'Choose an approved reference voice, then confirm permission.' : 'Add approved prompt audio and its exact transcription.');
-      }));
+      voiceMode.addEventListener('change', () => updateVoiceMode(true));
       $('#btn-persona-lab').addEventListener('click', (event) => {
         event.preventDefault(); personaLabSelection = null; renderPersonaPicker(); showPersonaLabView('library'); openModal('persona-lab-modal'); mascot.react('think');
       });
@@ -2518,8 +2560,7 @@
       customPersonas = readJsonStorage(CUSTOM_PERSONAS_KEY, []);
       if (!Array.isArray(customPersonas)) customPersonas = [];
       if (dialogueHistory[0]?.reply) setTsukiDialogue(dialogueHistory[0].reply);
-      const cloneToolsEnabled = readJsonStorage(CLONE_TOOLS_KEY, false) === true;
-      $('#btn-upload-tools').hidden = !cloneToolsEnabled;
+      updateVoiceMode();
       document.body.classList.toggle('prompt-text-large', readJsonStorage(LARGE_PROMPT_TEXT_KEY, false) === true);
       $('#vram-panel').hidden = !readVramOptions().telemetryVisible;
       renderGuideTerms('synthesis');
