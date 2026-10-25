@@ -1,5 +1,8 @@
 # VoiceGen Oui! (ROCm-VoxCPM2)
 
+[![Checks](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/actions/workflows/checks.yml/badge.svg)](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/actions/workflows/checks.yml)
+[![Release](https://img.shields.io/badge/release-v0.3.0-teal.svg)](https://github.com/cesarborgenkrans-gif/VoiceGen-Oui-ROCm-VoxCPM2/releases/tag/v0.3.0)
+
 **ROCm-powered VoxCPM2 voice generation for Windows users who want to use their AMD GPU instead of falling back to CPU.**
 
 **It supports 39 voice-generation languages!**
@@ -96,6 +99,16 @@ pip install -r requirements.txt
 That installs the pinned PyTorch ROCm packages, VoxCPM, and the other Python dependencies used by VoiceGen Oui!. Then download the model files below and use the launcher.
 
 New to WSL2 or ROCm? The setup guide walks through the one-time setup with validation checks. For installation troubleshooting, use [CONTRIBUTING.md](CONTRIBUTING.md) to report where the setup stopped, share logs, or contribute a setup fix for the next Windows AMD user.
+
+## Pre-Flight Check (Doctor)
+
+Before downloading models or starting the server for the first time, run the pre-flight doctor script in Windows PowerShell to verify your Windows host environment, WSL2 Ubuntu distro, AMD ROCm pass-through, and local ports:
+
+```powershell
+.\doctor.ps1
+```
+
+The doctor provides colorized diagnostics (`[OK]`, `[WARN]`, `[FAIL]`) and actionable guidance to get your environment ready.
 
 ## Model Files
 
